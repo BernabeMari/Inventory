@@ -42,68 +42,70 @@ export default function({users}){
 
   }
   return(
-    <div className="overflow-x-auto h-screen flex flex-col">
+    <div className="flex-col flex overflow-auto">
 
-    <div className="p-4">
+      {/* Search button */}
+      <div className="p-4">
 
-      <SearchField
-        value={search}
-        onChange={(e) => setSearch(e.target.value)}
-        placeholder="Search users..."
-      />
+        <SearchField
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          placeholder="Search users..."
+        />
 
-      <p className="mt-4">
-        You searched: {search}
-      </p>
+        <p className="mt-4">
+          You searched: {search}
+        </p>
 
-    </div>
+      </div>
 
       {/* Table */}
-      <table className="table">
-        {/* head */}
-        <thead>
-          <tr>
-            <th>Username</th>
-            <th>Role</th>
-            <th>Department</th>
-            <th>Action</th>
-            <th></th>
-          </tr>
-        </thead>
-        <tbody>
-          {/* row 1 */}
-          {users.filter(users => users.is_active).map(users => (
+      <div className="flex justify-center items-center">
+        <table className="table">
+          {/* head */}
+          <thead>
             <tr>
-            
-            
-            <td>
-              <div className="flex items-center gap-3">
-                <div className="avatar">
-                  <div className="mask mask-squircle h-12 w-12">
-                    <img
-                      src="https://img.daisyui.com/images/profile/demo/2@94.webp"
-                      alt="Avatar Tailwind CSS Component" />
+              <th>Username</th>
+              <th>Role</th>
+              <th>Department</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            {/* row 1 */}
+            {users.filter(users => users.is_active).map(users => (
+              <tr>
+              
+              
+              <td>
+                <div className="flex items-center gap-3">
+                  <div className="avatar">
+                    <div className="mask mask-squircle h-12 w-12">
+                      <img
+                        src="https://img.daisyui.com/images/profile/demo/2@94.webp"
+                        alt="Avatar Tailwind CSS Component" />
+                    </div>
+                  </div>
+                  <div>
+                    <div className="font-bold">{users.username}</div>
                   </div>
                 </div>
-                <div>
-                  <div className="font-bold">{users.username}</div>
-                </div>
-              </div>
-            </td>
-            <td>
-              {users.role}
-            </td>
-            <td>{users.department}</td>
+              </td>
+              <td>
+                {users.role}
+              </td>
+              <td>{users.department}</td>
 
 
-            <th>
-              <button onClick={(e) => {setEditModal(true);setData({username: users.username, user_id: users.id, username_edit: users.username})}} className="btn btn-dash btn-primary"><PencilSquareIcon className="w-5 h-5"/></button>
-              <button onClick={(e) => {setDeleteModal(true);setData({user_id: users.id, username: users.username})}} className="btn btn-dash btn-error"><TrashIcon className="w-5 h-5"/></button>
-            </th>
-          </tr>
-          ))}
-        </tbody>
-      </table>
+              <th>
+                <button onClick={(e) => {setEditModal(true);setData({username: users.username, user_id: users.id, username_edit: users.username})}} className="btn btn-dash btn-primary"><PencilSquareIcon className="w-5 h-5"/></button>
+                <button onClick={(e) => {setDeleteModal(true);setData({user_id: users.id, username: users.username})}} className="btn btn-dash btn-error"><TrashIcon className="w-5 h-5"/></button>
+              </th>
+            </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
 
       {/* Add User Button */}
       <div className="bg-white m-6 bottom-0 right-0 absolute rounded-full border border-black ">
@@ -204,6 +206,7 @@ export default function({users}){
       )}
 
       
+      {/* Delete User(soft delete) */}
       {deleteModal && (
         <dialog className="modal modal-open">
           <div className="modal-box">
