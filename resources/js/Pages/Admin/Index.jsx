@@ -1,9 +1,11 @@
 import SearchField from "@/Components/SearchField"
 import { useForm } from "@inertiajs/react"
 import { useState } from "react"
+import { PlusIcon, PencilSquareIcon, TrashIcon  } from "@heroicons/react/24/solid";
 
 export default function({users}){
   const [editModal, setEditModal] = useState(false)
+  const [deleteModal, setDeleteModal] = useState(false)
   const [createUserModal, setcreateUserModal] = useState(false)
   const [search, setSearch] = useState(" ")
 
@@ -15,6 +17,7 @@ export default function({users}){
     image: '',
     role_department: '',
     username_edit: '',
+    is_active: true
   })
 
   function createUser(e){
@@ -29,6 +32,14 @@ export default function({users}){
     post(route('edit_user'),{
       onSuccess: () => {setEditModal(false); reset()}
     })
+  }
+
+  function deleteUser(e){
+    e.preventDefault()
+    post(route('delete_user'),{
+      onSuccess: ()=> setDeleteModal(false)
+    })
+
   }
   return(
     <div className="overflow-x-auto h-screen flex flex-col">
@@ -55,13 +66,13 @@ export default function({users}){
             <th>Username</th>
             <th>Role</th>
             <th>Department</th>
-            <th>Edit</th>
+            <th>Action</th>
             <th></th>
           </tr>
         </thead>
         <tbody>
           {/* row 1 */}
-          {users.map(users => (
+          {users.filter(users => users.is_active).map(users => (
             <tr>
             
             
@@ -86,8 +97,8 @@ export default function({users}){
 
 
             <th>
-              <button onClick={(e) => {setEditModal(true);setData({username: users.username, user_id: users.id, username_edit: users.username})}} className="btn btn-ghost btn-xs">Edit details</button>
-          
+              <button onClick={(e) => {setEditModal(true);setData({username: users.username, user_id: users.id, username_edit: users.username})}} className="btn btn-dash btn-primary"><PencilSquareIcon className="w-5 h-5"/></button>
+              <button onClick={(e) => {setDeleteModal(true);setData({user_id: users.id, username: users.username})}} className="btn btn-dash btn-error"><TrashIcon className="w-5 h-5"/></button>
             </th>
           </tr>
           ))}
@@ -96,7 +107,7 @@ export default function({users}){
 
       {/* Add User Button */}
       <div className="bg-white m-6 bottom-0 right-0 absolute rounded-full border border-black ">
-        <button onClick={(e) => setcreateUserModal(true)} className="btn btn-soft btn-secondary rounded-full p-4">➕</button>
+        <button onClick={(e) => setcreateUserModal(true)} className="btn btn-soft btn-secondary rounded-full p-4"><PlusIcon className="w-5 h-5" /></button>
       </div>
       
       
@@ -193,6 +204,25 @@ export default function({users}){
       )}
 
       
+      {deleteModal && (
+        <dialog className="modal modal-open">
+          <div className="modal-box">
+            <button
+              className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2"
+              onClick={() => setDeleteModal(false)}
+            >
+              ✕
+            </button>
+            <p>Are you sure you want to DELETE this user? ({data.username})</p>
+            <div className="flex flex-row justify-center">
+              <button onClick={(e) => {setData({user_id: data.user_id});deleteUser(e)}} className="btn btn-success w-10">Yes</button>
+              <button onClick={() => setDeleteModal(false)} className="btn btn-error w-10">No</button>
+            </div>
+          </div>
+        </dialog>
+      )}
+
+
       {/* Create User */}
       {createUserModal && (
         <dialog className="modal modal-open">

@@ -16,4 +16,5 @@ Route::controller(AdminController::class)->group(function(){
     Route::get('/admin-dashboard', 'adminPage');
     Route::post('/create-user', 'createUser')->name('create_user');
     Route::post('/edit-user', 'editUser')->name('edit_user');
+    Route::post('/delete-user', 'deleteUser')->name('delete_user');
 });

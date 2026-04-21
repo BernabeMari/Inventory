@@ -18,6 +18,7 @@ return new class extends Migration
             $table->string('role');
             $table->string('image')->nullable();
             $table->string('department')->nullable();
+            $table->boolean('is_active')->default(true);
             $table->rememberToken();
             $table->timestamps();
         });
