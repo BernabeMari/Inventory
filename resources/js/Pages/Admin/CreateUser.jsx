@@ -250,7 +250,7 @@ export default function({users}){
 
                   <input value={data.username} onChange={(e) => setData('username', e.target.value)} type="text" required placeholder="Username" pattern="[A-Za-z][A-Za-z0-9\-]*" minLength="3" maxLength="30" title="Only letters, numbers or dash"/>
               
-              </label>
+              </label>  
                   <p className="validator-hint">
                     Must be 3 to 30 characters
                     <br />containing only letters, numbers or dash

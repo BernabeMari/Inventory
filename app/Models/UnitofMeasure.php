@@ -4,12 +4,9 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Admin extends Model
+class UnitofMeasure extends Model
 {
     protected $fillable = [
-        'username',
-        'password',
-        'role',
-        'department'
+        'unit_of_measure'
     ];
 }
