@@ -7,7 +7,8 @@ export default function({users}){
   const [editModal, setEditModal] = useState(false)
   const [deleteModal, setDeleteModal] = useState(false)
   const [createUserModal, setcreateUserModal] = useState(false)
-  const [search, setSearch] = useState(" ")
+  const [search, setSearch] = useState("")
+  
 
   const {post, data, setData, reset} = useForm({
     username: '',
@@ -72,8 +73,8 @@ export default function({users}){
             </tr>
           </thead>
           <tbody>
-            {/* row 1 */}
-            {users.filter(users => users.is_active).map(users => (
+
+            {users.filter(user => user.is_active).filter(user => user.username.toLowerCase().includes(search.toLowerCase()) || user.role.toLowerCase().includes(search.toLowerCase()) || user.department && user.department.toLowerCase().includes(search.toLowerCase())).map(user => (
               <tr>
               
               
@@ -87,19 +88,19 @@ export default function({users}){
                     </div>
                   </div>
                   <div>
-                    <div className="font-bold">{users.username}</div>
+                    <div className="font-bold">{user.username}</div>
                   </div>
                 </div>
               </td>
               <td>
-                {users.role}
+                {user.role}
               </td>
-              <td>{users.department}</td>
+              <td>{user.department}</td>
 
 
               <th>
-                <button onClick={(e) => {setEditModal(true);setData({username: users.username, user_id: users.id, username_edit: users.username})}} className="btn btn-dash btn-primary"><PencilSquareIcon className="w-5 h-5"/></button>
-                <button onClick={(e) => {setDeleteModal(true);setData({user_id: users.id, username: users.username})}} className="btn btn-dash btn-error"><TrashIcon className="w-5 h-5"/></button>
+                <button onClick={(e) => {setEditModal(true);setData({username: user.username, user_id: user.id, username_edit: user.username})}} className="btn btn-dash btn-primary"><PencilSquareIcon className="w-5 h-5"/></button>
+                <button onClick={(e) => {setDeleteModal(true);setData({user_id: user.id, username: user.username})}} className="btn btn-dash btn-error"><TrashIcon className="w-5 h-5"/></button>
               </th>
             </tr>
             ))}
@@ -167,16 +168,13 @@ export default function({users}){
 
               {/* Select Role */}
               <select value={data.role} onChange={(e) => setData('role', e.target.value)} className="select mt-5">
-                <option value="" disabled>Select Role</option>
+                <option value="">Select Role</option>
                 <option value="admin">Admin</option>
                 <option value="receiver">Receiver</option>
                 <option value="endorser">Endorser</option>
                 <option value="head">Head</option>
                 <option value="department">Department</option>
               </select>
-              <p className="validator-hint hidden">
-                Role is required
-              </p>
 
 
             {/* if user is department */}
@@ -190,7 +188,7 @@ export default function({users}){
                   </g>
                 </svg>
 
-                  <input value={data.role_department} onChange={(e) => setData('role_department', e.target.value)} type="text" placeholder="Role" maxLength="30" title="Department"/>
+                  <input required value={data.role_department} onChange={(e) => setData('role_department', e.target.value)} type="text" placeholder="Role" maxLength="30" title="Department"/>
               </label>
               </div>
             )}
