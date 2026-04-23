@@ -18,7 +18,7 @@ class ReceiverController extends Controller
         Receiver::create([
             'description' => $request->description,
             'unit_of_measure' => $request->unit_of_measure,
-            'quantity' => $request->quantity
+            'quantity' => (array) $request->quantity
         ]);
     }
 

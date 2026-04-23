@@ -1,15 +1,17 @@
+import SearchField from "@/Components/SearchField";
 import { PlusIcon, PencilSquareIcon, TrashIcon  } from "@heroicons/react/24/solid";
 import { useForm } from "@inertiajs/react";
 import { useState } from "react";
 import Select from "react-select";
 
-export default function({unitofmeasure, items}){
+export default function({unitofmeasure, items, total}){
+    const [search, setSearch] = useState('')
     const [createItemModal, setcreateItemModal] = useState(false)
     const [addReceiptModal, setaddReceiptModal] = useState(null)
     const {post, data, setData, reset} = useForm({
         unit_of_measure: '',
         description: '',
-        quantity: '',
+        quantity: [''],
     })
 
     const unit = unitofmeasure.map(item => 
@@ -29,8 +31,33 @@ export default function({unitofmeasure, items}){
             onSuccess: () => {setaddReceiptModal(false); reset()}
         })
     }
+
+    function sumQuantities(quantity){
+        if (!Array.isArray(quantity)) {
+            return Number(quantity || 0)
+        }
+        return quantity.reduce((sum, value) => sum + Number(value || 0), 0)
+    }
+
     return(
     <div className="flex-col flex overflow-auto">
+
+        {/* Search button */}
+              <div className="p-4">
+        
+                <SearchField
+                  value={search}
+                  onChange={(e) => setSearch(e.target.value)}
+                  placeholder="Search items..."
+                />
+        
+                <p className="mt-4">
+                  You searched: {search}
+                </p>
+        
+              </div>
+
+
         {/* Table */}
         <div className="flex justify-center items-center">
             <table className="table">
@@ -48,7 +75,7 @@ export default function({unitofmeasure, items}){
                 </tr>
             </thead>
             <tbody>
-                {items.map(item => (
+                {items.filter(item => item.description.toLowerCase().includes(search.toLowerCase()) || item.unit_of_measure.toLowerCase().includes(search.toLowerCase())).map(item => (
                 <tr> 
 
 
@@ -82,16 +109,24 @@ export default function({unitofmeasure, items}){
                 
                 <td>
                     <div className="flex justify-between items-center">
-                        <div>{item.quantity}</div>
+                        <div>{item.quantity.map(a => (
+                            <span>{a} + </span>
+                        ))}</div>
                         
                         {addReceiptModal === item.id && (<div>
                             <form onSubmit={addReceipt}>
-                                <input value={data.quantity} onChange={(e) => setData('quantity', e.target.value)} placeholder="Add Receipt" type="number" required/>
+                                <input value={data.quantity} min="1" onChange={(e) => setData('quantity', e.target.value)} placeholder="Add Receipt" type="number" required/>
                                 <button type="submit"></button>
                             </form>
                         </div>)}
                         
                         <div><button onClick={() => {setaddReceiptModal(item.id); setData({item_id: item.id})}} className="btn btn-xs sm:btn-sm md:btn-md lg:btn-lg xl:btn-xl"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" className="size-5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" /></svg></button></div>
+                    </div>
+                </td>
+
+                <td>
+                    <div className="font-bold">
+                       {sumQuantities(item.quantity)}
                     </div>
                 </td>
 
@@ -134,7 +169,7 @@ export default function({unitofmeasure, items}){
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="size-6">
                     <path strokeLinecap="round" strokeLinejoin="round" d="M5.25 8.25h15m-16.5 7.5h15m-1.8-13.5-3.9 19.5m-2.1-19.5-3.9 19.5" />
                     </svg>
-                    <input value={data.quantity} onChange={(e) => setData('quantity', e.target.value)} type="number" required placeholder="Quantity" title="Input Quantity of Item Here"/>
+                    <input value={data.quantity} onChange={(e) => setData('quantity', e.target.value)} min={0} type="number" required placeholder="Quantity" title="Input Quantity of Item Here"/>
                     </label> 
                 </div>
 
