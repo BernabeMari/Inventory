@@ -81,10 +81,14 @@ export default function({users}){
               <td>
                 <div className="flex items-center gap-3">
                   <div className="avatar">
-                    <div className="mask mask-squircle h-12 w-12">
-                      <img
-                        src="https://img.daisyui.com/images/profile/demo/2@94.webp"
-                        alt="Avatar Tailwind CSS Component" />
+                    <div className="mask rounded-full h-10 w-10 flex items-center justify-cente">
+                      {user.image ? (
+                      <img src={`/storage/${user.image}`} alt={user.username} />
+                    ) : (
+                      <div className="bg-red-300 w-10 h-10 flex items-center justify-center rounded-full">
+                        {user.username?.toUpperCase().slice(0, 1)}
+                      </div>
+                    )}
                     </div>
                   </div>
                   <div>

@@ -1,11 +1,12 @@
 <?php
 
-use App\Http\Controllers\AdminController;
-use App\Http\Controllers\RequestController;
-use App\Http\Controllers\EndorserController;
-use App\Http\Controllers\LoginController;
+use App\Http\Controllers\Admin\AdminController;
+use App\Http\Controllers\Department\DepartmentController;
+use App\Http\Controllers\Endorser\EndorserController;
+use App\Http\Controllers\Login\LoginController;
 use App\Http\Controllers\ProfileController;
-use App\Http\Controllers\ReceiverController;
+use App\Http\Controllers\Receiver\ReceiverController;
+use App\Http\Controllers\Requests\RequestController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -35,4 +36,9 @@ Route::middleware('role:endorser')->controller(EndorserController::class)->group
 Route::middleware('role:department')->controller(RequestController::class)->group(function(){
     Route::get('/department-dashboard', 'departmentPage')->name('department_page');
     Route::post('/request-item', 'requestItem')->name('request_item');
+});
+
+Route::middleware('role:department')->controller(DepartmentController::class)->group(function(){
+    Route::get('/profile-department-dashboard', 'profilePage')->name('profile_page');
+    Route::post('/update-department-profile', 'profilePicture')->name('profile_picture');
 });

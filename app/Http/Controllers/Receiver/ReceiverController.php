@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Receiver;
 
+use App\Http\Controllers\Controller;
 use App\Models\Receiver;
 use App\Models\UnitofMeasure;
 use Illuminate\Http\Request;
