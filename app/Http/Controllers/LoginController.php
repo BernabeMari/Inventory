@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 
 class LoginController extends Controller
@@ -10,14 +11,26 @@ class LoginController extends Controller
         return inertia('Login/Index');
     }
 
-    public function authenticateUser(Request $request){
-        $username = $request->username;
-        $password = $request->password;
+    public function authenticateUser(Request $request)
+    {
+        if (Auth::attempt([
+            'username' => $request->username,
+            'password' => $request->password,
+        ])) {
 
-        if($username === auth('username') && $password === auth('password')){
-            if(auth('role') === 'admin'){
-                return inertia('Admin/Index');
+            $request->session()->regenerate();
+
+            if (Auth::user()->role === 'receiver') {
+                return redirect()->route('receiver_page');
+            }elseif(Auth::user()->role === 'admin'){
+                return redirect()->route('admin_page');
             }
+
+            return redirect('/');
         }
+
+        return back()->withErrors([
+            'username' => 'Invalid credentials',
+        ]);
     }
 }
