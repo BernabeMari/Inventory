@@ -28,11 +28,11 @@ Route::middleware('role:receiver')->controller(ReceiverController::class)->group
     Route::post('/add-receipt', 'addReceipt')->name('add_receipt');
 });
 
-Route::controller(EndorserController::class)->group(function(){
-    Route::get('/endorser-dashboard', 'endorserPage');
+Route::middleware('role:endorser')->controller(EndorserController::class)->group(function(){
+    Route::get('/endorser-dashboard', 'endorserPage')->name('endorser_page');
 });
 
-Route::controller(RequestController::class)->group(function(){
-    Route::get('/department-dashboard', 'departmentPage');
+Route::middleware('role:department')->controller(RequestController::class)->group(function(){
+    Route::get('/department-dashboard', 'departmentPage')->name('department_page');
     Route::post('/request-item', 'requestItem')->name('request_item');
 });
