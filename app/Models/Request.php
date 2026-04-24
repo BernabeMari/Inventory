@@ -11,5 +11,6 @@ class Request extends Model
         'quantity',
         'status',
         'message',
+        'user_id'
     ];
 }

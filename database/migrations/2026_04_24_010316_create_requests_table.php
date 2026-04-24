@@ -17,6 +17,7 @@ return new class extends Migration
             $table->integer('quantity');
             $table->enum('status', ['pending', 'approved', 'rejected'])->default('pending');
             $table->string('message')->nullable();
+            $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->timestamps();
         });
     }

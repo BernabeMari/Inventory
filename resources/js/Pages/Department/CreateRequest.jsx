@@ -1,17 +1,19 @@
 import SearchField from "@/Components/SearchField"
 import SidebarLayout from "@/Layouts/SidebarLayout"
 import { PlusIcon } from "@heroicons/react/24/solid"
-import { useForm } from "@inertiajs/react"
+import { useForm, usePage } from "@inertiajs/react"
 import { useState } from "react"
 
 export default function({requests}){
     const [requestItem, setrequestItemModal] = useState(false)
     const [search, setSearch] = useState('')
+    const {auth} = usePage().props
     const {post, data, setData, reset} = useForm({
         item: '',
         quantity: '',
         status: '',
-        message: ''
+        message: '',
+        user_id: ''
     })
 
     function request_item(e){
@@ -48,7 +50,7 @@ export default function({requests}){
                 </tr>
             </thead>
             <tbody>
-                {requests.filter(request => request.item.toLowerCase().includes(search.toLowerCase()) || request.message && request.message.toLowerCase().includes(search.toLowerCase()) || request.status.toLowerCase().includes(search.toLowerCase())).map(request => (
+                {requests.filter(request => request.item.toLowerCase().includes(search.toLowerCase()) || request.message && request.message.toLowerCase().includes(search.toLowerCase()) || request.status.toLowerCase().includes(search.toLowerCase())).filter(request => request.user_id === auth.user.id).map(request => (
                 <tr> 
 
                 <td>
@@ -87,7 +89,7 @@ export default function({requests}){
 
             {/* Add Item Button */}
             <div className="bg-white m-6 bottom-0 right-0 absolute rounded-full border border-black ">
-                <button onClick={(e) => setrequestItemModal(true)} className="btn btn-soft btn-secondary rounded-full p-4"><PlusIcon className="w-5 h-5" /></button>
+                <button onClick={(e) => {setrequestItemModal(true);setData({user_id: data.id})}} className="btn btn-soft btn-secondary rounded-full p-4"><PlusIcon className="w-5 h-5" /></button>
             </div>
 
 

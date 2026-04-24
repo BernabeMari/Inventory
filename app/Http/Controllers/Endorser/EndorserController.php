@@ -3,11 +3,13 @@
 namespace App\Http\Controllers\Endorser;
 
 use App\Http\Controllers\Controller;
+use App\Models\Request as ModelsRequest;
 use Illuminate\Http\Request;
 
 class EndorserController extends Controller
 {
     public function endorserPage(){
-        return inertia('Endorser/Requests');
+        $requests = ModelsRequest::get();
+        return inertia('Endorser/Requests', ['requests' => $requests]);
     }
 }
