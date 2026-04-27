@@ -23,5 +23,7 @@ class RequestController extends Controller
         'message' => $request->message,
         'user_id' => Auth::id()
     ]);
+
+    return back()->with('success', 'Request Created Successfully');
 }
 }

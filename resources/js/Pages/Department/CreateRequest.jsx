@@ -7,7 +7,7 @@ import { useState } from "react"
 export default function({requests}){
     const [requestItem, setrequestItemModal] = useState(false)
     const [search, setSearch] = useState('')
-    const {auth} = usePage().props
+    const {auth, flash} = usePage().props
     const {post, data, setData, reset} = useForm({
         item: '',
         quantity: '',
@@ -26,7 +26,11 @@ export default function({requests}){
     return(
         <SidebarLayout>
         <div className="flex-col flex overflow-auto">
-
+        {flash.success && (
+            <div className="alert alert-success mb-4">
+                {flash.success}
+            </div>
+        )}
         {/* Search button */}
         <div className="p-4">
             <SearchField value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Search requests..."/>
@@ -128,9 +132,9 @@ export default function({requests}){
                         <div className="flex justify-center">
                             <label className="input validator">
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 15.75V18m-7.5-6.75h.008v.008H8.25v-.008Zm0 2.25h.008v.008H8.25V13.5Zm0 2.25h.008v.008H8.25v-.008Zm0 2.25h.008v.008H8.25V18Zm2.498-6.75h.007v.008h-.007v-.008Zm0 2.25h.007v.008h-.007V13.5Zm0 2.25h.007v.008h-.007v-.008Zm0 2.25h.007v.008h-.007V18Zm2.504-6.75h.008v.008h-.008v-.008Zm0 2.25h.008v.008h-.008V13.5Zm0 2.25h.008v.008h-.008v-.008Zm0 2.25h.008v.008h-.008V18Zm2.498-6.75h.008v.008h-.008v-.008Zm0 2.25h.008v.008h-.008V13.5ZM8.25 6h7.5v2.25h-7.5V6ZM12 2.25c-1.892 0-3.758.11-5.593.322C5.307 2.7 4.5 3.65 4.5 4.757V19.5a2.25 2.25 0 0 0 2.25 2.25h10.5a2.25 2.25 0 0 0 2.25-2.25V4.757c0-1.108-.806-2.057-1.907-2.185A48.507 48.507 0 0 0 12 2.25Z" />
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M8.625 9.75a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0H8.25m4.125 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0H12m4.125 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0h-.375m-13.5 3.01c0 1.6 1.123 2.994 2.707 3.227 1.087.16 2.185.283 3.293.369V21l4.184-4.183a1.14 1.14 0 0 1 .778-.332 48.294 48.294 0 0 0 5.83-.498c1.585-.233 2.708-1.626 2.708-3.228V6.741c0-1.602-1.123-2.995-2.707-3.228A48.394 48.394 0 0 0 12 3c-2.392 0-4.744.175-7.043.513C3.373 3.746 2.25 5.14 2.25 6.741v6.018Z" />
                             </svg>
-                            <input value={data.message} onChange={(e) => setData('message', e.target.value)} type="text" min={1} placeholder="Message(optional)" title="Input Message Here"/>
+                            <input value={data.message} onChange={(e) => setData('message', e.target.value)} type="text" placeholder="Message(optional)" title="Input Message Here"/>
                             </label>
                         </div>
                     

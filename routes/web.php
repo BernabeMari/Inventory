@@ -32,6 +32,8 @@ Route::middleware('role:receiver')->controller(ReceiverController::class)->group
 
 Route::middleware('role:endorser')->controller(EndorserController::class)->group(function(){
     Route::get('/endorser-dashboard', 'endorserPage')->name('endorser_page');
+    Route::post('/action-reject', 'actionReject')->name('action_reject');
+    Route::post('/action-approve', 'actionApprove')->name('action_approve');
 });
 
 Route::middleware('role:department')->controller(RequestController::class)->group(function(){

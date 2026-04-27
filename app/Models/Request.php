@@ -11,6 +11,8 @@ class Request extends Model
         'quantity',
         'status',
         'message',
+        'endorser_message',
+        'unfulfilled_quantity',
         'user_id'
     ];
 
