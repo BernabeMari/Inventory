@@ -2,6 +2,7 @@ import SearchField from "@/Components/SearchField"
 import { useForm } from "@inertiajs/react"
 import { useState } from "react"
 import { PlusIcon, PencilSquareIcon, TrashIcon  } from "@heroicons/react/24/solid";
+import SidebarLayout from "@/Layouts/SidebarLayout";
 
 export default function({users}){
   const [editModal, setEditModal] = useState(false)
@@ -43,6 +44,7 @@ export default function({users}){
 
   }
   return(
+    <SidebarLayout>
     <div className="flex-col flex overflow-auto">
 
       {/* Search button */}
@@ -322,5 +324,6 @@ export default function({users}){
 
 
     </div>
+    </SidebarLayout>
   )
 }

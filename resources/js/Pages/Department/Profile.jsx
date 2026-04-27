@@ -1,3 +1,4 @@
+import SidebarLayout from "@/Layouts/SidebarLayout";
 import { useForm, usePage } from "@inertiajs/react"
 
 export default function({profile}){
@@ -11,6 +12,7 @@ export default function({profile}){
         post(route('profile_picture'))
     }
     return(
+        <SidebarLayout>
         <div className="flex min-h-screen justify-center items-center">
             <div className="card bg-base-100 w-96 shadow-sm">
 
@@ -34,5 +36,6 @@ export default function({profile}){
 
             </div>
         </div>
+        </SidebarLayout>
     )
 }

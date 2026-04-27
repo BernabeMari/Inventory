@@ -1,4 +1,5 @@
 import SearchField from "@/Components/SearchField";
+import SidebarLayout from "@/Layouts/SidebarLayout";
 import { PlusIcon, PencilSquareIcon, TrashIcon  } from "@heroicons/react/24/solid";
 import { useForm } from "@inertiajs/react";
 import { useState } from "react";
@@ -40,6 +41,7 @@ export default function({unitofmeasure, items, total}){
     }
 
     return(
+    <SidebarLayout>
     <div className="flex-col flex overflow-auto">
 
         {/* Search button */}
@@ -192,5 +194,6 @@ export default function({unitofmeasure, items, total}){
 
 
     </div>
+    </SidebarLayout>
     )
 }

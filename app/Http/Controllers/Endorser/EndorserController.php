@@ -9,7 +9,7 @@ use Illuminate\Http\Request;
 class EndorserController extends Controller
 {
     public function endorserPage(){
-        $requests = ModelsRequest::get();
+        $requests = ModelsRequest::with('user')->get();
         return inertia('Endorser/Requests', ['requests' => $requests]);
     }
 }

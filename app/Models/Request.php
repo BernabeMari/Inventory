@@ -13,4 +13,8 @@ class Request extends Model
         'message',
         'user_id'
     ];
+
+    public function user(){
+        return $this->belongsTo(User::class);
+    }
 }
