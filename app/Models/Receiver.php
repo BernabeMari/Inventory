@@ -9,7 +9,8 @@ class Receiver extends Model
     protected $fillable = [
         'description',
         'unit_of_measure',
-        'quantity'
+        'quantity',
+        'total',
     ];
 
     protected $casts = [

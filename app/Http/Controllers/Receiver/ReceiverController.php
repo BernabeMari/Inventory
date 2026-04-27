@@ -19,6 +19,7 @@ class ReceiverController extends Controller
         Receiver::create([
             'description' => $request->description,
             'unit_of_measure' => $request->unit_of_measure,
+            'total' => $request->quantity,
             'quantity' => (array) $request->quantity
         ]);
     }
@@ -36,7 +37,8 @@ class ReceiverController extends Controller
         $quantity[] = (int) $request->quantity;
 
         $find->update([
-            'quantity' => $quantity
+            'quantity' => $quantity,
+            'total' => $find->total + $request->quantity
         ]);
     }
 }

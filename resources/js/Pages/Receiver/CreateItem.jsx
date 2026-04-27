@@ -12,6 +12,7 @@ export default function({unitofmeasure, items, total}){
     const {post, data, setData, reset} = useForm({
         unit_of_measure: '',
         description: '',
+        total: '',
         quantity: [''],
     })
 
@@ -128,7 +129,7 @@ export default function({unitofmeasure, items, total}){
 
                 <td>
                     <div className="font-bold">
-                       {sumQuantities(item.quantity)}
+                       {item.total}
                     </div>
                 </td>
 

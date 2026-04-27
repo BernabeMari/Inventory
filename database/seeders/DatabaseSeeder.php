@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\UnitofMeasure;
 use App\Models\User;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
@@ -22,6 +23,35 @@ class DatabaseSeeder extends Seeder
             'username' => 'zyb',
             'password' => Hash::make('Bernabe202003'),
             'role' => 'admin'
-            ]);
+        ]);
+        
+        User::factory()->create([
+            'username' => 'head',
+            'password' => Hash::make('Bernabe202003'),
+            'role' => 'head'
+        ]);
+        User::factory()->create([
+            'username' => 'rec',
+            'password' => Hash::make('Bernabe202003'),
+            'role' => 'receiver'
+        ]);
+        User::factory()->create([
+            'username' => 'end',
+            'password' => Hash::make('Bernabe202003'),
+            'role' => 'endorser'
+        ]);
+        User::factory()->create([
+            'username' => 'dep',
+            'password' => Hash::make('Bernabe202003'),
+            'role' => 'department',
+            'department' => 'MIS',
+        ]);
+            
+        UnitofMeasure::insert([
+        ['unit_of_measure' => 'pcs'],
+        ['unit_of_measure' => 'kg'],
+        ['unit_of_measure' => 'box'],
+        ['unit_of_measure' => 'cartridge'],
+    ]);
     }
 }

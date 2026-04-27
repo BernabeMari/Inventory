@@ -13,7 +13,8 @@ class Request extends Model
         'message',
         'endorser_message',
         'unfulfilled_quantity',
-        'user_id'
+        'user_id',
+        'issued_item'
     ];
 
     public function user(){
