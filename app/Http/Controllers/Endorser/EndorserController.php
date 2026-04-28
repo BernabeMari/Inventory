@@ -10,9 +10,14 @@ use Illuminate\Http\Request;
 class EndorserController extends Controller
 {
     public function endorserPage(){
-        $requests = ModelsRequest::with('user')->get();
+        $requests = ModelsRequest::with('user', 'receiver')->get();
         $items = Receiver::get();
         return inertia('Endorser/Requests', ['requests' => $requests, 'items' => $items]);
+    }
+
+    public function endorserDoneRequestPage(){
+        $requests = ModelsRequest::with('user')->get();
+        return inertia('Endorser/DoneRequests', ['requests' => $requests]);
     }
 
     public function actionReject(Request $request){
@@ -27,18 +32,25 @@ class EndorserController extends Controller
         $findRequest = ModelsRequest::findOrFail($request->request_id);
         $findItem = Receiver::findOrFail($request->item_id);
 
-        if ($findItem->quantity < $request->issue_quantity) {
+        if ($findItem->total < $request->fulfilled_quantity) {
             return back()->with('error', 'Insufficient stock available');
         }
+
+        if($request->fulfilled_quantity + $request->unfulfilled_quantity != $findRequest->quantity){
+            return back()->with('error', 'The fulfilled and unfulfilled items do not match the department’s request.');
+        }
+
 
         $findRequest->update([
             'status' => 'approved',
             'endorser_message' => $request->endorser_message,
+            'fulfilled_quantity' => $request->fulfilled_quantity,
             'unfulfilled_quantity' => $request->unfulfilled_quantity,
-            'issued_item' => $request->available_item
+            'issued_item' => $findItem->description,
+            'receiver_id' => $request->request_id
         ]);
 
-        $findItem->decrement('total', $request->issue_quantity);
+        $findItem->decrement('total', $request->fulfilled_quantity);
 
         return back()->with('success', 'Request approved successfully');
     }

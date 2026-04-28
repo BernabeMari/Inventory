@@ -6,14 +6,14 @@ import { useState } from "react";
 export default function(){
     const [approveModal, setapproveModal] = useState(false)
     const [rejectModal, setrejectModal] = useState(false)
-    const { flash, requests, items } = usePage().props
+    const { flash, requests, receiver, items } = usePage().props
     const [search, setSearch] = useState('')
     const {post, data, setData} = useForm({
         status: '',
         item_id: '',
         request_id: '',
         item: '',
-        issue_quantity: 0,
+        fulfilled_quantity: 0,
         unfulfilled_quantity: 0,
         endorser_message: '',
         available_item: '',
@@ -35,6 +35,7 @@ export default function(){
     return(
     <SidebarLayout>
          <div className="flex-col flex overflow-auto">
+            <h3 className="font-bold text-lg m-4">Requests</h3>
         {flash.error && (<div className="alert alert-error mb-4">
         {flash.error}
         </div>
@@ -70,7 +71,7 @@ export default function(){
                         </tr>
                     </thead>
                     <tbody>
-                        {requests.filter(request => request.status.toLowerCase().includes(search.toLowerCase()) || request.user?.department.toLowerCase().includes(search.toLowerCase()) || request.message && request.message.toLowerCase().includes(search.toLowerCase()) || request.item.toLowerCase().includes(search.toLowerCase())).map(request => (
+                        {requests.filter(request => request.status === 'pending').filter(request => request.status.toLowerCase().includes(search.toLowerCase()) || request.user?.department?.toLowerCase().includes(search.toLowerCase()) || request.message && request.message.toLowerCase().includes(search.toLowerCase()) || request.item.toLowerCase().includes(search.toLowerCase())).map(request => (
                             <tr> 
         
         
@@ -117,9 +118,8 @@ export default function(){
                        
                         <td>
                             <div className="font-bold flex-row flex">
-                                
                                 <div className="tooltip tooltip-close tooltip-right">
-                                    <button onClick={(e) => {setapproveModal(true); setData({request_id: request.id, item: request.item, item_id: request.id})}} className="btn">
+                                    <button onClick={(e) => {setapproveModal(true); setData({request_id: request.id, item: request.item})}} className="btn">
                                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
                                     </svg>
@@ -154,14 +154,20 @@ export default function(){
 
 
                              <form onSubmit={approve} className="flex flex-col gap-4">
-                                <h3 className="font-bold text-lg m-4">Approve Request({data.item})</h3>
+                                <h3 className="font-bold text-lg m-4">Approve Request({data.item}){data.item_id}</h3>
 
                                  <div className="flex justify-center">
-                                        <select onChange={(e) => setData('available_item', e.target.value)} defaultValue="Select an Item" className="select select-ghost">
-                                            <option disabled={true}>Select an Item</option>
-                                            {items.map(item =>
-                                                <option value={item.description}>{item.description} - ({item.total})</option>
-                                            )}
+                                        <select value={data.item_id || ""} onChange={(e) => setData('item_id', e.target.value)} required className="select select-ghost" >
+                                            
+                                            <option value="" disabled>
+                                                Select an Item
+                                            </option>
+
+                                            {items.map(item => (
+                                                <option key={item.id} value={item.id}>
+                                                {item.description} - ({item.total})
+                                                </option>
+                                            ))}
                                         </select>
                                 </div>
 
@@ -171,7 +177,7 @@ export default function(){
                                     <path strokeLinecap="round" strokeLinejoin="round" d="M21.75 6.75a4.5 4.5 0 0 1-4.884 4.484c-1.076-.091-2.264.071-2.95.904l-7.152 8.684a2.548 2.548 0 1 1-3.586-3.586l8.684-7.152c.833-.686.995-1.874.904-2.95a4.5 4.5 0 0 1 6.336-4.486l-3.276 3.276a3.004 3.004 0 0 0 2.25 2.25l3.276-3.276c.256.565.398 1.192.398 1.852Z" />
                                     <path strokeLinecap="round" strokeLinejoin="round" d="M4.867 19.125h.008v.008h-.008v-.008Z" />
                                     </svg>
-                                    <input value={data.issue_quantity} onChange={(e) => setData('issue_quantity', e.target.value)} type="number" min={0} required placeholder="Issue Quantity" title="Put Issue Quantity Here"/>
+                                    <input value={data.fulfilled_quantity} onChange={(e) => setData('fulfilled_quantity', e.target.value)} type="number" min={0} required placeholder="Issue Quantity" title="Put Issue Quantity Here"/>
                                     </label>  
                                     
                                     

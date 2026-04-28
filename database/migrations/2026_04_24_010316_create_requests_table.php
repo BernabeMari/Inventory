@@ -19,6 +19,7 @@ return new class extends Migration
             $table->string('message')->nullable();
             $table->string('endorser_message')->nullable();
             $table->string('issued_item')->nullable();
+            $table->integer('fulfilled_quantity')->nullable();
             $table->integer('unfulfilled_quantity')->nullable();
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->timestamps();

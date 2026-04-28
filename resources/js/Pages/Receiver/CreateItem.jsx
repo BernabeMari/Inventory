@@ -34,17 +34,11 @@ export default function({unitofmeasure, items, total}){
         })
     }
 
-    function sumQuantities(quantity){
-        if (!Array.isArray(quantity)) {
-            return Number(quantity || 0)
-        }
-        return quantity.reduce((sum, value) => sum + Number(value || 0), 0)
-    }
 
     return(
     <SidebarLayout>
     <div className="flex-col flex overflow-auto">
-
+        <h3 className="font-bold text-lg m-4">Create Item</h3>
         {/* Search button */}
               <div className="p-4">
         

@@ -70,7 +70,7 @@ export default function({children}){
            )}
            
            
-           {/* Endorser Create Item */}
+           {/* Endorser Action Page */}
            {auth.user.role === 'endorser' && (
             <Link href={route('endorser_page')}>
             <li className="flex items-center">
@@ -79,6 +79,21 @@ export default function({children}){
             <path stroke-linecap="round" stroke-linejoin="round" d="M21.75 9v.906a2.25 2.25 0 0 1-1.183 1.981l-6.478 3.488M2.25 9v.906a2.25 2.25 0 0 0 1.183 1.981l6.478 3.488m8.839 2.51-4.66-2.51m0 0-1.023-.55a2.25 2.25 0 0 0-2.134 0l-1.022.55m0 0-4.661 2.51m16.5 1.615a2.25 2.25 0 0 1-2.25 2.25h-15a2.25 2.25 0 0 1-2.25-2.25V8.844a2.25 2.25 0 0 1 1.183-1.981l7.5-4.039a2.25 2.25 0 0 1 2.134 0l7.5 4.039a2.25 2.25 0 0 1 1.183 1.98V19.5Z" />
             </svg>
                 <span className="is-drawer-close:hidden">Requests</span></button>
+            </div>
+            </li>
+           </Link>
+           )}
+           
+           
+           {/* Endorser Done Requests */}
+           {auth.user.role === 'endorser' && (
+            <Link href={route('endorser_done_request_page')}>
+            <li className="flex items-center">
+            <div className="tooltip tooltip-close tooltip-right">
+            <button className="btn"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" className="my-1.5 inline-block size-4">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+            </svg>
+                <span className="is-drawer-close:hidden">Done Requests</span></button>
             </div>
             </li>
            </Link>

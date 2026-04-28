@@ -12,12 +12,17 @@ class Request extends Model
         'status',
         'message',
         'endorser_message',
+        'fulfilled_quantity',
         'unfulfilled_quantity',
         'user_id',
-        'issued_item'
+        'issued_item',
     ];
 
     public function user(){
         return $this->belongsTo(User::class);
+    }
+    
+    public function receiver(){
+        return $this->belongsTo(Receiver::class, 'id');
     }
 }

@@ -16,4 +16,8 @@ class Receiver extends Model
     protected $casts = [
         'quantity' => 'array'
     ];
+
+    public function requests(){
+        return $this->hasMany(Request::class);
+    }
 }

@@ -13,12 +13,15 @@ export default function({profile}){
     }
     return(
         <SidebarLayout>
-        <div className="flex min-h-screen justify-center items-center">
+        <div className="flex-col flex overflow-auto">
+        <h3 className="font-bold text-lg m-4">Profile</h3>
+            <div className="flex justify-center items-center">
+
             <div className="card bg-base-100 w-96 shadow-sm">
 
             <figure>
                 {profile.filter(profile => profile.id === auth.user.id).map(profile => (
-                    <img src={`/storage/${profile.image}`} alt="Shoes" />
+                    <img src={`/storage/${profile.image}`} alt={`${auth.user.username.toUpperCase()} has no photo yet`} />
                 ))}
             </figure>
             
@@ -34,6 +37,7 @@ export default function({profile}){
                 </div>
             </div>
 
+            </div>
             </div>
         </div>
         </SidebarLayout>

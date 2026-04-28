@@ -26,6 +26,7 @@ export default function({requests}){
     return(
         <SidebarLayout>
         <div className="flex-col flex overflow-auto">
+        <h3 className="font-bold text-lg m-4">Create Request</h3>
         {flash.success && (
             <div className="alert alert-success mb-4">
                 {flash.success}

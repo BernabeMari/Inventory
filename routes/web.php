@@ -11,12 +11,16 @@ use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
+
+// LOGIN
 Route::controller(LoginController::class)->group(function (){
     Route::get('/login', 'loginPage')->name('login_page');
     Route::post('/login', 'authenticateUser')->name('login');
     Route::post('/logout', 'logout')->name('logout');
 });
 
+
+// ADMIN
 Route::middleware('role:admin')->controller(AdminController::class)->group(function(){
     Route::get('/admin-dashboard', 'adminPage')->name('admin_page');
     Route::post('/create-user', 'createUser')->name('create_user');
@@ -24,18 +28,25 @@ Route::middleware('role:admin')->controller(AdminController::class)->group(funct
     Route::post('/delete-user', 'deleteUser')->name('delete_user');
 });
 
+
+// RECEIVER
 Route::middleware('role:receiver')->controller(ReceiverController::class)->group(function(){
     Route::get('/receiver-dashboard', 'receiverPage')->name('receiver_page');
     Route::post('/create-item', 'createItem')->name('create_item');
     Route::post('/add-receipt', 'addReceipt')->name('add_receipt');
 });
 
+
+// ENDORSER
 Route::middleware('role:endorser')->controller(EndorserController::class)->group(function(){
     Route::get('/endorser-dashboard', 'endorserPage')->name('endorser_page');
+    Route::get('/endorser-done-requests-dashboard', 'endorserDoneRequestPage')->name('endorser_done_request_page');
     Route::post('/action-reject', 'actionReject')->name('action_reject');
     Route::post('/action-approve', 'actionApprove')->name('action_approve');
 });
 
+
+// DEPARTMENT
 Route::middleware('role:department')->controller(RequestController::class)->group(function(){
     Route::post('/request-item', 'requestItem')->name('request_item');
     Route::get('/department-dashboard', 'departmentPage')->name('department_page');
