@@ -51,6 +51,7 @@ export default function({requests}){
                 <th>QUANTITY</th>
                 <th>STATUS</th>
                 <th>MESSAGE</th>
+                <th>ENDORSER'S MESSAGE</th>
                 <th>VIEW ISSUANCE</th>
                 </tr>
             </thead>
@@ -81,6 +82,13 @@ export default function({requests}){
                 <td>
                     <div className="font-bold">
                        {request.message}
+                    </div>
+                </td>
+                
+                
+                <td>
+                    <div className="font-bold">
+                       {request.endorser_message}
                     </div>
                 </td>
                 

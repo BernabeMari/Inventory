@@ -11,7 +11,7 @@ class ReceiverController extends Controller
 {
     public function receiverPage(){
         $UnitOfMeasure = UnitofMeasure::get();
-        $items = Receiver::get();
+        $items = Receiver::with('requests')->get();
         return inertia('Receiver/CreateItem', ['unitofmeasure' => $UnitOfMeasure, 'items' => $items]);
     }
 

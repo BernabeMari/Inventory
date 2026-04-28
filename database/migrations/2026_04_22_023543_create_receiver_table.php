@@ -16,7 +16,8 @@ return new class extends Migration
             $table->string('description');
             $table->string('unit_of_measure');
             $table->json('quantity');
-            $table->string('total');
+            $table->integer('total');
+            $table->integer('less')->nullable();
             $table->timestamps();
         });
     }

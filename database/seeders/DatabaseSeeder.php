@@ -62,19 +62,5 @@ class DatabaseSeeder extends Seeder
         ['unit_of_measure' => 'box'],
         ['unit_of_measure' => 'cartridge'],
         ]);
-
-        Receiver::create([
-            'description' => 'Pencil',
-            'unit_of_measure' => 'pcs',
-            'quantity' => '[50]',
-            'total' => '50',
-        ]);
-        
-        Receiver::create([
-            'description' => 'Bond Paper',
-            'unit_of_measure' => 'reams',
-            'quantity' => '[50]',
-            'total' => '50',
-        ]);
     }
 }

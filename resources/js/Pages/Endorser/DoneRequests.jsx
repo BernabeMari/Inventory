@@ -32,6 +32,7 @@ export default function(){
                             <th>UNFULFILLED QUANTITY</th>
                             <th>STATUS</th>
                             <th>MESSAGE</th>
+                            <th>ENDORSER'S MESSAGE</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -94,6 +95,13 @@ export default function(){
                                 <td>
                                     <div className="font-bold">
                                         {request.message}
+                                    </div>
+                                </td>
+                                
+                                
+                                <td>
+                                    <div className="font-bold">
+                                        {request.endorser_message}
                                     </div>
                                 </td>
 

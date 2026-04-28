@@ -11,6 +11,7 @@ class Receiver extends Model
         'unit_of_measure',
         'quantity',
         'total',
+        'less'
     ];
 
     protected $casts = [
@@ -18,6 +19,6 @@ class Receiver extends Model
     ];
 
     public function requests(){
-        return $this->hasMany(Request::class);
+        return $this->belongsTo(Request::class, 'id');
     }
 }

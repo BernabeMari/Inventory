@@ -24,7 +24,8 @@ class EndorserController extends Controller
         $findItem = ModelsRequest::findOrFail($request->request_id);
 
         $findItem->update([
-            'status' => 'rejected'
+            'status' => 'rejected',
+            'endorser_message' => $request->endorser_message
         ]);
     }
 
@@ -47,9 +48,13 @@ class EndorserController extends Controller
             'fulfilled_quantity' => $request->fulfilled_quantity,
             'unfulfilled_quantity' => $request->unfulfilled_quantity,
             'issued_item' => $findItem->description,
-            'receiver_id' => $request->request_id
+            'receiver_id' => $request->request_id,
         ]);
 
+        $findItem->update([
+            'less' => $findItem->less + $request->fulfilled_quantity
+        ]);
+        
         $findItem->decrement('total', $request->fulfilled_quantity);
 
         return back()->with('success', 'Request approved successfully');

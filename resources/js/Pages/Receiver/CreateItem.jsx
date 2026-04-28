@@ -1,14 +1,15 @@
 import SearchField from "@/Components/SearchField";
 import SidebarLayout from "@/Layouts/SidebarLayout";
 import { PlusIcon, PencilSquareIcon, TrashIcon  } from "@heroicons/react/24/solid";
-import { useForm } from "@inertiajs/react";
+import { useForm, usePage } from "@inertiajs/react";
 import { useState } from "react";
 import Select from "react-select";
 
-export default function({unitofmeasure, items, total}){
+export default function(){
     const [search, setSearch] = useState('')
     const [createItemModal, setcreateItemModal] = useState(false)
     const [addReceiptModal, setaddReceiptModal] = useState(null)
+    const {unitofmeasure, items, total, requests} = usePage().props
     const {post, data, setData, reset} = useForm({
         unit_of_measure: '',
         description: '',
@@ -105,10 +106,8 @@ export default function({unitofmeasure, items, total}){
                 
                 
                 <td>
-                    <div className="flex justify-between items-center">
-                        <div>{item.quantity.map(a => (
-                            <span>{a} + </span>
-                        ))}</div>
+                     <div className="flex justify-between items-center">
+                        {item.quantity.join(" + ")} 
                         
                         {addReceiptModal === item.id && (<div>
                             <form onSubmit={addReceipt}>
@@ -124,6 +123,13 @@ export default function({unitofmeasure, items, total}){
                 <td>
                     <div className="font-bold">
                        {item.total}
+                    </div>
+                </td>
+                
+                
+                <td>
+                    <div className="font-bold">
+                       {item.less}
                     </div>
                 </td>
 
