@@ -3,7 +3,7 @@ import SidebarLayout from "@/Layouts/SidebarLayout";
 import { PlusIcon, PencilSquareIcon, TrashIcon  } from "@heroicons/react/24/solid";
 import { useForm, usePage } from "@inertiajs/react";
 import { useState } from "react";
-import Select from "react-select";
+import CreatableSelect from "react-select/creatable";
 
 export default function(){
     const [search, setSearch] = useState('')
@@ -17,9 +17,12 @@ export default function(){
         quantity: [''],
     })
 
-    const unit = unitofmeasure.map(item => 
-        ({value: item.id,
-        label: item.unit_of_measure}))
+    const [unitOptions, setUnitOptions] = useState(
+        unitofmeasure.map(item => ({
+            value: item.id,
+            label: item.unit_of_measure
+        }))
+    )
         
     function createItem(e){
         e.preventDefault()
@@ -186,7 +189,18 @@ export default function(){
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="size-6">
                     <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 15.75V18m-7.5-6.75h.008v.008H8.25v-.008Zm0 2.25h.008v.008H8.25V13.5Zm0 2.25h.008v.008H8.25v-.008Zm0 2.25h.008v.008H8.25V18Zm2.498-6.75h.007v.008h-.007v-.008Zm0 2.25h.007v.008h-.007V13.5Zm0 2.25h.007v.008h-.007v-.008Zm0 2.25h.007v.008h-.007V18Zm2.504-6.75h.008v.008h-.008v-.008Zm0 2.25h.008v.008h-.008V13.5Zm0 2.25h.008v.008h-.008v-.008Zm0 2.25h.008v.008h-.008V18Zm2.498-6.75h.008v.008h-.008v-.008Zm0 2.25h.008v.008h-.008V13.5ZM8.25 6h7.5v2.25h-7.5V6ZM12 2.25c-1.892 0-3.758.11-5.593.322C5.307 2.7 4.5 3.65 4.5 4.757V19.5a2.25 2.25 0 0 0 2.25 2.25h10.5a2.25 2.25 0 0 0 2.25-2.25V4.757c0-1.108-.806-2.057-1.907-2.185A48.507 48.507 0 0 0 12 2.25Z" />
                     </svg>
-                    <Select value={unit.find(u => u.value === data.unit_of_measure)} onChange={(selected) => setData('unit_of_measure', selected.label)} required options={unit} isSearchable/>    
+                    <CreatableSelect
+                        value={unitOptions.find(u => u.label === data.unit_of_measure) || null}
+                        onChange={(selected) => setData('unit_of_measure', selected ? selected.label : '')}
+                        onCreateOption={(inputValue) => {
+                            const newOption = { value: inputValue, label: inputValue };
+                            setUnitOptions(prev => [...prev, newOption]);
+                            setData('unit_of_measure', inputValue);
+                        }}
+                        required
+                        options={unitOptions}
+                        isSearchable
+                    />    
                     </label> 
                 </div>
                

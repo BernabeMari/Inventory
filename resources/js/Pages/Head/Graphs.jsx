@@ -22,7 +22,7 @@ export default function Dashboard({ statusChartData = {}, quantityChartData = {}
                 <div className="grid gap-6 lg:grid-cols-2 max-w-4xl mx-auto">
                     <div className="card bg-base-100 shadow">
                         <div className="card-body">
-                            <h2 className="card-title">Accepted vs Rejected</h2>
+                            <h2 className="card-title">Accepted / Rejected</h2>
                             <PieChart width={350} height={300}>
                                 <Pie
                                     data={statusData}
@@ -45,7 +45,7 @@ export default function Dashboard({ statusChartData = {}, quantityChartData = {}
 
                     <div className="card bg-base-100 shadow">
                         <div className="card-body">
-                            <h2 className="card-title">Fulfilled vs Unfulfilled</h2>
+                            <h2 className="card-title">Fulfilled / Unfulfilled</h2>
                             <PieChart width={350} height={300}>
                                 <Pie
                                     data={quantityData}

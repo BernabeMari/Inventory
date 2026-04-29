@@ -16,9 +16,17 @@ class ReceiverController extends Controller
     }
 
     public function createItem(Request $request){
+        $unitOfMeasure = trim($request->unit_of_measure);
+
+        if ($unitOfMeasure !== '') {
+            UnitofMeasure::firstOrCreate([
+                'unit_of_measure' => $unitOfMeasure,
+            ]);
+        }
+
         Receiver::create([
             'description' => $request->description,
-            'unit_of_measure' => $request->unit_of_measure,
+            'unit_of_measure' => $unitOfMeasure,
             'total' => $request->quantity,
             'quantity' => (array) $request->quantity
         ]);
