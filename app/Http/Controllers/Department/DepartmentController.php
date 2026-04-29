@@ -3,7 +3,9 @@
 namespace App\Http\Controllers\Department;
 
 use App\Http\Controllers\Controller;
+use App\Models\Request as ModelsRequest;
 use App\Models\User;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -20,5 +22,15 @@ class DepartmentController extends Controller
         $findUser->update([
             'image' => $request->file('image')->store('profile', 'public'),
         ]);
+    }
+
+    public function downloadPdf($id){
+        $request = ModelsRequest::where('id', $id)
+        ->where('user_id', auth()->id()) // 🔒 security check
+        ->firstOrFail();
+
+        $pdf = Pdf::loadView('pdf.issuance', compact('request'));
+
+        return $pdf->stream('request-' . $request->id . '.pdf');
     }
 }

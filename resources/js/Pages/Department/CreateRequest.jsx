@@ -23,6 +23,10 @@ export default function({requests}){
         })
     }
 
+    function downloadPDF(){
+        post(route('download_pdf'))
+    }
+
     return(
         <SidebarLayout>
         <div className="flex-col flex overflow-auto">
@@ -89,6 +93,15 @@ export default function({requests}){
                 <td>
                     <div className="font-bold">
                        {request.endorser_message}
+                    </div>
+                </td>
+                
+                
+                <td>
+                    <div className="font-bold">
+                       {request.status === 'approved' && (
+                        <button onClick={() => window.open(`/requests/${request.id}/pdf`, '_blank')} className="underline" type="button">View Issuance</button>
+                       )}
                     </div>
                 </td>
                 

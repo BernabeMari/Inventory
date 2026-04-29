@@ -55,4 +55,5 @@ Route::middleware('role:department')->controller(RequestController::class)->grou
 Route::middleware('role:department')->controller(DepartmentController::class)->group(function(){
     Route::get('/profile-department-dashboard', 'profilePage')->name('profile_department_page');
     Route::post('/update-department-profile', 'profilePicture')->name('profile_picture');
+    Route::get('/requests/{id}/pdf', 'downloadPdf')->name('download_pdf');
 });
