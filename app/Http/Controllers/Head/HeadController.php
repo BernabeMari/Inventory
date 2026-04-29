@@ -21,9 +21,29 @@ class HeadController extends Controller
             'Unfulfilled' => $requests->sum('unfulfilled_quantity'),
         ];
 
+        $departmentCounts = ModelsRequest::with('user')
+            ->get()
+            ->groupBy(function ($request) {
+                return $request->user->department ?? 'Unknown';
+            })
+            ->map(function ($group) {
+                return count($group);
+            })
+            ->sortDesc()
+            ->toArray();
+
+        $departmentChartData = [];
+        foreach ($departmentCounts as $department => $count) {
+            $departmentChartData[] = [
+                'name' => $department,
+                'requests' => $count
+            ];
+        }
+
         return inertia('Head/Graphs', [
             'statusChartData' => $statusChartData,
             'quantityChartData' => $quantityChartData,
+            'departmentChartData' => $departmentChartData,
         ]);
     }
 

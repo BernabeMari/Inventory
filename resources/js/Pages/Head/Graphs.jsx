@@ -1,7 +1,7 @@
 import SidebarLayout from "@/Layouts/SidebarLayout";
-import { PieChart, Pie, Cell, Tooltip, Legend } from "recharts";
+import { PieChart, Pie, Cell, Tooltip, Legend, BarChart, Bar, XAxis, YAxis, CartesianGrid, ResponsiveContainer } from "recharts";
 
-export default function Dashboard({ statusChartData = {}, quantityChartData = {} }) {
+export default function Dashboard({ statusChartData = {}, quantityChartData = {}, departmentChartData = [] }) {
 
     const statusData = Object.entries(statusChartData).map(([name, value]) => ({
         name,
@@ -64,6 +64,26 @@ export default function Dashboard({ statusChartData = {}, quantityChartData = {}
                                 <Legend verticalAlign="bottom" height={36} />
                             </PieChart>
                         </div>
+                    </div>
+                </div>
+                
+                <div className="card mt-10 bg-base-100 shadow max-w-4xl mx-auto w-full">
+                    <div className="card-body">
+                        <h2 className="card-title">Department Requests</h2>
+                        <ResponsiveContainer width="100%" height={300}>
+                            <BarChart data={departmentChartData} margin={{ top: 20, right: 30, left: 0, bottom: 60 }}>
+                                <CartesianGrid strokeDasharray="3 3" />
+                                <XAxis 
+                                    dataKey="name" 
+                                    angle={-45}
+                                    textAnchor="end"
+                                    height={100}
+                                />
+                                <YAxis allowDecimals={false}/>
+                                <Tooltip />
+                                <Bar dataKey="requests" fill="#60a5fa" name="Number of Requests" />
+                            </BarChart>
+                        </ResponsiveContainer>
                     </div>
                 </div>
               </div>
