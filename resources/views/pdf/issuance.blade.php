@@ -15,11 +15,11 @@
 
     <tr>
         <td>{{ $request->id }}</td>
-        <td>{{ $request->item }}</td>
-        <td>{{ $request->quantity }}</td>
-        <td>{{ $request->issued_item }}</td>
-        <td>{{ $request->fulfilled_quantity }}</td>
-        <td>{{ $request->unfulfilled_quantity }}</td>
+        <td>{{ is_array($request->item) ? implode(', ', $request->item) : $request->item }}</td>
+        <td>{{ is_array($request->quantity) ? implode(', ', $request->quantity) : $request->quantity }}</td>
+        <td>{{ is_array($request->issued_item) ? implode(', ', $request->issued_item) : $request->issued_item }}</td>
+        <td>{{ is_array($request->fulfilled_quantity) ? implode(', ', $request->fulfilled_quantity) : $request->fulfilled_quantity }}</td>
+        <td>{{ is_array($request->unfulfilled_quantity) ? implode(', ', $request->unfulfilled_quantity) : $request->unfulfilled_quantity }}</td>
         <td>{{ $request->status }}</td>
     </tr>
 </table>
