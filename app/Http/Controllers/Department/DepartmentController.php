@@ -26,7 +26,7 @@ class DepartmentController extends Controller
 
     public function downloadPdf($id){
         $request = ModelsRequest::where('id', $id)
-        ->where('user_id', auth()->id()) // 🔒 security check
+        ->where('user_id', auth()->id())
         ->firstOrFail();
 
         $pdf = Pdf::loadView('pdf.issuance', compact('request'));
