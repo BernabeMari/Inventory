@@ -71,7 +71,7 @@ export default function(){
                         </tr>
                     </thead>
                     <tbody>
-                        {requests.filter(request => request.status === 'pending').filter(request => request.status.toLowerCase().includes(search.toLowerCase()) || request.user?.department?.toLowerCase().includes(search.toLowerCase()) || request.message && request.message.toLowerCase().includes(search.toLowerCase()) || request.item.toLowerCase().includes(search.toLowerCase())).map(request => (
+                        {requests.filter(request => request.status === 'pending').filter(request => request.status.toLowerCase().includes(search.toLowerCase()) || request.user?.department?.toLowerCase().includes(search.toLowerCase()) || request.message && request.message.toLowerCase().includes(search.toLowerCase()) || request.item?.some(item => item.toLowerCase().includes(search.toLowerCase()))).map(request => (
                             <tr> 
         
         

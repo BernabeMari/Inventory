@@ -18,6 +18,11 @@ class Request extends Model
         'issued_item',
     ];
 
+    protected $casts = [
+        'item' => 'array',
+        'quantity' => 'array',
+    ];
+
     public function user(){
         return $this->belongsTo(User::class);
     }

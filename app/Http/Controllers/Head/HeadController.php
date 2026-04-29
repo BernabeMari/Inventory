@@ -64,4 +64,8 @@ class HeadController extends Controller
             'chartData' => $chartData
         ]);
     }
+
+    public function headReportPage(){
+        return inertia('Head/Report');
+    }
 }

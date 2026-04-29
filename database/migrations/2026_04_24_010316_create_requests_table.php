@@ -13,8 +13,8 @@ return new class extends Migration
     {
         Schema::create('requests', function (Blueprint $table) {
             $table->id();
-            $table->string('item');
-            $table->integer('quantity');
+            $table->json('item');
+            $table->json('quantity');
             $table->enum('status', ['pending', 'approved', 'rejected'])->default('pending');
             $table->string('message')->nullable();
             $table->string('endorser_message')->nullable();

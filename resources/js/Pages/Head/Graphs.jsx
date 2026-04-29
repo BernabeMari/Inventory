@@ -22,7 +22,7 @@ export default function Dashboard({ statusChartData = {}, quantityChartData = {}
            <div className="flex-col flex overflow-auto">
             <h3 className="font-bold text-lg m-4">Requests</h3> 
                 
-                <div className="flex flex-row gap-10 justify-center">
+                <div className="flex overflow-auto flex-row gap-10 justify-center">
                     <div className="card bg-base-100 shadow">
                         <div className="card-body">
                             <h2 className="card-title">Accepted / Rejected</h2>

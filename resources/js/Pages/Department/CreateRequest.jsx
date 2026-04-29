@@ -9,8 +9,8 @@ export default function({requests}){
     const [search, setSearch] = useState('')
     const {auth, flash} = usePage().props
     const {post, data, setData, reset} = useForm({
-        item: '',
-        quantity: '',
+        item: [''],
+        quantity: [''],
         status: '',
         message: '',
         user_id: ''
@@ -19,12 +19,8 @@ export default function({requests}){
     function request_item(e){
         e.preventDefault()
         post(route('request_item'),{
-            onSuccess: ()=>{reset(); setrequestItemModal(false)}
+            onSuccess: ()=>{reset(); setrequestItemModal(false); }
         })
-    }
-
-    function downloadPDF(){
-        post(route('download_pdf'))
     }
 
     return(
@@ -60,7 +56,7 @@ export default function({requests}){
                 </tr>
             </thead>
             <tbody>
-                {requests.filter(request => request.item.toLowerCase().includes(search.toLowerCase()) || request.message && request.message.toLowerCase().includes(search.toLowerCase()) || request.status.toLowerCase().includes(search.toLowerCase())).filter(request => request.user_id === auth.user.id).map(request => (
+                {requests.filter(request => request.item?.some(item => item.toLowerCase().includes(search.toLowerCase())) || request.message && request.message.toLowerCase().includes(search.toLowerCase()) || request.status.toLowerCase().includes(search.toLowerCase())).filter(request => request.user_id === auth.user.id).map(request => (
                 <tr> 
 
                 <td>
@@ -123,7 +119,7 @@ export default function({requests}){
 
             {/* Add Item Button */}
             <div className="bg-white m-6 bottom-0 right-0 absolute rounded-full border border-black ">
-                <button onClick={(e) => {setrequestItemModal(true);setData({user_id: data.id})}} className="btn btn-soft btn-secondary rounded-full p-4"><PlusIcon className="w-5 h-5" /></button>
+                <button onClick={(e) => {setrequestItemModal(true);setData({user_id: data.id, item: [''], quantity: ['']})}} className="btn btn-soft btn-secondary rounded-full p-4"><PlusIcon className="w-5 h-5" /></button>
             </div>
 
 
@@ -142,21 +138,33 @@ export default function({requests}){
                         <h3 className="font-bold text-lg m-4">Create Request</h3>
 
                         <div className="flex flex-row gap-4">
+                            {data.item.map((item, index) => (
                             <label className="input validator">
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="size-6">
                             <path strokeLinecap="round" strokeLinejoin="round" d="M21.75 6.75a4.5 4.5 0 0 1-4.884 4.484c-1.076-.091-2.264.071-2.95.904l-7.152 8.684a2.548 2.548 0 1 1-3.586-3.586l8.684-7.152c.833-.686.995-1.874.904-2.95a4.5 4.5 0 0 1 6.336-4.486l-3.276 3.276a3.004 3.004 0 0 0 2.25 2.25l3.276-3.276c.256.565.398 1.192.398 1.852Z" />
                             <path strokeLinecap="round" strokeLinejoin="round" d="M4.867 19.125h.008v.008h-.008v-.008Z" />
                             </svg>
-                            <input value={data.item} onChange={(e) => setData('item', e.target.value)} type="text" required placeholder="Item" title="Input Request Here"/>
+                                <input key={index} value={item} onChange={(e) => {
+                                    const newItems = [...data.item];
+                                    newItems[index] = e.target.value;
+                                    setData('item', newItems);
+                                }} type="text" required placeholder="Item" title="Input Request Here"/>
                             </label>  
+                            ))}
                             
                             
+                            {data.quantity.map((quantity, index) => (
                             <label className="input validator">
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 15.75V18m-7.5-6.75h.008v.008H8.25v-.008Zm0 2.25h.008v.008H8.25V13.5Zm0 2.25h.008v.008H8.25v-.008Zm0 2.25h.008v.008H8.25V18Zm2.498-6.75h.007v.008h-.007v-.008Zm0 2.25h.007v.008h-.007V13.5Zm0 2.25h.007v.008h-.007v-.008Zm0 2.25h.007v.008h-.007V18Zm2.504-6.75h.008v.008h-.008v-.008Zm0 2.25h.008v.008h-.008V13.5Zm0 2.25h.008v.008h-.008v-.008Zm0 2.25h.008v.008h-.008V18Zm2.498-6.75h.008v.008h-.008v-.008Zm0 2.25h.008v.008h-.008V13.5ZM8.25 6h7.5v2.25h-7.5V6ZM12 2.25c-1.892 0-3.758.11-5.593.322C5.307 2.7 4.5 3.65 4.5 4.757V19.5a2.25 2.25 0 0 0 2.25 2.25h10.5a2.25 2.25 0 0 0 2.25-2.25V4.757c0-1.108-.806-2.057-1.907-2.185A48.507 48.507 0 0 0 12 2.25Z" />
                             </svg>
-                            <input value={data.quantity} onChange={(e) => setData('quantity', e.target.value)} type="number" min={1} required placeholder="Quantity" title="Input Quantity Here"/>
+                                <input key={index} value={quantity} onChange={(e) => {
+                                    const newQuantities = [...data.quantity];
+                                    newQuantities[index] = e.target.value;
+                                    setData('quantity', newQuantities);
+                                }} min={0} type="number" required placeholder="Quantity" title="Input Quantity of Request Here"/>
                             </label>  
+                            ))}
                         </div>
 
                         <div className="flex justify-center">
@@ -169,6 +177,10 @@ export default function({requests}){
                         </div>
                     
                     {/* Create Item Button */}
+                        <button type="button" onClick={() => {
+                            setData('item', [...data.item, '']);
+                            setData('quantity', [...data.quantity, '']);
+                        }}>+</button>
                         <button className="btn btn-primary">Send Request</button>
                     </form>
                 
