@@ -31,31 +31,47 @@ class EndorserController extends Controller
 
     public function actionApprove(Request $request){
         $findRequest = ModelsRequest::findOrFail($request->request_id);
-        $findItem = Receiver::findOrFail($request->item_id);
+        $itemIds = is_array($request->item_id) ? $request->item_id : [$request->item_id];
+        $fulfilledQuantities = array_map('intval', (array) $request->fulfilled_quantity);
+        $unfulfilledQuantities = array_map('intval', (array) $request->unfulfilled_quantity);
+        $requestedQuantities = (array) $findRequest->quantity;
 
-        if ($findItem->total < $request->fulfilled_quantity) {
-            return back()->with('error', 'Insufficient stock available');
+        if (
+            count($itemIds) !== count($requestedQuantities) ||
+            count($fulfilledQuantities) !== count($requestedQuantities) ||
+            count($unfulfilledQuantities) !== count($requestedQuantities)
+        ) {
+            return back()->with('error', 'Approval data does not match the request.');
         }
 
-        if($request->fulfilled_quantity + $request->unfulfilled_quantity != $findRequest->quantity){
-            return back()->with('error', 'The fulfilled and unfulfilled items do not match the department’s request.');
-        }
+        $issuedItems = [];
 
+        foreach ($itemIds as $index => $itemId) {
+            $findItem = Receiver::findOrFail($itemId);
+            $fulfilled = $fulfilledQuantities[$index];
+            $unfulfilled = $unfulfilledQuantities[$index];
+            $requested = $requestedQuantities[$index];
+
+            if ($findItem->total < $fulfilled) {
+                return back()->with('error', 'Insufficient stock available for selected item.');
+            }
+
+            if ($fulfilled + $unfulfilled != $requested) {
+                return back()->with('error', 'The fulfilled and unfulfilled items do not match the department’s request.');
+            }
+
+            $issuedItems[] = $findItem->description;
+            $findItem->increment('less', $fulfilled);
+            $findItem->decrement('total', $fulfilled);
+        }
 
         $findRequest->update([
             'status' => 'approved',
             'endorser_message' => $request->endorser_message,
-            'fulfilled_quantity' => $request->fulfilled_quantity,
-            'unfulfilled_quantity' => $request->unfulfilled_quantity,
-            'issued_item' => $findItem->description,
-            'receiver_id' => $request->request_id,
+            'fulfilled_quantity' => $fulfilledQuantities,
+            'unfulfilled_quantity' => $unfulfilledQuantities,
+            'issued_item' => $issuedItems,
         ]);
-
-        $findItem->update([
-            'less' => $findItem->less + $request->fulfilled_quantity
-        ]);
-        
-        $findItem->decrement('total', $request->fulfilled_quantity);
 
         return back()->with('success', 'Request approved successfully');
     }

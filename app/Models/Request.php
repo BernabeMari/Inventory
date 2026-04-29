@@ -21,6 +21,9 @@ class Request extends Model
     protected $casts = [
         'item' => 'array',
         'quantity' => 'array',
+        'issued_item' => 'array',
+        'fulfilled_quantity' => 'array',
+        'unfulfilled_quantity' => 'array',
     ];
 
     public function user(){

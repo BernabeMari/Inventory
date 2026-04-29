@@ -61,13 +61,13 @@ export default function({requests}){
 
                 <td>
                     <div className="font-bold">
-                     {request.item}
+                     {request.item.join(', ')}
                     </div>
                 </td>
 
                 <td>
                     <div className="font-bold">
-                     {request.quantity}
+                     {request.quantity.join(', ')}
                     </div>
                 </td>
 
