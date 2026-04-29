@@ -95,7 +95,7 @@ export default function Dashboard({ statusChartData = {}, quantityChartData = {}
                 
                 <div className="card mt-10 bg-base-100 shadow max-w-4xl mx-auto w-full">
                     <div className="card-body">
-                        <h2 className="card-title">Department Requests</h2>
+                        <h2 className="card-title">Department Request Items</h2>
                         <ResponsiveContainer width="100%" height={300}>
                             <BarChart data={departmentChartData} margin={{ top: 20, right: 30, left: 0, bottom: 60 }}>
                                 <CartesianGrid strokeDasharray="3 3" />
@@ -107,7 +107,7 @@ export default function Dashboard({ statusChartData = {}, quantityChartData = {}
                                 />
                                 <YAxis allowDecimals={false}/>
                                 <Tooltip />
-                                <Bar dataKey="requests" fill="#60a5fa" name="Number of Requests" />
+                                <Bar dataKey="requests" fill="#60a5fa" name="Number of Request Items" />
                             </BarChart>
                         </ResponsiveContainer>
                     </div>

@@ -18,9 +18,27 @@ class HeadController extends Controller
         ];
         
 
+        $fulfilledQuantity = $requests
+            ->flatMap(function ($request) {
+                return is_array($request->fulfilled_quantity) ? $request->fulfilled_quantity : [];
+            })
+            ->map(function ($value) {
+                return intval($value);
+            })
+            ->sum();
+
+        $unfulfilledQuantity = $requests
+            ->flatMap(function ($request) {
+                return is_array($request->unfulfilled_quantity) ? $request->unfulfilled_quantity : [];
+            })
+            ->map(function ($value) {
+                return intval($value);
+            })
+            ->sum();
+
         $quantityChartData = [
-            'Fulfilled' => $requests->sum('fulfilled_quantity'),
-            'Unfulfilled' => $requests->sum('unfulfilled_quantity'),
+            'Fulfilled' => $fulfilledQuantity,
+            'Unfulfilled' => $unfulfilledQuantity,
         ];
         
 
@@ -30,7 +48,9 @@ class HeadController extends Controller
                 return $request->user->department ?? 'Unknown';
             })
             ->map(function ($group) {
-                return count($group);
+                return $group->sum(function ($request) {
+                    return is_array($request->item) ? count($request->item) : 0;
+                });
             })
             ->sortDesc()
             ->toArray();
