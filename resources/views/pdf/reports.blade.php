@@ -21,7 +21,7 @@
         <td>{{ $receiver->id }}</td>
         <td>{{ $receiver->description }}</td>
         <td>{{ $receiver->unit_of_measure }}</td>
-        <td>{{ is_array($receiver->quantity) ? implode(', ', $receiver->quantity) : $receiver->quantity }}</td>
+        <td>{{ is_array($receiver->quantity) ? implode(' + ', $receiver->quantity) : $receiver->quantity }}</td>
         <td>{{ $receiver->total }}</td>
         <td>{{ $receiver->less ?? '—' }}</td>
     </tr>

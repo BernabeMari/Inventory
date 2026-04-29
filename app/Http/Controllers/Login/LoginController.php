@@ -29,6 +29,8 @@ class LoginController extends Controller
                 return redirect()->route('department_page');
             }elseif(Auth::user()->role === 'endorser'){
                 return redirect()->route('endorser_page');
+            }elseif(Auth::user()->role === 'head'){
+                return redirect()->route('head_page');
             }
 
             return redirect('/');

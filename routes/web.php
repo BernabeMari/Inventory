@@ -3,6 +3,7 @@
 use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\Department\DepartmentController;
 use App\Http\Controllers\Endorser\EndorserController;
+use App\Http\Controllers\Head\HeadController;
 use App\Http\Controllers\Login\LoginController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Receiver\ReceiverController;
@@ -26,6 +27,12 @@ Route::middleware('role:admin')->controller(AdminController::class)->group(funct
     Route::post('/create-user', 'createUser')->name('create_user');
     Route::post('/edit-user', 'editUser')->name('edit_user');
     Route::post('/delete-user', 'deleteUser')->name('delete_user');
+});
+
+
+// HEAD
+Route::middleware('role:head')->controller(HeadController::class)->group(function(){
+    Route::get('/head-dashboard', 'headPage')->name('head_page');
 });
 
 

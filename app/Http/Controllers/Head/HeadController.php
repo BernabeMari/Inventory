@@ -1,0 +1,44 @@
+<?php
+
+namespace App\Http\Controllers\Head;
+
+use App\Http\Controllers\Controller;
+use App\Models\Request as ModelsRequest;
+use Illuminate\Http\Request;
+
+class HeadController extends Controller
+{
+    public function headPage(){
+        $requests = ModelsRequest::all();
+
+        $statusChartData = [
+            'Approved' => $requests->where('status', 'approved')->count(),
+            'Rejected' => $requests->where('status', 'rejected')->count(),
+        ];
+
+        $quantityChartData = [
+            'Fulfilled' => $requests->sum('fulfilled_quantity'),
+            'Unfulfilled' => $requests->sum('unfulfilled_quantity'),
+        ];
+
+        return inertia('Head/Graphs', [
+            'statusChartData' => $statusChartData,
+            'quantityChartData' => $quantityChartData,
+        ]);
+    }
+
+    public function dashboard(){
+        $requests = ModelsRequest::all();
+
+        $chartData = $requests->groupBy('status')->map(function ($items, $key) {
+            return [
+                'name' => $key,
+                'value' => count($items)
+            ];
+        })->values();
+
+        return inertia('Dashboard', [
+            'chartData' => $chartData
+        ]);
+    }
+}
