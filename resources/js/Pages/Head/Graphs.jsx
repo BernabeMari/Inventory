@@ -19,7 +19,7 @@ export default function Dashboard({ statusChartData = {}, quantityChartData = {}
         <SidebarLayout>
            <div className="flex-col flex overflow-auto">
             <h3 className="font-bold text-lg m-4">Requests</h3> 
-                <div className="grid gap-6 lg:grid-cols-2">
+                <div className="grid gap-6 lg:grid-cols-2 max-w-4xl mx-auto">
                     <div className="card bg-base-100 shadow">
                         <div className="card-body">
                             <h2 className="card-title">Accepted vs Rejected</h2>

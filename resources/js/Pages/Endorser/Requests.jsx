@@ -61,7 +61,7 @@ export default function(){
                     {/* head */}
                     <thead>
                         <tr>
-                        <th>REQUEST NO.</th>
+                        <th></th>
                         <th>DEPARTMENT</th>
                         <th>REQUEST</th>
                         <th>QUANTITY OF REQUEST</th>
@@ -77,13 +77,20 @@ export default function(){
         
                         <td>
                             <div className="font-bold">
-                                {request.id}
+                            {request.user?.image ? (
+                            <img src={`/storage/${request.user.image}`} alt="" className="ml-2 rounded-full h-10 w-10"/>) 
+                            : (<div className="ml-2 w-10 h-10 rounded-full bg-gray-300 flex items-center justify-center">
+                                    <span className="text-gray-600">
+                                        {request.user?.username?.toUpperCase().slice(0, 1)}
+                                    </span>
+                                </div>
+                            )}
                             </div>
                         </td>
         
         
                         <td>
-                            <div className="font-bold">
+                            <div className="font-bold flex-row flex items-center gap-2">
                                 {request.user?.department}
                             </div>
                         </td>

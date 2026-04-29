@@ -14,11 +14,18 @@ export default function({children}){
         {/* Navbar */}
         <nav className="navbar w-full bg-base-300">
         <div className="flex-1">
-            <div className="px-4">Navbar Title</div>
+            <div className="px-4">Mezzanine</div>
         </div>
 
         <div className="flex-none">
-            <img className="w-10 h-10 rounded-full" src={`/storage/${auth.user.image}`} alt=""/>
+           {auth.user.image?(
+            <img src={`/storage/${auth.user.image}`} alt="" className="ml-2 rounded-full h-10 w-10"/>
+           ) : (
+            <div className="ml-2 rounded-full h-10 w-10 bg-gray-300 flex items-center justify-center">
+              <span className="text-gray-600 font-bold">{auth.user.username.toUpperCase().slice(0, 1)}</span>
+            </div>
+           )}
+
         </div>
         </nav>
         {/* Page content here */}
@@ -148,7 +155,7 @@ export default function({children}){
 
 
             {/* Logout Button */}
-            <li className="flex items-center justify-end flex-0">
+            <li className="flex items-center absolute bottom-0 flex-0">
             <div className="tooltip tooltip-close tooltip-right">
             <button onClick={logout} className="btn">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" className="my-1.5 inline-block size-4">
