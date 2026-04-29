@@ -12,14 +12,17 @@ class HeadController extends Controller
         $requests = ModelsRequest::all();
 
         $statusChartData = [
+            'Pending' => $requests->where('status', 'pending')->count(),
             'Approved' => $requests->where('status', 'approved')->count(),
             'Rejected' => $requests->where('status', 'rejected')->count(),
         ];
+        
 
         $quantityChartData = [
             'Fulfilled' => $requests->sum('fulfilled_quantity'),
             'Unfulfilled' => $requests->sum('unfulfilled_quantity'),
         ];
+        
 
         $departmentCounts = ModelsRequest::with('user')
             ->get()
