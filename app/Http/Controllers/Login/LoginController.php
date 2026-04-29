@@ -36,9 +36,7 @@ class LoginController extends Controller
             return redirect('/');
         }
 
-        return back()->withErrors([
-            'username' => 'Invalid credentials',
-        ]);
+        return back()->with('error', 'Invalid username or password');
     }
 
     public function logout(Request $request){

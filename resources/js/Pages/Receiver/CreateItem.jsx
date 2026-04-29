@@ -9,7 +9,7 @@ export default function(){
     const [search, setSearch] = useState('')
     const [createItemModal, setcreateItemModal] = useState(false)
     const [addReceiptModal, setaddReceiptModal] = useState(null)
-    const {unitofmeasure, items, total, requests} = usePage().props
+    const {unitofmeasure, items, total, requests, flash} = usePage().props
     const {post, data, setData, reset} = useForm({
         unit_of_measure: '',
         description: '',
@@ -40,6 +40,11 @@ export default function(){
     <SidebarLayout>
     <div className="flex-col flex overflow-auto">
         <h3 className="font-bold text-lg m-4">Create Item</h3>
+        {flash.success && (
+            <div className="alert alert-success mb-4">
+                {flash.success}
+            </div>
+        )}
         {/* Search button */}
               <div className="p-4">
         

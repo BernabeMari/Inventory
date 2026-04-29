@@ -22,6 +22,8 @@ class ReceiverController extends Controller
             'total' => $request->quantity,
             'quantity' => (array) $request->quantity
         ]);
+
+        return back()->with('success', 'Item created successfully');
     }
 
     public function addReceipt(Request $request){
