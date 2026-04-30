@@ -27,6 +27,7 @@ Route::middleware('role:admin')->controller(AdminController::class)->group(funct
     Route::post('/create-user', 'createUser')->name('create_user');
     Route::post('/edit-user', 'editUser')->name('edit_user');
     Route::post('/delete-user', 'deleteUser')->name('delete_user');
+    Route::post('/restore-user', 'restoreUser')->name('restore_user');
 });
 
 

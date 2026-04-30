@@ -54,13 +54,21 @@ class AdminController extends Controller
         $findUser->update($data);
     }
     
-    
 
     // Delete User
     public function deleteUser(Request $request){
         $find = User::findOrFail($request->user_id);
         $find->update([
             'is_active' => false
+        ]);
+    }
+
+
+    // Restore User
+    public function restoreUser(Request $request){
+        $find = User::findOrFail($request->user_id);
+        $find->update([
+            'is_active' => true
         ]);
     }
 }
