@@ -51,4 +51,17 @@ class ReceiverController extends Controller
             'total' => $find->total + $request->quantity
         ]);
     }
+
+    public function editReceipt(Request $request){
+        $find = Receiver::findOrFail($request->item_id);
+        
+        $newQuantity = array_values($request->quantity); // accept full array
+        $oldTotal = array_sum($find->quantity);
+        $newTotal = array_sum($newQuantity);
+
+        $find->update([
+            'quantity' => $newQuantity,
+            'total' => $find->total - $oldTotal + $newTotal
+        ]);
+    }
 }

@@ -13,15 +13,25 @@
         <th>Status</th>
     </tr>
 
-    <tr>
-        <td>{{ $request->id }}</td>
-        <td>{{ is_array($request->item) ? implode(', ', $request->item) : $request->item }}</td>
-        <td>{{ is_array($request->quantity) ? implode(', ', $request->quantity) : $request->quantity }}</td>
-        <td>{{ is_array($request->issued_item) ? implode(', ', $request->issued_item) : $request->issued_item }}</td>
-        <td>{{ is_array($request->fulfilled_quantity) ? implode(', ', $request->fulfilled_quantity) : $request->fulfilled_quantity }}</td>
-        <td>{{ is_array($request->unfulfilled_quantity) ? implode(', ', $request->unfulfilled_quantity) : $request->unfulfilled_quantity }}</td>
-        <td>{{ $request->status }}</td>
+    @php $items = is_array($request->item) ? $request->item : [$request->item]; @endphp
+
+    @foreach($items as $index => $item)
+    <tr style="text-align: center;">
+        @if($loop->first)
+            <td rowspan="{{ count($items) }}" class="text-center">{{ $request->id }}</td>
+        @endif
+        
+        <td>{{ $item }}</td>
+        <td>{{ is_array($request->quantity) ? ($request->quantity[$index] ?? '') : $request->quantity }}</td>
+        <td>{{ is_array($request->issued_item) ? ($request->issued_item[$index] ?? '') : $request->issued_item }}</td>
+        <td>{{ is_array($request->fulfilled_quantity) ? ($request->fulfilled_quantity[$index] ?? '') : $request->fulfilled_quantity }}</td>
+        <td>{{ is_array($request->unfulfilled_quantity) ? ($request->unfulfilled_quantity[$index] ?? '') : $request->unfulfilled_quantity }}</td>
+        @if($loop->first)
+            <td rowspan="{{ count($items) }}" class="text-center">{{ $request->status }}</td>
+        @endif
     </tr>
+    @endforeach
+    
 </table>
 <br><br>
 

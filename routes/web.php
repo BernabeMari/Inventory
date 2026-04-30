@@ -42,6 +42,7 @@ Route::middleware('role:receiver')->controller(ReceiverController::class)->group
     Route::get('/receiver-dashboard', 'receiverPage')->name('receiver_page');
     Route::post('/create-item', 'createItem')->name('create_item');
     Route::post('/add-receipt', 'addReceipt')->name('add_receipt');
+    Route::post('/edit-receipt', 'editReceipt')->name('edit_receipt');
 });
 
 

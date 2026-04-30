@@ -8,6 +8,7 @@ import CreatableSelect from "react-select/creatable";
 export default function(){
     const [search, setSearch] = useState('')
     const [createItemModal, setcreateItemModal] = useState(false)
+    const [editItemModal, seteditItemModal] = useState(false)
     const [addReceiptModal, setaddReceiptModal] = useState(null)
     const {unitofmeasure, items, total, requests, flash} = usePage().props
     const {post, data, setData, reset} = useForm({
@@ -38,6 +39,12 @@ export default function(){
         })
     }
 
+    function editReceipt(e){
+        e.preventDefault()
+        post(route('edit_receipt'),{
+            onSuccess: () => {seteditItemModal(false); reset()}
+        })
+    }
 
     return(
     <SidebarLayout>
@@ -124,7 +131,44 @@ export default function(){
                             </form>
                         </div>)}
                         
-                        <div><button onClick={() => {setaddReceiptModal(item.id); setData({item_id: item.id})}} className="btn btn-xs sm:btn-sm md:btn-md lg:btn-lg xl:btn-xl"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" className="size-5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" /></svg></button></div>
+                        <div>
+                            <button onClick={() => {setaddReceiptModal(item.id); setData({item_id: item.id})}} className="btn btn-xs sm:btn-sm md:btn-md lg:btn-lg xl:btn-xl"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" className="size-5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" /></svg></button>
+                            <button onClick={() => {seteditItemModal(item.id); setData({item_id: item.id, quantity: [...item.quantity]})}} className="btn btn-xs sm:btn-sm md:btn-md lg:btn-lg xl:btn-xl"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" className="size-5"><path stroke-linecap="round" stroke-linejoin="round" d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0 1 15.75 21H5.25A2.25 2.25 0 0 1 3 18.75V8.25A2.25 2.25 0 0 1 5.25 6H10" /></svg></button>
+                        </div>
+
+                        {editItemModal && (
+                                <dialog className="modal modal-open">
+                                    <div className="modal-box">
+                                        <h3 className="font-bold text-lg m-4">Edit Receipt</h3>
+                                        <button
+                                            className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2"
+                                            onClick={() => seteditItemModal(false)}
+                                        >
+                                            ✕
+                                        </button>
+
+                                        {data.quantity.map((qty, index) => (
+                                            <div key={index} className="flex items-center justify-center gap-2 mb-4">
+                                                <form onSubmit={editReceipt}>
+                                                    <label className="input validator">
+                                                    <input
+                                                        value={qty}
+                                                        onChange={(e) => {
+                                                            const newQuantity = [...data.quantity];
+                                                            newQuantity[index] = e.target.value;
+                                                            setData('quantity', newQuantity);
+                                                        }}
+                                                        type="number"
+                                                        min="1"
+                                                        required
+                                                    />
+                                                    </label>
+                                                </form>
+                                            </div>
+                                        ))}
+                                     </div>
+                                </dialog>
+                                )}
                     </div>
                 </td>
 
