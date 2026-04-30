@@ -11,6 +11,7 @@ Artisan::command('inspire', function () {
 })->purpose('Display an inspiring quote');
 
 
+// 1. Generates PDF every minute
 Schedule::call(function () {
     try {
         $receivers = Receiver::all();
@@ -21,22 +22,33 @@ Schedule::call(function () {
             mkdir($dir, 0755, true);
         }
 
-        foreach ($receivers as $receiver) {
-            $pdf = Pdf::loadView('pdf.reports', compact('receiver'));
-            $pdf->save($dir . '/receiver_' . $receiver->id . '_' . $timestamp . '.pdf');
-        }
-        
-        logger('PDFs generated successfully');
+        $snapshotPath = storage_path('app/ending_balances.json');
+        $beginnings = file_exists($snapshotPath) ? json_decode(file_get_contents($snapshotPath), true) : [];
+
+        $pdf = Pdf::loadView('pdf.reports', compact('receivers', 'beginnings'));
+        $pdf->save($dir . '/receivers_' . $timestamp . '.pdf');
+
+        logger('PDF generated successfully');
     } catch (\Exception $e) {
         logger()->error('PDF generation failed: ' . $e->getMessage());
-        $r = Receiver::first();
-        if ($r) {
-            logger('id: ' . json_encode($r->id));
-            logger('description: ' . json_encode($r->description));
-            logger('unit_of_measure: ' . json_encode($r->unit_of_measure));
-            logger('quantity: ' . json_encode($r->quantity));
-            logger('total: ' . json_encode($r->total));
-            logger('less: ' . json_encode($r->less));
-        }
     }
-})->monthly();
+})->everyMinute();
+
+// 2. Resets data on the 1st of every month
+Schedule::call(function () {
+    $snapshotPath = storage_path('app/ending_balances.json');
+    $snapshots = file_exists($snapshotPath) ? json_decode(file_get_contents($snapshotPath), true) : [];
+
+    Receiver::all()->each(function ($receiver) use ($snapshotPath, &$snapshots) {
+        $snapshots[$receiver->id] = ($receiver->total ?? 0) - ($receiver->less ?? 0);
+
+        $receiver->update([
+            'quantity' => [],
+            'total'    => $snapshots[$receiver->id],
+            'less'     => 0,
+        ]);
+    });
+
+    file_put_contents($snapshotPath, json_encode($snapshots));
+    logger('Monthly carry-over completed');
+})->everyMinute();
