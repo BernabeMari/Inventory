@@ -48,18 +48,50 @@ export default function({users}){
     <div className="flex-col flex overflow-auto">
 
       {/* Search button */}
-      <div className="p-4">
+      <div className="p-4 flex flex-row gap-4 ">
 
-        <SearchField
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          placeholder="Search users..."
-        />
+        <div>
+            <SearchField
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            placeholder="Search users..."
+          />
 
-        <p className="mt-4">
-          You searched: {search}
-        </p>
+          <p className="mt-4">
+            You searched: {search}
+          </p>
+        </div>
 
+        {/* Toggle switch active/inactive users */}
+        <div className="absolute right-20">
+          <label className="toggle text-base-content">
+          <input type="checkbox" checked={data.is_active} onChange={(e) => setData('is_active', e.target.checked)} />
+          <svg aria-label="enabled" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <g
+              strokeLinejoin="round"
+              strokeLinecap="round"
+              strokeWidth="4"
+              fill="none"
+              stroke="currentColor"
+            >
+              <path d="M20 6 9 17l-5-5"></path>
+            </g>
+          </svg>
+          <svg
+            aria-label="disabled"
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="4"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          >
+            <path d="M18 6 6 18" />
+            <path d="m6 6 12 12" />
+          </svg>
+        </label>
+        </div>
       </div>
 
       {/* Table */}
@@ -76,7 +108,7 @@ export default function({users}){
           </thead>
           <tbody>
 
-            {users.filter(user => user.is_active).filter(user => user.username.toLowerCase().includes(search.toLowerCase()) || user.role.toLowerCase().includes(search.toLowerCase()) || user.department && user.department.toLowerCase().includes(search.toLowerCase())).map(user => (
+            {users.filter(user => Boolean(user.is_active) === data.is_active).filter(user => user.username.toLowerCase().includes(search.toLowerCase()) || user.role.toLowerCase().includes(search.toLowerCase()) || user.department && user.department.toLowerCase().includes(search.toLowerCase())).map(user => (
               <tr>
               
               

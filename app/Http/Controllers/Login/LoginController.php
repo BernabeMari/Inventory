@@ -21,19 +21,19 @@ class LoginController extends Controller
 
             $request->session()->regenerate();
 
-            if (Auth::user()->role === 'receiver') {
+            if (Auth::user()->role === 'receiver' && Auth::user()->is_active) {
                 return redirect()->route('receiver_page');
-            }elseif(Auth::user()->role === 'admin'){
+            }elseif(Auth::user()->role === 'admin' && Auth::user()->is_active){
                 return redirect()->route('admin_page');
-            }elseif(Auth::user()->role === 'department'){
+            }elseif(Auth::user()->role === 'department' && Auth::user()->is_active){
                 return redirect()->route('department_page');
-            }elseif(Auth::user()->role === 'endorser'){
+            }elseif(Auth::user()->role === 'endorser' && Auth::user()->is_active){
                 return redirect()->route('endorser_page');
-            }elseif(Auth::user()->role === 'head'){
+            }elseif(Auth::user()->role === 'head' && Auth::user()->is_active){
                 return redirect()->route('head_page');
             }
 
-            return redirect('/');
+            return back()->with('error', 'Your account is inactive. Please contact the administrator.');
         }
 
         return back()->with('error', 'Invalid username or password');

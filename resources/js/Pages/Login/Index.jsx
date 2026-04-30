@@ -26,7 +26,7 @@ export default function(){
 
         <form onSubmit={login} className="fieldset m-4">
           {flash.error && (<div className="alert alert-error mb-4">
-        {flash.error}
+          {flash.error}
           </div>)}
           <label className="label">Email</label>
           <input value={data.username} onChange={(e) => setData('username', e.target.value)} type="text" className="input border border-black" />
