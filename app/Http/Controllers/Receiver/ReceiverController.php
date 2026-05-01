@@ -3,7 +3,8 @@
 namespace App\Http\Controllers\Receiver;
 
 use App\Http\Controllers\Controller;
-use App\Models\Receiver;
+use App\Models\Item;
+use App\Models\Quantity;
 use App\Models\UnitofMeasure;
 use Illuminate\Http\Request;
 
@@ -11,7 +12,7 @@ class ReceiverController extends Controller
 {
     public function receiverPage(){
         $UnitOfMeasure = UnitofMeasure::get();
-        $items = Receiver::with('requests')->get();
+        $items = Item::with('requests', 'quantities', 'issuances')->get();
         return inertia('Receiver/CreateItem', ['unitofmeasure' => $UnitOfMeasure, 'items' => $items]);
     }
 
@@ -24,44 +25,51 @@ class ReceiverController extends Controller
             ]);
         }
 
-        Receiver::create([
+        $item = Item::create([
             'description' => $request->description,
             'unit_of_measure' => $unitOfMeasure,
-            'total' => $request->quantity,
-            'quantity' => (array) $request->quantity
+            'total' => $request->quantity
+        ]);
+
+        $id = $item->id;
+
+        Quantity::create([
+            'quantity' => $request->quantity,
+            'item_id' => $id
         ]);
 
         return back()->with('success', 'Item created successfully');
     }
 
     public function addReceipt(Request $request){
-        $find = Receiver::findOrFail($request->item_id);
+        $item = Item::findOrFail($request->item_id);
 
-        $quantity = $find->quantity;
+        Quantity::create([
+            'quantity' => $request->quantity,
+            'item_id' => $item->id
+        ]);
 
-        // FORCE array
-        if (!is_array($quantity)) {
-            $quantity = $quantity ? [$quantity] : [];
-        }
-
-        $quantity[] = (int) $request->quantity;
-
-        $find->update([
-            'quantity' => $quantity,
-            'total' => $find->total + $request->quantity
+        $item->update([
+            'total' => $item->total + $request->quantity
         ]);
     }
 
     public function editReceipt(Request $request){
-        $find = Receiver::findOrFail($request->item_id);
+        $findItem = Item::findOrFail($request->item_id);
+        $findQuantity = Quantity::findOrFail($request->quantity_id);
         
-        $newQuantity = array_values($request->quantity); // accept full array
-        $oldTotal = array_sum($find->quantity);
-        $newTotal = array_sum($newQuantity);
-
-        $find->update([
-            'quantity' => $newQuantity,
-            'total' => $find->total - $oldTotal + $newTotal
+        $oldQuantity = $findQuantity->quantity;
+        $newQuantity = $request->quantity;
+        $difference = $newQuantity - $oldQuantity;
+        
+        $findQuantity->update([
+            'quantity' => $newQuantity
         ]);
+        
+        $findItem->update([
+            'total' => $findItem->total + $difference
+        ]);
+        
+        return back()->with('success', 'Receipt updated successfully');
     }
 }
