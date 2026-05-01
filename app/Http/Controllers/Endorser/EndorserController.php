@@ -69,16 +69,17 @@ class EndorserController extends Controller
             'status' => 'approved',
         ]);
 
-        Issuance::create([
-            'user_id' => $findRequest->user_id,
-            'request_id' => $findRequest->id,
-            'item_id' => $itemIds,
-            'less' => $fulfilledQuantities,
-            'issued_item' => $issuedItems,
-            'fulfilled_quantity' => $fulfilledQuantities,
-            'unfulfilled_quantity' => $unfulfilledQuantities,
-            'endorser_message' => $request->endorser_message
-        ]);
+        foreach ($itemIds as $index => $itemId) {
+            Issuance::create([
+                'user_id' => $findRequest->user_id,
+                'request_id' => $findRequest->id,
+                'item_id' => $itemId,
+                'issued_item' => $issuedItems[$index],
+                'fulfilled_quantity' => $fulfilledQuantities[$index],
+                'unfulfilled_quantity' => $unfulfilledQuantities[$index],
+                'endorser_message' => $request->endorser_message,
+            ]);
+        }
 
         return back()->with('success', 'Request approved successfully');
     }

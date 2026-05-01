@@ -176,13 +176,13 @@ export default function(){
                 
                 <td>
                     <div className="font-bold">
-                       {item.issuances?.reduce((total, issuance) => {
-                           const itemIndex = issuance.item_id?.indexOf(String(item.id));
-                           if (itemIndex !== -1 && issuance.less?.[itemIndex]) {
-                               return total + Number(issuance.less[itemIndex]);
-                           }
-                           return total;
-                       }, 0)}
+                       {item.issuances?.reduce((sum, issuance) => {
+                            if (Array.isArray(issuance.fulfilled_quantity)) {
+                                return sum + issuance.fulfilled_quantity.reduce((total, qty) => total + Number(qty || 0), 0);
+                            }
+                            return sum + Number(issuance.fulfilled_quantity || 0);
+                        }, 0)}
+                        
                     </div>
                 </td>
 
