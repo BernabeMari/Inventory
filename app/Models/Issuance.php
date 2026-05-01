@@ -8,7 +8,22 @@ class Issuance extends Model
 {
     protected $fillable = [
         'user_id',
+        'request_id',
         'item_id',
+        'issued_item',
+        'fulfilled_quantity',
+        'unfulfilled_quantity',
+        'endorser_message',
         'less',
     ];
+    protected $casts = [
+        'item_id' => 'array',
+        'issued_item' => 'array',
+        'fulfilled_quantity' => 'array',
+        'unfulfilled_quantity' => 'array',
+        'less' => 'array',
+    ];
+    public function requests(){
+        return $this->belongsTo(Request::class);
+    }
 }

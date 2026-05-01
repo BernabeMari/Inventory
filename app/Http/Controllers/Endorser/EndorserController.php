@@ -3,15 +3,16 @@
 namespace App\Http\Controllers\Endorser;
 
 use App\Http\Controllers\Controller;
-use App\Models\Receiver;
+use App\Models\Issuance;
+use App\Models\Item;
 use App\Models\Request as ModelsRequest;
 use Illuminate\Http\Request;
 
 class EndorserController extends Controller
 {
     public function endorserPage(){
-        $requests = ModelsRequest::with('user', 'receiver')->get();
-        $items = Receiver::get();
+        $requests = ModelsRequest::with('user', 'items', 'issuances')->get();
+        $items = Item::get();
         return inertia('Endorser/Requests', ['requests' => $requests, 'items' => $items]);
     }
 
@@ -47,7 +48,7 @@ class EndorserController extends Controller
         $issuedItems = [];
 
         foreach ($itemIds as $index => $itemId) {
-            $findItem = Receiver::findOrFail($itemId);
+            $findItem = Item::findOrFail($itemId);
             $fulfilled = $fulfilledQuantities[$index];
             $unfulfilled = $unfulfilledQuantities[$index];
             $requested = $requestedQuantities[$index];
@@ -61,16 +62,22 @@ class EndorserController extends Controller
             }
 
             $issuedItems[] = $findItem->description;
-            $findItem->increment('less', $fulfilled);
             $findItem->decrement('total', $fulfilled);
         }
 
         $findRequest->update([
             'status' => 'approved',
-            'endorser_message' => $request->endorser_message,
+        ]);
+
+        Issuance::create([
+            'user_id' => $findRequest->user_id,
+            'request_id' => $findRequest->id,
+            'item_id' => $itemIds,
+            'less' => $fulfilledQuantities,
+            'issued_item' => $issuedItems,
             'fulfilled_quantity' => $fulfilledQuantities,
             'unfulfilled_quantity' => $unfulfilledQuantities,
-            'issued_item' => $issuedItems,
+            'endorser_message' => $request->endorser_message
         ]);
 
         return back()->with('success', 'Request approved successfully');

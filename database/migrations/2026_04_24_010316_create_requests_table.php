@@ -17,10 +17,6 @@ return new class extends Migration
             $table->json('quantity');
             $table->enum('status', ['pending', 'approved', 'rejected'])->default('pending');
             $table->string('message')->nullable();
-            $table->string('endorser_message')->nullable();
-            $table->json('issued_item')->nullable();
-            $table->json('fulfilled_quantity')->nullable();
-            $table->json('unfulfilled_quantity')->nullable();
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->timestamps();
         });

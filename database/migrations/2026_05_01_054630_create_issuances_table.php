@@ -14,8 +14,13 @@ return new class extends Migration
         Schema::create('issuances', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
-            $table->foreignId('item_id')->constrained()->onDelete('cascade');
-            $table->integer('less');
+            $table->foreignId('request_id')->constrained()->onDelete('cascade');
+            $table->json('item_id');
+            $table->json('less');
+            $table->string('endorser_message')->nullable();
+            $table->json('issued_item');
+            $table->json('fulfilled_quantity');
+            $table->json('unfulfilled_quantity');
             $table->timestamps();
         });
     }

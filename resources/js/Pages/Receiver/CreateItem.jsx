@@ -176,7 +176,13 @@ export default function(){
                 
                 <td>
                     <div className="font-bold">
-                       {item.less}
+                       {item.issuances?.reduce((total, issuance) => {
+                           const itemIndex = issuance.item_id?.indexOf(String(item.id));
+                           if (itemIndex !== -1 && issuance.less?.[itemIndex]) {
+                               return total + Number(issuance.less[itemIndex]);
+                           }
+                           return total;
+                       }, 0)}
                     </div>
                 </td>
 

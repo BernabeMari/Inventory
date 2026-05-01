@@ -126,7 +126,7 @@ export default function(){
                         <td>
                             <div className="font-bold flex-row flex">
                                 <div className="tooltip tooltip-close tooltip-right">
-                                    <button onClick={(e) => {setapproveModal(true); setData({request_id: request.id, item: request.item, item_id: Array(request.item.length).fill(''), fulfilled_quantity: request.fulfilled_quantity || [], unfulfilled_quantity: request.unfulfilled_quantity || []})}} className="btn">
+                                    <button onClick={(e) => {setapproveModal(true); setData({issuance_id: request.issuances?.id || null, request_id: request.id, item: request.item, item_id: Array(request.item.length).fill(''), fulfilled_quantity: request.fulfilled_quantity || [], unfulfilled_quantity: request.unfulfilled_quantity || []})}} className="btn">
                                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="size-6">
                                     <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
                                     </svg>
