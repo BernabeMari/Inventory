@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Head;
 
 use App\Http\Controllers\Controller;
+use App\Models\Receiver;
 use App\Models\Request as ModelsRequest;
 use Illuminate\Http\Request;
 
@@ -86,6 +87,13 @@ class HeadController extends Controller
     }
 
     public function headReportPage(){
-        return inertia('Head/Report');
+    $items = Receiver::get();
+
+    $snapshotPath = storage_path('app/ending_balances.json');
+    $beginnings = file_exists($snapshotPath) 
+        ? json_decode(file_get_contents($snapshotPath), true) 
+        : [];
+        
+    return inertia('Head/Report', ['items' => $items, 'beginnings' => $beginnings]);
     }
 }
