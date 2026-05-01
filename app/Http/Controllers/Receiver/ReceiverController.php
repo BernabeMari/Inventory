@@ -56,20 +56,21 @@ class ReceiverController extends Controller
 
     public function editReceipt(Request $request){
         $findItem = Item::findOrFail($request->item_id);
-        $findQuantity = Quantity::findOrFail($request->quantity_id);
-        
-        $oldQuantity = $findQuantity->quantity;
-        $newQuantity = $request->quantity;
-        $difference = $newQuantity - $oldQuantity;
-        
-        $findQuantity->update([
-            'quantity' => $newQuantity
-        ]);
-        
+
+        $oldTotal = Quantity::where('item_id', $request->item_id)->sum('quantity');
+
+        foreach ($request->quantity as $item) {
+            Quantity::where('id', $item['id'])->update([
+                'quantity' => $item['quantity']
+            ]);
+        }
+
+        $newTotal = Quantity::where('item_id', $request->item_id)->sum('quantity');
+
         $findItem->update([
-            'total' => $findItem->total + $difference
+            'total' => $findItem->total + ($newTotal - $oldTotal)
         ]);
-        
+
         return back()->with('success', 'Receipt updated successfully');
     }
 }

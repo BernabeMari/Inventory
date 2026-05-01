@@ -73,7 +73,7 @@ export default function({users}){
         {/* Toggle switch active/inactive users */}
         <div className="absolute right-20">
           <label className="toggle text-base-content">
-          <input type="checkbox" checked={data.is_active} onChange={(e) => setData('is_active', e.target.checked)} />
+          <input type="checkbox" checked={!data.is_active} onChange={(e) => setData('is_active', !e.target.checked)} />
           <svg aria-label="enabled" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
             <g
               strokeLinejoin="round"
