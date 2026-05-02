@@ -11,6 +11,11 @@ class Item extends Model
         'unit_of_measure',
         'total',
         'less',
+        'added_receipt'
+    ];
+
+    protected $casts = [
+        'added_receipt' => 'array',
     ];
 
     public function requests(){

@@ -17,6 +17,7 @@ return new class extends Migration
             $table->string('unit_of_measure');
             $table->integer('total')->default(0);
             $table->integer('less')->default(0);
+            $table->json('added_receipt')->nullable();
             $table->timestamps();
         });
     }

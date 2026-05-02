@@ -22,11 +22,8 @@ Schedule::call(function () {
         $item->update([
             'total'    => $snapshots[$item->id],
             'less'     => 0,
+            'added_receipt' => []
         ]);
-        
-        $item->quantities()->update([
-            'quantity' => 0,
-            ]);
     });
 
     file_put_contents($snapshotPath, json_encode($snapshots));

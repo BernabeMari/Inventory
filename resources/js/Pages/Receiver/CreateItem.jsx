@@ -114,7 +114,7 @@ export default function(){
                 
                 <td>
                      <div className="flex justify-between items-center">
-                        {item.quantities?.map(q => q.quantity).join(' + ')}
+                        {item.added_receipt?.join(' + ')}
                         
                         {addReceiptModal === item.id && (<div>
                             <form onSubmit={addReceipt}>

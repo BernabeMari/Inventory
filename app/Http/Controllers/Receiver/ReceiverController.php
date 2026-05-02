@@ -50,6 +50,7 @@ class ReceiverController extends Controller
         ]);
 
         $item->update([
+            'added_receipt' => array_merge($item->added_receipt ?? [], [$request->quantity]),
             'total' => $item->total + $request->quantity
         ]);
     }
