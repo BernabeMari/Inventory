@@ -21,6 +21,6 @@ class Item extends Model
     }
 
     public function issuances(){
-        return $this->hasMany(Issuance::class, 'item_id', 'id');
+        return $this->hasMany(Issuance::class);
     }
 }

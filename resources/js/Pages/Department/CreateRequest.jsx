@@ -33,11 +33,18 @@ export default function({requests}){
             </div>
         )}
         {/* Search button */}
-        <div className="p-4">
-            <SearchField value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Search requests..."/>
-            <p className="mt-4">
-            You searched: {search}
-            </p> 
+        <div className="p-4 flex flex-col md:flex-row md:justify-between md:items-center">
+            <div>
+                <SearchField value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Search requests..."/>
+                <p className="mt-4">
+                You searched: {search}
+                </p> 
+            </div>
+
+            {/* Add Item Button */}
+            <div className="bg-white m-6 rounded-full border border-black ">
+                <button onClick={(e) => {setrequestItemModal(true);setData({user_id: data.id, item: [''], quantity: ['']})}} className="btn btn-soft btn-secondary rounded-full p-4"><PlusIcon className="w-5 h-5" />Create Request</button>
+            </div>
         </div>
         
 
@@ -114,12 +121,6 @@ export default function({requests}){
              ))} 
             </tbody>
             </table>
-            </div>
-
-
-            {/* Add Item Button */}
-            <div className="bg-white m-6 bottom-0 right-0 absolute rounded-full border border-black ">
-                <button onClick={(e) => {setrequestItemModal(true);setData({user_id: data.id, item: [''], quantity: ['']})}} className="btn btn-soft btn-secondary rounded-full p-4"><PlusIcon className="w-5 h-5" /></button>
             </div>
 
 

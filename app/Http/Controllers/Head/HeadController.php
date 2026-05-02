@@ -87,7 +87,7 @@ class HeadController extends Controller
     }
 
     public function headReportPage(){
-        $items = Item::get();
+        $items = Item::with('issuances', 'quantities')->get();
 
         $snapshotPath = storage_path('app/ending_balances.json');
         $beginnings = file_exists($snapshotPath) 

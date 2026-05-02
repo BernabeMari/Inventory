@@ -56,18 +56,20 @@ export default function(){
             </div>
         )}
         {/* Search button */}
-              <div className="p-4">
+              <div className="p-4 flex flex-col md:flex-row md:justify-between md:items-center">
         
-                <SearchField
-                  value={search}
-                  onChange={(e) => setSearch(e.target.value)}
-                  placeholder="Search items..."
-                />
+                <div>
+                    <SearchField value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Search items..."/>
         
-                <p className="mt-4">
-                  You searched: {search}
-                </p>
-        
+                    <p className="mt-4">
+                    You searched: {search}
+                    </p>
+                </div>
+
+                {/* Add Item Button */}
+                <div className="bg-white m-6 rounded-full border border-black ">
+                    <button onClick={(e) => setcreateItemModal(true)} className="btn btn-soft btn-secondary rounded-full p-4"><PlusIcon className="w-5 h-5" />Create Item</button>
+                </div>
               </div>
 
 
@@ -176,13 +178,7 @@ export default function(){
                 
                 <td>
                     <div className="font-bold">
-                       {item.issuances?.reduce((sum, issuance) => {
-                            if (Array.isArray(issuance.fulfilled_quantity)) {
-                                return sum + issuance.fulfilled_quantity.reduce((total, qty) => total + Number(qty || 0), 0);
-                            }
-                            return sum + Number(issuance.fulfilled_quantity || 0);
-                        }, 0)}
-                        
+                       {(item.issuances || []).reduce((sum, f) => sum + (f.fulfilled_quantity), 0)}
                     </div>
                 </td>
 
@@ -191,11 +187,6 @@ export default function(){
             </tbody>
             </table>
         </div>
-
-    {/* Add Item Button */}
-      <div className="bg-white m-6 bottom-0 right-0 absolute rounded-full border border-black ">
-        <button onClick={(e) => setcreateItemModal(true)} className="btn btn-soft btn-secondary rounded-full p-4"><PlusIcon className="w-5 h-5" /></button>
-      </div>
 
     {/* Create Item */}
       {createItemModal && (

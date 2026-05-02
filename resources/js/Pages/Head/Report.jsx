@@ -8,7 +8,7 @@ export default function(){
     const [createItemModal, setcreateItemModal] = useState(false)
     const [editItemModal, seteditItemModal] = useState(false)
     const [addReceiptModal, setaddReceiptModal] = useState(null)
-    const {beginnings, items, receivers, flash} = usePage().props
+    const {beginnings, items, issuances, quantities, flash} = usePage().props
     const {post, data, setData, reset} = useForm({
         unit_of_measure: '',
         description: '',
@@ -90,7 +90,7 @@ export default function(){
 
                 <td>
                      <div className="flex justify-between items-center">
-                        {item.quantity.join(" + ")} 
+                        {item.quantities?.map(q => q.quantity).join(' + ')}
                     </div>
                 </td>
 
@@ -103,13 +103,13 @@ export default function(){
                 
                 <td>
                     <div className="font-bold">
-                       {item.less}
+                       {item.issuances?.reduce((sum, f) => sum + (f.fulfilled_quantity || 0), 0)}
                     </div>
                 </td>
                 
                 <td>
                     <div className="font-bold">
-                       {item.total - item.less}
+                       {item.total - (item.issuances?.reduce((sum, f) => sum + (f.fulfilled_quantity || 0), 0))}
                     </div>
                 </td>
 
