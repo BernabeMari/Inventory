@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Head;
 
 use App\Http\Controllers\Controller;
+use App\Models\Issuance;
 use App\Models\Item;
 use App\Models\Request as ModelsRequest;
 use Illuminate\Http\Request;
@@ -11,6 +12,7 @@ class HeadController extends Controller
 {
     public function headPage(){
         $requests = ModelsRequest::all();
+        $issuances = Issuance::all();
 
         $statusChartData = [
             'Pending' => $requests->where('status', 'pending')->count(),
@@ -19,23 +21,8 @@ class HeadController extends Controller
         ];
         
 
-        $fulfilledQuantity = $requests
-            ->flatMap(function ($request) {
-                return is_array($request->fulfilled_quantity) ? $request->fulfilled_quantity : [];
-            })
-            ->map(function ($value) {
-                return intval($value);
-            })
-            ->sum();
-
-        $unfulfilledQuantity = $requests
-            ->flatMap(function ($request) {
-                return is_array($request->unfulfilled_quantity) ? $request->unfulfilled_quantity : [];
-            })
-            ->map(function ($value) {
-                return intval($value);
-            })
-            ->sum();
+        $fulfilledQuantity = $issuances->sum('fulfilled_quantity');
+        $unfulfilledQuantity = $issuances->sum('unfulfilled_quantity');
 
         $quantityChartData = [
             'Fulfilled' => $fulfilledQuantity,

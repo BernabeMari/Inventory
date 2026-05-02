@@ -112,7 +112,13 @@ export default function(){
                         
                         <td>
                             <div className="font-bold">
-                               {request.status}
+                               {request.status === 'pending' ? (
+                                    <span className="text-yellow-500">{request.status}</span>
+                                ) : request.status === 'approved' ? (
+                                    <span className="text-green-500">{request.status}</span>
+                                ) : (
+                                    <span className="text-red-500">{request.status}</span>
+                                )}
                             </div>
                         </td>
                        

@@ -58,16 +58,19 @@ export default function({users}){
       {/* Search button */}
       <div className="p-4 flex flex-row gap-4 ">
 
-        <div>
-            <SearchField
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            placeholder="Search users..."
-          />
+        <div className="p-4 flex flex-col md:flex-row md:justify-between md:items-center">
+            <div>
+              <SearchField value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Search users..."/>
 
-          <p className="mt-4">
-            You searched: {search}
-          </p>
+              <p className="mt-4">
+                You searched: {search}
+              </p>
+            </div>
+
+            {/* Add User Button */}
+            <div className="bg-white m-6 rounded-full border absolute right-0 border-black ">
+              <button onClick={(e) => setcreateUserModal(true)} className="btn btn-soft btn-secondary rounded-full p-4"><PlusIcon className="w-5 h-5" />Create User</button>
+            </div>
         </div>
 
         {/* Toggle switch active/inactive users */}
@@ -75,15 +78,7 @@ export default function({users}){
           <label className="toggle text-base-content">
           <input type="checkbox" checked={!data.is_active} onChange={(e) => setData('is_active', !e.target.checked)} />
           <svg aria-label="enabled" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-            <g
-              strokeLinejoin="round"
-              strokeLinecap="round"
-              strokeWidth="4"
-              fill="none"
-              stroke="currentColor"
-            >
-              <path d="M20 6 9 17l-5-5"></path>
-            </g>
+            <g strokeLinejoin="round" strokeLinecap="round" strokeWidth="4" fill="none" stroke="currentColor"><path d="M20 6 9 17l-5-5"></path></g>
           </svg>
           <svg
             aria-label="disabled"
@@ -159,11 +154,6 @@ export default function({users}){
             ))}
           </tbody>
         </table>
-      </div>
-
-      {/* Add User Button */}
-      <div className="bg-white m-6 bottom-0 right-0 absolute rounded-full border border-black ">
-        <button onClick={(e) => setcreateUserModal(true)} className="btn btn-soft btn-secondary rounded-full p-4"><PlusIcon className="w-5 h-5" /></button>
       </div>
       
       
