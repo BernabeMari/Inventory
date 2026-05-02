@@ -103,13 +103,13 @@ export default function(){
                 
                 <td>
                     <div className="font-bold">
-                       {item.issuances?.reduce((sum, f) => sum + (f.fulfilled_quantity || 0), 0)}
+                       {item.less}
                     </div>
                 </td>
                 
                 <td>
                     <div className="font-bold">
-                       {item.total - (item.issuances?.reduce((sum, f) => sum + (f.fulfilled_quantity || 0), 0))}
+                       {item.total - item.less}
                     </div>
                 </td>
 

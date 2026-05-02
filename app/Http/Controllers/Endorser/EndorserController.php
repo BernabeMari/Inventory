@@ -63,6 +63,7 @@ class EndorserController extends Controller
 
             $issuedItems[] = $findItem->description;
             $findItem->decrement('total', $fulfilled);
+            $findItem->increment('less', $fulfilled);
         }
 
         $findRequest->update([

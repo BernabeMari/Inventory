@@ -10,6 +10,7 @@ class Item extends Model
         'description',
         'unit_of_measure',
         'total',
+        'less',
     ];
 
     public function requests(){

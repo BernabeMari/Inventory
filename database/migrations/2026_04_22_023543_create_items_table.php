@@ -15,7 +15,8 @@ return new class extends Migration
             $table->id();
             $table->string('description');
             $table->string('unit_of_measure');
-            $table->integer('total');
+            $table->integer('total')->default(0);
+            $table->integer('less')->default(0);
             $table->timestamps();
         });
     }
