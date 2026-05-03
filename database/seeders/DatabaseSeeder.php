@@ -48,13 +48,6 @@ class DatabaseSeeder extends Seeder
             'role' => 'department',
             'department' => 'MIS',
         ]);
-        
-        Request::create([
-            'item' => 'Pencil',
-            'quantity' => '20',
-            'status' => 'pending',
-            'user_id' => '5',
-        ]);
 
         UnitofMeasure::insert([
         ['unit_of_measure' => 'pcs'],

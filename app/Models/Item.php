@@ -29,4 +29,8 @@ class Item extends Model
     public function issuances(){
         return $this->hasMany(Issuance::class);
     }
+
+    public function history(){
+        return $this->hasMany(History::class);
+    }
 }
