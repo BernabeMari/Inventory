@@ -5,10 +5,7 @@ import { useState } from "react";
 
 export default function(){
     const [search, setSearch] = useState('')
-    const [createItemModal, setcreateItemModal] = useState(false)
-    const [editItemModal, seteditItemModal] = useState(false)
-    const [addReceiptModal, setaddReceiptModal] = useState(null)
-    const {beginnings, items, issuances, quantities, history, flash} = usePage().props
+    const {beginnings, items, flash} = usePage().props
     const {post, data, setData, reset} = useForm({
         unit_of_measure: '',
         description: '',
@@ -48,7 +45,7 @@ export default function(){
                 <div className="">
                     <form onSubmit={handleFilter}>
                         <input type="date" value={data.start_date} onChange={(e) => setData('start_date', e.target.value)}/> - <input type="date" value={data.end_date} onChange={(e) => setData('end_date', e.target.value)}/>                    
-                        <button type="submit" onClick={() => post('/head/report')} className="btn btn-primary ml-4">Filter Report</button>
+                        <button type="submit" className="btn btn-primary ml-4">Filter Report</button>
                     </form> 
               </div>
               </div>
@@ -71,65 +68,35 @@ export default function(){
                 </tr>
             </thead>
             <tbody>
-                {items.map(item => (
-                    item.history?.map(history => (
-                        <tr> 
+                {items.map(item => {
+                    const grouped = item.history?.reduce((acc, h) => {
+                        if(!acc[h.item_id]){
+                            acc[h.item_id] = {...h, total: 0, less: 0, add_receipts: []}
+                        }
 
+                        acc[h.item_id].total += h.total || 0;
+                        acc[h.item_id].less += h.less || 0;
+                        acc[h.item_id].add_receipts = [
+                            ...acc[h.item_id].add_receipts,
+                            ...(h.add_receipts || [])
+                        ];
 
-                <td>
-                    <div className="font-bold">
-                        {history.id}
-                    </div>
-                </td>
+                        return acc;
+                    }, {});
 
-
-                <td>
-                    <div className="font-bold">
-                        {item.description}
-                    </div>
-                </td>
-
-
-                <td>
-                    <div className="font-bold">
-                        {history.unit_of_measure}
-                    </div>
-                </td>
-               
-               <td>
-                    <div className="font-bold">
-                        {beginnings[history.id] ?? 0}
-                    </div>
-                </td>
-
-                <td>
-                     <div className="flex justify-between items-center">
-                        {history.add_receipts?.join(' + ')}
-                    </div>
-                </td>
-
-                <td>
-                    <div className="font-bold">
-                       {history.total}
-                    </div>
-                </td>
-                
-                
-                <td>
-                    <div className="font-bold">
-                       {history.less}
-                    </div>
-                </td>
-                
-                <td>
-                    <div className="font-bold">
-                       {history.total - history.less}
-                    </div>
-                </td>
-
-                </tr>
-                    ))
-                ))}
+                    return Object.values(grouped || {}).map(history => (
+                        <tr key={history.item_id}>
+                            <td>{history.item_id}</td>
+                            <td>{item.description}</td>
+                            <td>{history.unit_of_measure}</td>
+                            <td>{history.beginning_inventory}</td>
+                            <td>{history.add_receipts.join(' + ')}</td>
+                            <td>{history.total}</td>
+                            <td>{history.less}</td>
+                            <td>{history.total - history.less}</td>
+                        </tr>
+                    ));
+                })}
             </tbody>
             </table>
         </div>

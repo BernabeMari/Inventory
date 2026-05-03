@@ -82,8 +82,9 @@ class HeadController extends Controller
                     $request->end_date . ' 23:59:59',
                 ]);
             } 
-        }])->get();
 
+        }])->get();
+        
         $snapshotPath = storage_path('app/ending_balances.json');
         $beginnings = file_exists($snapshotPath) 
             ? json_decode(file_get_contents($snapshotPath), true) 
