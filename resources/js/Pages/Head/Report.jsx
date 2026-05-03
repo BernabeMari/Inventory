@@ -1,6 +1,6 @@
 import SearchField from "@/Components/SearchField";
 import SidebarLayout from "@/Layouts/SidebarLayout";
-import { useForm, usePage } from "@inertiajs/react";
+import { router, useForm, usePage } from "@inertiajs/react";
 import { useState } from "react";
 
 export default function(){
@@ -8,12 +8,14 @@ export default function(){
     const [createItemModal, setcreateItemModal] = useState(false)
     const [editItemModal, seteditItemModal] = useState(false)
     const [addReceiptModal, setaddReceiptModal] = useState(null)
-    const {beginnings, items, issuances, quantities, flash} = usePage().props
+    const {beginnings, items, issuances, quantities, history, flash} = usePage().props
     const {post, data, setData, reset} = useForm({
         unit_of_measure: '',
         description: '',
         total: '',
         quantity: [''],
+        start_date: null,
+        end_date: null
     })
 
     return(
@@ -26,18 +28,18 @@ export default function(){
             </div>
         )}
         {/* Search button */}
-              <div className="p-4">
+              <div className="p-4 flex flex-col md:flex-row md:justify-between md:items-center">
         
-                <SearchField
-                  value={search}
-                  onChange={(e) => setSearch(e.target.value)}
-                  placeholder="Search items..."
-                />
+                <div>
+                    <SearchField value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Search items..."/>
         
-                <p className="mt-4">
-                  You searched: {search}
-                </p>
-        
+                    <p className="mt-4">
+                    You searched: {search}
+                    </p>
+                </div>
+                <div className="">
+                    <input type="date" value={data.start_date} onChange={(e) => setData('start_date', e.target.value)}/> - <input type="date" value={data.end_date} onChange={(e) => setData('end_date', e.target.value)}/>
+                </div>
               </div>
 
 
@@ -59,61 +61,63 @@ export default function(){
             </thead>
             <tbody>
                 {items.map(item => (
-                <tr> 
+                    item.history?.map(history => (
+                        <tr> 
 
 
                 <td>
                     <div className="font-bold">
-                        {item.id}
+                        {history.id}
                     </div>
                 </td>
 
 
                 <td>
                     <div className="font-bold">
-                        {item.description}
+                        {history.description}
                     </div>
                 </td>
 
 
                 <td>
                     <div className="font-bold">
-                        {item.unit_of_measure}
+                        {history.unit_of_measure}
                     </div>
                 </td>
                
                <td>
                     <div className="font-bold">
-                        {beginnings[item.id] ?? 0}
+                        {beginnings[history.id] ?? 0}
                     </div>
                 </td>
 
                 <td>
                      <div className="flex justify-between items-center">
-                        {item.added_receipt?.join(' + ')}
+                        {history.add_receipts?.join(' + ')}
                     </div>
                 </td>
 
                 <td>
                     <div className="font-bold">
-                       {item.total}
+                       {history.total}
                     </div>
                 </td>
                 
                 
                 <td>
                     <div className="font-bold">
-                       {item.less}
+                       {history.less}
                     </div>
                 </td>
                 
                 <td>
                     <div className="font-bold">
-                       {item.total - item.less}
+                       {history.total - history.less}
                     </div>
                 </td>
 
                 </tr>
+                    ))
                 ))}
             </tbody>
             </table>

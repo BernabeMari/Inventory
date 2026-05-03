@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Head;
 
 use App\Http\Controllers\Controller;
+use App\Models\History;
 use App\Models\Issuance;
 use App\Models\Item;
 use App\Models\Request as ModelsRequest;
@@ -73,8 +74,15 @@ class HeadController extends Controller
         ]);
     }
 
-    public function headReportPage(){
-        $items = Item::with('issuances', 'quantities')->get();
+    public function headReportPage(Request $request){
+        $items = Item::with(['issuances', 'quantities', 'history' => function ($query) use ($request){
+            if($request->start_date && $request->end_date){
+                $query->whereBetween('created_at', [
+                    $request->start_date,
+                    $request->end_date,
+                ]);
+            } 
+        }])->get();
 
         $snapshotPath = storage_path('app/ending_balances.json');
         $beginnings = file_exists($snapshotPath) 
