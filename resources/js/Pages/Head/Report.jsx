@@ -18,6 +18,14 @@ export default function(){
         end_date: null
     })
 
+    function handleFilter(e){
+        e.preventDefault()
+        router.get(route('head_report_page'),{
+            start_date: data.start_date,
+            end_date: data.end_date
+        })
+    }
+
     return(
     <SidebarLayout>
     <div className="flex-col flex overflow-auto">
@@ -38,8 +46,11 @@ export default function(){
                     </p>
                 </div>
                 <div className="">
-                    <input type="date" value={data.start_date} onChange={(e) => setData('start_date', e.target.value)}/> - <input type="date" value={data.end_date} onChange={(e) => setData('end_date', e.target.value)}/>
-                </div>
+                    <form onSubmit={handleFilter}>
+                        <input type="date" value={data.start_date} onChange={(e) => setData('start_date', e.target.value)}/> - <input type="date" value={data.end_date} onChange={(e) => setData('end_date', e.target.value)}/>                    
+                        <button type="submit" onClick={() => post('/head/report')} className="btn btn-primary ml-4">Filter Report</button>
+                    </form> 
+              </div>
               </div>
 
 
@@ -74,7 +85,7 @@ export default function(){
 
                 <td>
                     <div className="font-bold">
-                        {history.description}
+                        {item.description}
                     </div>
                 </td>
 

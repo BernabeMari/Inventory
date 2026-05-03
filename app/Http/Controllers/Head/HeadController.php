@@ -78,8 +78,8 @@ class HeadController extends Controller
         $items = Item::with(['issuances', 'quantities', 'history' => function ($query) use ($request){
             if($request->start_date && $request->end_date){
                 $query->whereBetween('created_at', [
-                    $request->start_date,
-                    $request->end_date,
+                    $request->start_date . ' 00:00:00',
+                    $request->end_date . ' 23:59:59',
                 ]);
             } 
         }])->get();
