@@ -59,6 +59,7 @@ Route::middleware('role:endorser')->controller(EndorserController::class)->group
 // DEPARTMENT
 Route::middleware('role:department')->controller(RequestController::class)->group(function(){
     Route::post('/request-item', 'requestItem')->name('request_item');
+    Route::post('/cancel-request', 'cancelRequest')->name('cancel_request');
     Route::get('/department-dashboard', 'departmentPage')->name('department_page');
 });
 

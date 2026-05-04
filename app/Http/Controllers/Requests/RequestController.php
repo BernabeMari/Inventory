@@ -25,5 +25,12 @@ class RequestController extends Controller
     ]);
 
     return back()->with('success', 'Request Created Successfully');
-}
+    }
+
+    public function cancelRequest(Request $request){
+        $findRequest = ModelsRequest::findOrFail($request->request_id);
+        $findRequest->update([
+            'status' => 'cancelled',
+        ]);
+    }
 }

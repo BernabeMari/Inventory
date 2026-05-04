@@ -37,6 +37,10 @@ class EndorserController extends Controller
         $unfulfilledQuantities = array_map('intval', (array) $request->unfulfilled_quantity);
         $requestedQuantities = (array) $findRequest->quantity;
 
+        if($findRequest->status === 'cancelled'){
+            return back()->with('error', 'Request is Cancelled by Department');
+        }
+
         if (
             count($itemIds) !== count($requestedQuantities) ||
             count($fulfilledQuantities) !== count($requestedQuantities) ||

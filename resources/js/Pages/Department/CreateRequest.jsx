@@ -6,6 +6,7 @@ import { useState } from "react"
 
 export default function({requests}){
     const [requestItem, setrequestItemModal] = useState(false)
+    const [cancelModal, setCancelModal] = useState(false)
     const [search, setSearch] = useState('')
     const {auth, flash} = usePage().props
     const {post, data, setData, reset} = useForm({
@@ -20,6 +21,13 @@ export default function({requests}){
         e.preventDefault()
         post(route('request_item'),{
             onSuccess: ()=>{reset(); setrequestItemModal(false); }
+        })
+    }
+
+    function cancel_request(e){
+        e.preventDefault()
+        post(route('cancel_request'),{
+            onSuccess: () => setCancelModal(false)
         })
     }
 
@@ -59,7 +67,7 @@ export default function({requests}){
                 <th>STATUS</th>
                 <th>MESSAGE</th>
                 <th>ENDORSER'S MESSAGE</th>
-                <th>VIEW ISSUANCE</th>
+                <th>ACTION</th>
                 </tr>
             </thead>
             <tbody>
@@ -90,6 +98,9 @@ export default function({requests}){
                        {request.status === 'rejected' && (
                         <span className="text-red-500">{request.status}</span>
                        )}
+                       {request.status === 'cancelled' && (
+                        <span className="text-orange-500">{request.status}</span>
+                       )}
                     </div>
                 </td>
                 
@@ -110,9 +121,11 @@ export default function({requests}){
                 
                 <td>
                     <div className="font-bold">
-                       {request.status === 'approved' && (
+                       {request.status === 'approved' ? (
                         <button onClick={() => window.open(`/requests/${request.id}/pdf`, '_blank')} className="underline" type="button">View Issuance</button>
-                       )}
+                       ) : request.status === 'pending' ? (
+                        <button className="btn btn-sm btn-circle btn-ghost" onClick={() => {setCancelModal(true); setData({request_id: request.id})}}> ✕ </button> 
+                       ) : null}
                     </div>
                 </td>
                 
@@ -182,6 +195,30 @@ export default function({requests}){
                             setData('quantity', [...data.quantity, '']);
                         }}>+</button>
                         <button className="btn btn-primary">Send Request</button>
+                    </form>
+                
+                </div>
+                </dialog>
+            )}
+
+
+            {/* Cancel Request */}
+            {cancelModal && (
+                <dialog className="modal modal-open">
+                <div className="modal-box">
+                    <button
+                    className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2"
+                    onClick={() => setCancelModal(false)}
+                    >
+                    ✕
+                    </button>
+
+                    <form onSubmit={cancel_request} className="flex flex-col gap-4">
+                        <p>Are you sure you want to <p className="badge badge-ghost bold badge-xl">CANCEL</p> this request?</p>                 
+                                <div className="flex flex-row gap-10 justify-center">
+                                    <button type="submit" className="btn btn-success w-10">Yes</button>
+                                    <button onClick={() => setCancelModal(false)} className="btn btn-error w-10">No</button>
+                                </div>
                     </form>
                 
                 </div>

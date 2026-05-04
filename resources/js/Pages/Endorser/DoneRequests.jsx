@@ -36,7 +36,7 @@ export default function(){
                             </tr>
                         </thead>
                         <tbody>
-                        {requests.filter(request => request.status === 'approved' || request.status === 'rejected').filter(request => request.status.toLowerCase().includes(search.toLowerCase()) || request.user?.department.toLowerCase().includes(search.toLowerCase()) || request.message && request.message.toLowerCase().includes(search.toLowerCase()) || request.item.toLowerCase().includes(search.toLowerCase())).map(request => (
+                        {requests.filter(request => request.status !== 'pending').filter(request => request.status.toLowerCase().includes(search.toLowerCase()) || request.user?.department.toLowerCase().includes(search.toLowerCase()) || request.message && request.message.toLowerCase().includes(search.toLowerCase()) || request.item.toLowerCase().includes(search.toLowerCase())).map(request => (
                             <tr> 
                                 
                                 <td>
@@ -94,10 +94,16 @@ export default function(){
                                 
                                 <td>
                                     <div className="font-bold">
-                                        {request.status === 'approved' ? (
+                                        {request.status === 'approved' && (
                                             <span className="text-green-500">{request.status}</span>
-                                        ) : (
+                                        )}
+                                        
+                                        {request.status === 'rejected' && (
                                             <span className="text-red-500">{request.status}</span>
+                                        )}
+
+                                        {request.status === 'cancelled' && (
+                                            <span className="text-orange-500">{request.status}</span>
                                         )}
                                     </div>
                                 </td>

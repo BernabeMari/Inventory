@@ -238,7 +238,7 @@ export default function(){
                             >
                             ✕
                             </button>
-                            <p>Are you sure you want to <p className="badge badge-ghost badge-xl">REJECT</p> this request?</p>
+                            <p>Are you sure you want to <p className="badge badge-ghost bold badge-xl">REJECT</p> this request?</p>
                             <form onSubmit={reject} className="flex flex-col mt-5 justify-center">
                                 
                                 <label className="input validator">
