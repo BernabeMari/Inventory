@@ -73,21 +73,21 @@ export default function(){
                                 
                                 <td>
                                     <div className="font-bold">
-                                        {request.issued_item}
+                                        {request.issuances?.map(issuance => issuance.issued_item).join(', ')}
                                     </div>
                                 </td>
                                 
                                 
                                 <td>
                                     <div className="font-bold">
-                                        {request.fulfilled_quantity}
+                                        {request.issuances?.map(issuance => issuance.fulfilled_quantity).join(', ')}
                                     </div>
                                 </td>
                                 
                                 
                                 <td>
                                     <div className="font-bold">
-                                        {request.unfulfilled_quantity}
+                                        {request.issuances?.map(issuance => issuance.unfulfilled_quantity).join(', ')}
                                     </div>
                                 </td>
                                 
@@ -102,21 +102,20 @@ export default function(){
                                     </div>
                                 </td>
                                 
-                                
+
                                 <td>
                                     <div className="font-bold">
                                         {request.message}
                                     </div>
                                 </td>
-                                
-                                
+
+
                                 <td>
                                     <div className="font-bold">
                                         {request.endorser_message}
                                     </div>
                                 </td>
-
-
+                               
                             </tr>
                         ))}
                         </tbody>

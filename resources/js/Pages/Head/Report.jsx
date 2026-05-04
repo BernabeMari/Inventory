@@ -26,10 +26,10 @@ export default function(){
     return(
     <SidebarLayout>
     <div className="flex-col flex overflow-auto">
-        <h3 className="font-bold text-lg m-4">Create Item</h3>
-        {flash.success && (
-            <div className="alert alert-success mb-4">
-                {flash.success}
+        <h3 className="font-bold text-lg m-4">Report</h3>
+        {flash.error && (
+            <div className="alert alert-error mb-4">
+                {flash.error}
             </div>
         )}
         {/* Search button */}

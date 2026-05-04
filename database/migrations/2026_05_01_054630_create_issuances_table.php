@@ -16,7 +16,6 @@ return new class extends Migration
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->foreignId('request_id')->constrained()->onDelete('cascade');
             $table->foreignId('item_id')->constrained()->onDelete('cascade');
-            $table->string('endorser_message')->nullable();
             $table->json('issued_item');
             $table->json('fulfilled_quantity');
             $table->json('unfulfilled_quantity');

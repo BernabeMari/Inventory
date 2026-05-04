@@ -77,12 +77,15 @@ class HeadController extends Controller
     public function headReportPage(Request $request){
         $items = Item::with(['issuances', 'quantities', 'history' => function ($query) use ($request){
             if($request->start_date && $request->end_date){
+                if ($request->start_date > $request->end_date) {
+                    return back()->with('error', 'Start date cannot be greater than end date.');
+                }
+
                 $query->whereBetween('created_at', [
                     $request->start_date . ' 00:00:00',
                     $request->end_date . ' 23:59:59',
                 ]);
             } 
-
         }])->get();
         
         $snapshotPath = storage_path('app/ending_balances.json');

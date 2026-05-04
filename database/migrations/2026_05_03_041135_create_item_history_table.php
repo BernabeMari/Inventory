@@ -16,7 +16,7 @@ return new class extends Migration
             $table->foreignId('item_id');
             $table->string('unit_of_measure');
             $table->integer('beginning_inventory');
-            $table->json('add_receipts');
+            $table->json('add_receipts')->nullable();
             $table->integer('total');
             $table->integer('less');
             $table->integer('ending_balance');

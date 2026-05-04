@@ -12,6 +12,7 @@ class Request extends Model
         'status',
         'message',
         'user_id',
+        'endorser_message',
     ];
 
     protected $casts = [
@@ -28,6 +29,6 @@ class Request extends Model
     }
 
     public function issuances(){
-        return $this->hasOne(Issuance::class, 'request_id');
+        return $this->hasMany(Issuance::class);
     }
 }

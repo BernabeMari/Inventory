@@ -17,7 +17,7 @@ class EndorserController extends Controller
     }
 
     public function endorserDoneRequestPage(){
-        $requests = ModelsRequest::with('user')->get();
+        $requests = ModelsRequest::with('user', 'issuances')->get();
         return inertia('Endorser/DoneRequests', ['requests' => $requests]);
     }
 
@@ -78,9 +78,12 @@ class EndorserController extends Controller
                 'issued_item' => $issuedItems[$index],
                 'fulfilled_quantity' => $fulfilledQuantities[$index],
                 'unfulfilled_quantity' => $unfulfilledQuantities[$index],
-                'endorser_message' => $request->endorser_message,
             ]);
         }
+
+        $findRequest->update([
+            'endorser_message' => $request->endorser_message
+        ]);
 
         return back()->with('success', 'Request approved successfully');
     }

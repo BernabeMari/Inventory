@@ -13,7 +13,6 @@ class Issuance extends Model
         'issued_item',
         'fulfilled_quantity',
         'unfulfilled_quantity',
-        'endorser_message',
     ];
     protected $casts = [
         'issued_item' => 'array',
