@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Department;
 
 use App\Http\Controllers\Controller;
+use App\Models\Issuance;
 use App\Models\Request as ModelsRequest;
 use App\Models\User;
 use Barryvdh\DomPDF\Facade\Pdf;
@@ -25,12 +26,11 @@ class DepartmentController extends Controller
     }
 
     public function downloadPdf($id){
-        $request = ModelsRequest::where('id', $id)
-        ->where('user_id', auth()->id())
-        ->firstOrFail();
+        $request = ModelsRequest::with('issuances')->findOrFail($id);
+        $issuances = $request->issuances;
+        
+        $pdf = Pdf::loadView('pdf.issuance', compact('request', 'issuances'));
 
-        $pdf = Pdf::loadView('pdf.issuance', compact('request'));
-
-        return $pdf->stream('request-' . $request->id . '.pdf');
+        return $pdf->stream('requests' . $request->id . '.pdf');
     }
 }
