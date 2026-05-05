@@ -85,8 +85,19 @@ class HeadController extends Controller
                     $request->start_date . ' 00:00:00',
                     $request->end_date . ' 23:59:59',
                 ]);
-            } 
-        }])->get();
+
+                }
+                
+        }]);
+
+        if(filled($request->search)){
+            $items->where('description', 'like', '%' . $request->search . '%')
+            ->orWhere('unit_of_measure', 'like', '%' . $request->search . '%');
+        }
+
+        
+        $items = $items->get();
+        
         
         $snapshotPath = storage_path('app/ending_balances.json');
         $beginnings = file_exists($snapshotPath) 

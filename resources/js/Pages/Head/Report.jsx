@@ -1,11 +1,12 @@
 import SearchField from "@/Components/SearchField";
 import SidebarLayout from "@/Layouts/SidebarLayout";
 import { router, useForm, usePage } from "@inertiajs/react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 export default function(){
     const [search, setSearch] = useState('')
     const {beginnings, items, flash} = usePage().props
+    const [error, setError] = useState(flash.error)
     const {post, data, setData, reset} = useForm({
         unit_of_measure: '',
         description: '',
@@ -23,20 +24,32 @@ export default function(){
         })
     }
 
+    function handleSearch(e){
+        setSearch(e.target.value)
+        router.get(route('head_report_page'), {search: e.target.value})
+    }
+
+    useEffect(() => {
+        if(error){
+            const timer = setTimeout(() => {
+                setError(null)
+            }, 3000)
+
+            return () => clearTimeout(timer)
+        }
+    }, [error])
     return(
     <SidebarLayout>
     <div className="flex-col flex overflow-auto">
         <h3 className="font-bold text-lg m-4">Report</h3>
-        {flash.error && (
-            <div className="alert alert-error mb-4">
-                {flash.error}
-            </div>
-        )}
+        {error && (<div className="alert alert-error mb-4">
+                {error}
+            </div>)}
         {/* Search button */}
               <div className="p-4 flex flex-col md:flex-row md:justify-between md:items-center">
         
                 <div>
-                    <SearchField value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Search items..."/>
+                    <SearchField value={search} onChange={handleSearch} placeholder="Search items..."/>
         
                     <p className="mt-4">
                     You searched: {search}
