@@ -22,7 +22,11 @@ class DepartmentController extends Controller
             ->orWhere('quantity', 'like', '%' . $request->search . '%')
             ->orWhere('endorser_message', 'like', '%' . $request->search . '%');
         }
-
+        
+        if(filled($request->pending)){
+            $requests->where('status', '=', 'pending');
+        }
+        
         $requests = $requests->get();
 
         return inertia('Department/CreateRequest', ['requests' => $requests]);
@@ -47,6 +51,6 @@ class DepartmentController extends Controller
         
         $pdf = Pdf::loadView('pdf.issuance', compact('request', 'issuances'));
 
-        return $pdf->stream('requests' . $request->id . '.pdf');
+        return $pdf->download('requests' . $request->id . '.pdf');
     }
 }

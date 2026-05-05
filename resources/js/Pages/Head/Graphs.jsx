@@ -1,8 +1,12 @@
 import SidebarLayout from "@/Layouts/SidebarLayout";
+import { router, useForm } from "@inertiajs/react";
 import { PieChart, Pie, Cell, Tooltip, Legend, BarChart, Bar, XAxis, YAxis, CartesianGrid, ResponsiveContainer } from "recharts";
 
 export default function Dashboard({ statusChartData = {}, quantityChartData = {}, departmentChartData = [] }) {
-
+    const {post, setData, data} = useForm({
+        start_date: '',
+        end_date: ''
+    })
     const statusData = Object.entries(statusChartData).map(([name, value]) => ({
         name,
         value,
@@ -17,11 +21,22 @@ export default function Dashboard({ statusChartData = {}, quantityChartData = {}
 
     const COLORS = ["#4ade80", "#facc15", "#f87171", "#60a5fa"];
 
+    function handleFilter(e){
+        router.get(route('head_page'),{
+            start_date: '',
+            end_date: '',
+        })
+    }
     return (
         <SidebarLayout>
            <div className="flex-col flex overflow-auto">
             <h3 className="font-bold text-lg m-4">Requests</h3> 
-                
+                <div className="flex justify-end mb-5">
+                    <form onSubmit={handleFilter}>
+                        <input type="date" value={data.start_date} onChange={(e) => setData('start_date', e.target.value)}/> - <input type="date" value={data.end_date} onChange={(e) => setData('end_date', e.target.value)}/>                    
+                        <button type="submit" className="btn btn-primary ml-4">Filter Report</button>
+                    </form> 
+                </div>
                 <div className="flex overflow-auto flex-row gap-10 justify-center">
                     <div className="card bg-base-100 shadow">
                         <div className="card-body">

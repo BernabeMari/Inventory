@@ -29,21 +29,12 @@ export default function(){
         router.get(route('head_report_page'), {search: e.target.value})
     }
 
-    useEffect(() => {
-        if(error){
-            const timer = setTimeout(() => {
-                setError(null)
-            }, 3000)
-
-            return () => clearTimeout(timer)
-        }
-    }, [error])
     return(
     <SidebarLayout>
     <div className="flex-col flex overflow-auto">
         <h3 className="font-bold text-lg m-4">Report</h3>
-        {error && (<div className="alert alert-error mb-4">
-                {error}
+        {flash.error && (<div className="alert alert-error mb-4">
+                {flash.error}
             </div>)}
         {/* Search button */}
               <div className="p-4 flex flex-col md:flex-row md:justify-between md:items-center">

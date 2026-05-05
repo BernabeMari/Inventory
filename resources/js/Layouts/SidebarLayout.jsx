@@ -15,7 +15,14 @@ export default function({children}){
         {/* Navbar */}
         <nav className="navbar w-full bg-base-300">
         <div className="flex-1">
-            <div className="px-4">Mezzanine</div>
+            <div className="px-4 flex-row flex items-center gap-3">
+                <img src={`/storage/tcu-logo.jpg`} alt="" className="ml-2 rounded-full h-10 w-10"/>
+                <div className="">
+                    <p className="text-xl mb-0 leading-tight">Taguig City University</p>
+                    <p className="leading-tight">Office Supply</p>
+
+                </div>
+            </div>
         </div>
 
         <div className="flex-none">

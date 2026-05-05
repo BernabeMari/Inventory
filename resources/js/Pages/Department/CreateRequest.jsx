@@ -14,7 +14,8 @@ export default function({requests}){
         quantity: [''],
         status: '',
         message: '',
-        user_id: ''
+        user_id: '',
+        pending: ''
     })
 
     function request_item(e){
@@ -35,9 +36,10 @@ export default function({requests}){
         setSearch(e.target.value)
         router.get(route('department_page'), {search: e.target.value})
     }
+    
     return(
         <SidebarLayout>
-        <div className="flex-col flex overflow-auto">
+        <div className="flex-col flex overflow-auto relative">
         <h3 className="font-bold text-lg m-4">Create Request</h3>
         {flash.success && (
             <div className="alert alert-success mb-4">
@@ -54,9 +56,26 @@ export default function({requests}){
             </div>
 
             {/* Add Item Button */}
-            <div className="bg-white m-6 rounded-full border border-black ">
+            <div className="bg-white absolute top-0 right-0 m-6 rounded-full border border-black ">
                 <button onClick={(e) => {setrequestItemModal(true);setData({user_id: data.id, item: [''], quantity: ['']})}} className="btn btn-soft btn-secondary rounded-full p-4"><PlusIcon className="w-5 h-5" />Create Request</button>
             </div>
+
+            <div className="gap-5 flex">
+                <button value="pending" onClick={(e) => setData('status', e.target.value)} className="btn bg-yellow-500 p-2 text-white hover:bg-yellow-600">
+                    Pending
+                </button>
+                <button className="btn bg-green-500 p-2 text-white hover:bg-green-600">
+                    Approved
+                </button>
+                <button className="btn bg-red-500 p-2 text-white hover:bg-red-600">
+                    Rejected
+                </button>
+                <button className="btn bg-gray-500 p-2 text-white hover:bg-gray-600">
+                    Cancelled
+                </button>
+            </div>
+
+            
         </div>
         
 
@@ -74,6 +93,7 @@ export default function({requests}){
                 <th>ACTION</th>
                 </tr>
             </thead>
+            
             <tbody>
                 {requests.map(request => (
                 <tr> 
