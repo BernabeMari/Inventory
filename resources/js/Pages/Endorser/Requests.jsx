@@ -1,6 +1,6 @@
 import SearchField from "@/Components/SearchField";
 import SidebarLayout from "@/Layouts/SidebarLayout";
-import { useForm, usePage } from "@inertiajs/react";
+import { router, useForm, usePage } from "@inertiajs/react";
 import { useState } from "react";
 
 export default function(){
@@ -32,6 +32,11 @@ export default function(){
             onSuccess: () => setapproveModal(false)
         })
     }
+
+    function handleSearch(e){
+        setSearch(e.target.value)
+        router.get(route('endorser_page'), {search: e.target.value})
+    }
     return(
     <SidebarLayout>
          <div className="flex-col flex overflow-auto">
@@ -45,7 +50,7 @@ export default function(){
                 
                         <SearchField
                           value={search}
-                          onChange={(e) => setSearch(e.target.value)}
+                          onChange={handleSearch}
                           placeholder="Search items..."
                           />
                 
@@ -71,7 +76,7 @@ export default function(){
                         </tr>
                     </thead>
                     <tbody>
-                        {requests.filter(request => request.status === 'pending').filter(request => request.status.toLowerCase().includes(search.toLowerCase()) || request.user?.department?.toLowerCase().includes(search.toLowerCase()) || request.message && request.message.toLowerCase().includes(search.toLowerCase()) || request.item?.some(item => item.toLowerCase().includes(search.toLowerCase()))).map(request => (
+                        {requests.map(request => (
                             <tr> 
         
         

@@ -10,9 +10,24 @@ use Illuminate\Http\Request;
 
 class EndorserController extends Controller
 {
-    public function endorserPage(){
-        $requests = ModelsRequest::with('user', 'items', 'issuances')->get();
+    public function endorserPage(Request $request){
+        $requests = ModelsRequest::with('user', 'items', 'issuances')->where('status', '=', 'pending');
         $items = Item::get();
+
+        if (filled($request->search)) {
+        $requests->where(function ($query) use ($request) {
+            $query->where('item', 'like', '%' . $request->search . '%')
+                ->orWhere('quantity', 'like', '%' . $request->search . '%')
+                ->orWhere('message', 'like', '%' . $request->search . '%');
+        })
+        ->orWhereHas('user', function ($query) use ($request) {
+            $query->where('department', 'like', '%' . $request->search . '%')->where('status', '=', 'pending');
+        });
+    }
+
+
+        $requests = $requests->get();
+
         return inertia('Endorser/Requests', ['requests' => $requests, 'items' => $items]);
     }
 
