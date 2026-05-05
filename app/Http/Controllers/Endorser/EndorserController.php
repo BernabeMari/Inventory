@@ -43,6 +43,10 @@ class EndorserController extends Controller
         })
         ->orWhereHas('user', function ($query) use ($request) {
             $query->where('department', 'like', '%' . $request->search . '%')->where('status', '!=', 'pending');
+        })
+        ->orWhereHas('issuances', function ($query) use ($request) {
+            $query->where('fulfilled_quantity', 'like', '%' . $request->search . '%')->where('status', '!=', 'pending')
+            ->orWhere('unfulfilled_quantity', 'like', '%' . $request->search . '%')->where('status', '!=', 'pending');
         });
     }
 
