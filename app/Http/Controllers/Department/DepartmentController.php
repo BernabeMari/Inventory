@@ -23,19 +23,6 @@ class DepartmentController extends Controller
             ->orWhere('endorser_message', 'like', '%' . $request->search . '%');
         }
         
-        if(filled($request->pending)){
-            $requests->where('status', '=', 'pending');
-        }
-        if(filled($request->approved)){
-            $requests->where('status', '=', 'approved');
-        }
-        if(filled($request->rejected)){
-            $requests->where('status', '=', 'rejected');
-        }
-        if(filled($request->cancelled)){
-            $requests->where('status', '=', 'cancelled');
-        }
-        
         $requests = $requests->get();
 
         return inertia('Department/CreateRequest', ['requests' => $requests]);

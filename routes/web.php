@@ -35,6 +35,7 @@ Route::middleware('role:admin')->controller(AdminController::class)->group(funct
 Route::middleware('role:head')->controller(HeadController::class)->group(function(){
     Route::get('/head-dashboard', 'headPage')->name('head_page');
     Route::get('/head-report', 'headReportPage')->name('head_report_page');
+    Route::post('/reset-inventory', 'resetInventory')->name('reset_inventory');
 });
 
 

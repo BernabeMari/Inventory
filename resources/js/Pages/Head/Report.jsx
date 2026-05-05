@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 
 export default function(){
     const [search, setSearch] = useState('')
+    const [saveModal, setSaveModal] = useState(false)
     const {beginnings, items, flash} = usePage().props
     const [error, setError] = useState(flash.error)
     const {post, data, setData, reset} = useForm({
@@ -29,9 +30,14 @@ export default function(){
         router.get(route('head_report_page'), {search: e.target.value})
     }
 
+    function resetInventory(e){
+        e.preventDefault()  
+        post(route('reset_inventory'), {less: 0, add_receipts: []})
+    }
+
     return(
     <SidebarLayout>
-    <div className="flex-col flex overflow-auto">
+    <div className="flex-col flex overflow-auto relative">
         <h3 className="font-bold text-lg m-4">Report</h3>
         {flash.error && (<div className="alert alert-error mb-4">
                 {flash.error}
@@ -46,7 +52,43 @@ export default function(){
                     You searched: {search}
                     </p>
                 </div>
-                <div className="">
+
+
+                {/* save button */}
+                <div className="absolute top-0 right-0">
+                    <button onClick={(e) => {setSaveModal(true); setData({id: data.id})}} className="btn"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 3.75H6.912a2.25 2.25 0 0 0-2.15 1.588L2.35 13.177a2.25 2.25 0 0 0-.1.661V18a2.25 2.25 0 0 0 2.25 2.25h15A2.25 2.25 0 0 0 21.75 18v-4.162c0-.224-.034-.447-.1-.661L19.24 5.338a2.25 2.25 0 0 0-2.15-1.588H15M2.25 13.5h3.86a2.25 2.25 0 0 1 2.012 1.244l.256.512a2.25 2.25 0 0 0 2.013 1.244h3.218a2.25 2.25 0 0 0 2.013-1.244l.256-.512a2.25 2.25 0 0 1 2.013-1.244h3.859M12 3v8.25m0 0-3-3m3 3 3-3" />
+                    </svg>
+                    </button>
+                </div>
+                
+
+                {/* saveModal */}
+            {saveModal && (
+                <dialog className="modal modal-open">
+                <div className="modal-box">
+                    <button
+                    className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2"
+                    onClick={() => setSaveModal(false)}
+                    >
+                    ✕
+                    </button>
+
+                    <form onSubmit={resetInventory} className="flex flex-col gap-4">
+                        <p>Are you sure you want to <p className="badge badge-ghost bold badge-xl">SAVE</p> current</p>                 
+                                <div className="flex flex-row gap-10 justify-center">
+                                    <button type="submit" className="btn btn-success w-10">Yes</button>
+                                    <button onClick={() => setSaveModal(false)} className="btn btn-error w-10">No</button>
+                                </div>
+                    </form>
+                
+                </div>
+                </dialog>
+            )}
+
+
+                
+                <div>
                     <form onSubmit={handleFilter}>
                         <input type="date" value={data.start_date} onChange={(e) => setData('start_date', e.target.value)}/> - <input type="date" value={data.end_date} onChange={(e) => setData('end_date', e.target.value)}/>                    
                         <button type="submit" className="btn btn-primary ml-4">Filter Report</button>
