@@ -61,16 +61,19 @@ export default function({requests}){
             </div>
 
             <div className="gap-5 flex">
-                <button value="pending" onClick={(e) => setData('status', e.target.value)} className="btn bg-yellow-500 p-2 text-white hover:bg-yellow-600">
+                <button value={''} onClick={handleSearch} className="btn bg-slate-500 p-2 text-white hover:bg-slate-600">
+                    All
+                </button>
+                <button value={'pending'} onClick={handleSearch} className="btn bg-yellow-500 p-2 text-white hover:bg-yellow-600">
                     Pending
                 </button>
-                <button className="btn bg-green-500 p-2 text-white hover:bg-green-600">
+                <button value={'approved'} onClick={handleSearch} className="btn bg-green-500 p-2 text-white hover:bg-green-600">
                     Approved
                 </button>
-                <button className="btn bg-red-500 p-2 text-white hover:bg-red-600">
+                <button value={'rejected'} onClick={handleSearch} className="btn bg-red-500 p-2 text-white hover:bg-red-600">
                     Rejected
                 </button>
-                <button className="btn bg-gray-500 p-2 text-white hover:bg-gray-600">
+                <button value={'cancelled'} onClick={handleSearch} className="btn bg-gray-500 p-2 text-white hover:bg-gray-600">
                     Cancelled
                 </button>
             </div>
