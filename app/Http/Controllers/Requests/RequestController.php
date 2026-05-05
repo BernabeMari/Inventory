@@ -10,11 +10,6 @@ use Illuminate\Support\Facades\Auth;
 
 class RequestController extends Controller
 {
-    public function departmentPage(){
-        $requests = ModelsRequest::get();
-        return inertia('Department/CreateRequest', ['requests' => $requests]);
-    }
-
     public function requestItem(Request $request){
     ModelsRequest::create([
         'item' => $request->item,

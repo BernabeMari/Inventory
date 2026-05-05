@@ -1,7 +1,7 @@
 import SearchField from "@/Components/SearchField"
 import SidebarLayout from "@/Layouts/SidebarLayout"
 import { PlusIcon } from "@heroicons/react/24/solid"
-import { useForm, usePage } from "@inertiajs/react"
+import { router, useForm, usePage } from "@inertiajs/react"
 import { useState } from "react"
 
 export default function({requests}){
@@ -31,6 +31,10 @@ export default function({requests}){
         })
     }
 
+    function handleSearch(e){
+        setSearch(e.target.value)
+        router.get(route('department_page'), {search: e.target.value})
+    }
     return(
         <SidebarLayout>
         <div className="flex-col flex overflow-auto">
@@ -43,7 +47,7 @@ export default function({requests}){
         {/* Search button */}
         <div className="p-4 flex flex-col md:flex-row md:justify-between md:items-center">
             <div>
-                <SearchField value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Search requests..."/>
+                <SearchField value={search} onChange={handleSearch} placeholder="Search requests..."/>
                 <p className="mt-4">
                 You searched: {search}
                 </p> 
@@ -71,7 +75,7 @@ export default function({requests}){
                 </tr>
             </thead>
             <tbody>
-                {requests.filter(request => request.item?.some(item => item.toLowerCase().includes(search.toLowerCase())) || request.message && request.message.toLowerCase().includes(search.toLowerCase()) || request.status.toLowerCase().includes(search.toLowerCase())).filter(request => request.user_id === auth.user.id).map(request => (
+                {requests.map(request => (
                 <tr> 
 
                 <td>

@@ -12,6 +12,22 @@ use Illuminate\Support\Facades\Auth;
 
 class DepartmentController extends Controller
 {
+    public function departmentPage(Request $request){
+        $requests = ModelsRequest::query();
+        
+        if(filled($request->search)){
+            $requests->where('item', 'like', '%' . $request->search . '%')
+            ->orWhere('status', 'like', '%' . $request->search . '%')
+            ->orWhere('message', 'like', '%' . $request->search . '%')
+            ->orWhere('quantity', 'like', '%' . $request->search . '%')
+            ->orWhere('endorser_message', 'like', '%' . $request->search . '%');
+        }
+
+        $requests = $requests->get();
+
+        return inertia('Department/CreateRequest', ['requests' => $requests]);
+    }
+
     public function profilePage(){
         $profile = User::get();   
         return inertia('Department/Profile', ['profile' => $profile]);
