@@ -1,7 +1,7 @@
 import SearchField from "@/Components/SearchField";
 import SidebarLayout from "@/Layouts/SidebarLayout";
 import { PlusIcon, PencilSquareIcon, TrashIcon  } from "@heroicons/react/24/solid";
-import { useForm, usePage } from "@inertiajs/react";
+import { router, useForm, usePage } from "@inertiajs/react";
 import { useState } from "react";
 import CreatableSelect from "react-select/creatable";
 
@@ -46,6 +46,11 @@ export default function(){
         })
     }
 
+    function handleSearch(e){
+        setSearch(e.target.value)
+        router.get(route('receiver_page'), {search: e.target.value})
+    }
+
     return(
     <SidebarLayout>
     <div className="flex-col flex overflow-auto">
@@ -55,11 +60,16 @@ export default function(){
                 {flash.success}
             </div>
         )}
+        {flash.error && (
+            <div className="alert alert-error mb-4">
+                {flash.error}
+            </div>
+        )}
         {/* Search button */}
               <div className="p-4 flex flex-col md:flex-row md:justify-between md:items-center">
         
                 <div>
-                    <SearchField value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Search items..."/>
+                    <SearchField value={search} onChange={handleSearch} placeholder="Search items..."/>
         
                     <p className="mt-4">
                     You searched: {search}
@@ -88,7 +98,7 @@ export default function(){
                 </tr>
             </thead>
             <tbody>
-                {items.filter(item => item.description.toLowerCase().includes(search.toLowerCase()) || item.unit_of_measure.toLowerCase().includes(search.toLowerCase())).map(item => (
+                {items.map(item => (
                 <tr> 
 
 

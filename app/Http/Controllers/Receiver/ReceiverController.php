@@ -10,9 +10,20 @@ use Illuminate\Http\Request;
 
 class ReceiverController extends Controller
 {
-    public function receiverPage(){
+    public function receiverPage(Request $request){
         $UnitOfMeasure = UnitofMeasure::get();
-        $items = Item::with('requests', 'quantities', 'issuances')->get();
+        $items = Item::with('requests', 'quantities', 'issuances');
+
+        if(filled($request->search)){
+            $items->where('description', 'like', '%' . $request->search . '%')
+            ->orWhere('unit_of_measure', 'like', '%' . $request->search . '%');
+        }
+
+        $items = $items->get();
+
+        if($items->isEmpty() && filled($request->search)){
+            return back()->with('error', 'No matching items found');
+        }
         return inertia('Receiver/CreateItem', ['unitofmeasure' => $UnitOfMeasure, 'items' => $items]);
     }
 
