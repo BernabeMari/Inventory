@@ -179,6 +179,25 @@ export default function({requests}){
                                             newQuantities[index] = e.target.value;
                                             setData('quantity', newQuantities);
                                         }} min={0} type="number" required placeholder="Quantity" title="Input Quantity of Request Here" />
+                                        {index > 0 && (
+                                        <button
+                                            type="button"
+                                            onClick={() => {
+                                            const newItems = [...data.item];
+                                            const newQuantities = [...data.quantity];
+
+                                            newItems.splice(index, 1);
+                                            newQuantities.splice(index, 1);
+
+                                            setData('item', newItems);
+                                            setData('quantity', newQuantities);
+                                            }}
+                                        >
+                                           <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" className="size-5">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
+                                            </svg>
+                                        </button>
+                                        )}
                                     </label>
                                 </div>
                             ))}
