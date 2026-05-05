@@ -1,18 +1,23 @@
 import SearchField from "@/Components/SearchField";
 import SidebarLayout from "@/Layouts/SidebarLayout";
-import { usePage } from "@inertiajs/react";
+import { router, usePage } from "@inertiajs/react";
 import { useState } from "react";
 
 export default function(){
     const [search, setSearch] = useState('')
     const {requests} = usePage().props
+
+    function handleSearch(e){
+        setSearch(e.target.value)
+        router.get(route('endorser_done_request_page'), {search: e.target.value})
+    }
     return(
         <SidebarLayout>
             <div className="flex-col flex overflow-auto">
                 <h3 className="font-bold text-lg m-4">Done Requests</h3>
                 {/* Search button */}
                 <div className="p-4">          
-                    <SearchField value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Search items..."/>
+                    <SearchField value={search} onChange={handleSearch} placeholder="Search items..."/>
                         <p className="mt-4">You searched: {search}</p>
                 </div>
 
@@ -36,7 +41,7 @@ export default function(){
                             </tr>
                         </thead>
                         <tbody>
-                        {requests.filter(request => request.status !== 'pending').filter(request => request.status.toLowerCase().includes(search.toLowerCase()) || request.user?.department.toLowerCase().includes(search.toLowerCase()) || request.message && request.message.toLowerCase().includes(search.toLowerCase()) || request.item.toLowerCase().includes(search.toLowerCase())).map(request => (
+                        {requests.map(request => (
                             <tr> 
                                 
                                 <td>

@@ -31,8 +31,24 @@ class EndorserController extends Controller
         return inertia('Endorser/Requests', ['requests' => $requests, 'items' => $items]);
     }
 
-    public function endorserDoneRequestPage(){
-        $requests = ModelsRequest::with('user', 'issuances')->get();
+    public function endorserDoneRequestPage(Request $request){
+        $requests = ModelsRequest::with('user', 'issuances')->where('status', '!=', 'pending');
+
+        if (filled($request->search)) {
+        $requests->where(function ($query) use ($request) {
+            $query->where('item', 'like', '%' . $request->search . '%')
+                ->orWhere('quantity', 'like', '%' . $request->search . '%')
+                ->orWhere('status', 'like', '%' . $request->search . '%')
+                ->orWhere('message', 'like', '%' . $request->search . '%');
+        })
+        ->orWhereHas('user', function ($query) use ($request) {
+            $query->where('department', 'like', '%' . $request->search . '%')->where('status', '!=', 'pending');
+        });
+    }
+
+
+        $requests = $requests->get();
+
         return inertia('Endorser/DoneRequests', ['requests' => $requests]);
     }
 
