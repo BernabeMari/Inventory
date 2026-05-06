@@ -107,17 +107,4 @@ class HeadController extends Controller
         return inertia('Head/Report', ['items' => $items, 'beginnings' => $beginnings]);
         
     }
-
-    public function resetInventory(Request $request){
-        $items = Item::with('quantities', 'history')->get();
-        
-
-        foreach($items as $item){
-            $item->update([
-            'less' => 0,
-            'added_receipt' => [],
-
-        ]);
-        }
-    }
 }

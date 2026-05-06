@@ -53,7 +53,7 @@ export default function({users}){
 
   return(
     <SidebarLayout>
-    <div className="flex-col flex overflow-auto">
+    <div className="flex-col flex overflow-auto relative">
     <h3 className="font-bold text-lg m-4">Create Item</h3>
       {/* Search button */}
       <div className="p-4 flex flex-row gap-4 ">

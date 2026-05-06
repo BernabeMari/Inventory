@@ -12,7 +12,7 @@ class ReceiverController extends Controller
 {
     public function receiverPage(Request $request){
         $UnitOfMeasure = UnitofMeasure::get();
-        $items = Item::with('requests', 'quantities', 'issuances');
+        $items = Item::with('requests', 'quantities', 'issuances', 'history');
 
         if(filled($request->search)){
             $items->where('description', 'like', '%' . $request->search . '%')
@@ -84,5 +84,32 @@ class ReceiverController extends Controller
         ]);
 
         return back()->with('success', 'Receipt updated successfully');
+    }
+
+    public function resetInventory(){
+        $items = Item::with('quantities', 'history')->get();
+        
+        foreach($items as $item){
+            $lastHistory = $item->history()->orderByDesc('id')->first();
+            
+            $item->history()->create([
+                'item_id' => $item->id,
+                'unit_of_measure' => $item->unit_of_measure,
+                'add_receipts' => $item->added_receipt,
+                'total' => $item->total,
+                'less' => $item->less,
+                'ending_balance' => $item->total - $item->less,
+                'beginning_inventory' => $lastHistory ? $lastHistory?->ending_balance : 0,
+            ]);
+        }
+
+        foreach($items as $item){
+            $item->update([
+            'total' => $item->total - $item->less,
+            'less' => 0,
+            'added_receipt' => [],
+
+        ]);
+        }
     }
 }

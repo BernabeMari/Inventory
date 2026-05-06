@@ -7,10 +7,11 @@ import CreatableSelect from "react-select/creatable";
 
 export default function(){
     const [search, setSearch] = useState('')
+    const [resetModal, setResetModal] = useState(false)
     const [createItemModal, setcreateItemModal] = useState(false)
     const [editItemModal, seteditItemModal] = useState(null)
     const [addReceiptModal, setaddReceiptModal] = useState(null)
-    const {unitofmeasure, items, flash, quantities, issuances} = usePage().props
+    const {unitofmeasure, items, flash, quantities, issuances, history} = usePage().props
     const {post, data, setData, reset} = useForm({
         unit_of_measure: '',
         description: '',
@@ -51,9 +52,14 @@ export default function(){
         router.get(route('receiver_page'), {search: e.target.value})
     }
 
+    function resetInventory(e){
+        e.preventDefault()  
+        post(route('reset_inventory'), {less: 0, add_receipts: [], onSuccess: () => setResetModal(false)})
+    }
+
     return(
     <SidebarLayout>
-    <div className="flex-col flex overflow-auto">
+    <div className="flex-col flex overflow-auto relative">
         <h3 className="font-bold text-lg m-4">Create Item</h3>
         {flash.success && (
             <div className="alert alert-success mb-4">
@@ -81,6 +87,82 @@ export default function(){
                     <button onClick={(e) => setcreateItemModal(true)} className="btn btn-soft btn-secondary rounded-full p-4"><PlusIcon className="w-5 h-5" />Create Item</button>
                 </div>
               </div>
+
+              {/* reset button */}
+                <div className="absolute top-0 right-0">
+                    <button onClick={(e) => {setResetModal(true); setData({id: data.id})}} className="btn"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182m0-4.991v4.99" />
+                    </svg>
+                    </button>
+                </div>
+                
+
+                {/* reset Modal */}
+            {resetModal && (
+                <dialog className="modal modal-open">
+                <div className="modal-box">
+                    <button
+                    className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2"
+                    onClick={() => setResetModal(false)}
+                    >
+                    ✕
+                    </button>
+
+                    <form onSubmit={resetInventory} className="flex flex-col gap-4">
+                        <p>Are you sure you want to <p className="badge badge-ghost bold badge-xl">RESET</p> this month with:</p>                 
+                        <div className="flex justify-center items-center">
+                        <div className="overflow-x-auto w-full max-h-[400px] overflow-y-auto">
+                            
+                            <table className="table table-zebra text-sm">
+                            
+                            <thead className="sticky top-0 bg-base-100 z-10">
+                                <tr>
+                                <th>ITEM NO.</th>
+                                <th>DESCRIPTION</th>
+                                <th>UNIT</th>
+                                <th>BEGINNING</th>
+                                <th>ADD: RECEIPTS</th>
+                                <th>TOTAL</th>
+                                <th>LESS: ISSUANCE</th>
+                                <th>ENDING</th>
+                                </tr>
+                            </thead>
+
+                            <tbody>
+                                {items.map(item => {
+                                    const lastHistory = item.history[item.history.length - 1];
+                                    return (
+                                        <tr key={item.id}>
+                                            <td>{item.id}</td>
+                                            <td>{item.description}</td>
+                                            <td>{item.unit_of_measure}</td>
+                                            <td>{lastHistory?.ending_balance}</td>
+                                            <td>{item.added_receipt?.join(' + ')}</td>
+                                            <td>{item.total}</td>
+                                            <td>{item.less}</td>
+                                            <td className="font-bold text-primary">
+                                                {item.total - item.less}
+                                            </td>
+                                        </tr>
+                                    );
+                                })}
+
+                            </tbody>
+
+                            </table>
+
+                        </div>
+                        </div>
+
+                                <div className="flex flex-row gap-10 justify-center">
+                                    <button type="submit" className="btn btn-success w-10">Yes</button>
+                                    <button onClick={() => setResetModal(false)} className="btn btn-error w-10">No</button>
+                                </div>
+                    </form>
+                
+                </div>
+                </dialog>
+            )}
 
 
         {/* Table */}
@@ -188,7 +270,7 @@ export default function(){
                 
                 <td>
                     <div className="font-bold">
-                       {(item.issuances || []).reduce((sum, f) => sum + (f.fulfilled_quantity), 0)}
+                       {item.less}
                     </div>
                 </td>
 

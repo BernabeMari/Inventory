@@ -68,6 +68,21 @@ export default function({children}){
            </Link>
            )}
            
+           {/* Admin Set Interval */}
+           {auth.user.role === 'admin' && (
+            <Link href={route('admin_set_interval')}>
+            <li className={`flex items-center w-full ${currentRoute === 'admin_set_interval' ? 'bg-black text-primary-content rounded-md' : ''}`}>
+            <div className="tooltip tooltip-close tooltip-right w-full">
+            <button className="btn w-full"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" className="my-1.5 inline-block size-4">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+            </svg>
+
+                <span className="is-drawer-close:hidden">Set Interval</span></button>
+            </div>
+            </li>
+           </Link>
+           )}
+           
            
            {/* Head Graphs Page */}
            {auth.user.role === 'head' && (

@@ -14,6 +14,10 @@ class AdminController extends Controller
         return inertia('Admin/CreateUser', ['users' => $users]);
     }
 
+    public function adminSetIntervalPage(){
+        return inertia('Admin/SetInterval');
+    }
+
     // create user
     public function createUser(Request $request){
         User::create([

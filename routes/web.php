@@ -24,6 +24,7 @@ Route::controller(LoginController::class)->group(function (){
 // ADMIN
 Route::middleware('role:admin')->controller(AdminController::class)->group(function(){
     Route::get('/admin-dashboard', 'adminPage')->name('admin_page');
+    Route::get('/admin-set-interval', 'adminSetIntervalPage')->name('admin_set_interval');
     Route::post('/create-user', 'createUser')->name('create_user');
     Route::post('/edit-user', 'editUser')->name('edit_user');
     Route::post('/delete-user', 'deleteUser')->name('delete_user');
@@ -35,7 +36,6 @@ Route::middleware('role:admin')->controller(AdminController::class)->group(funct
 Route::middleware('role:head')->controller(HeadController::class)->group(function(){
     Route::get('/head-dashboard', 'headPage')->name('head_page');
     Route::get('/head-report', 'headReportPage')->name('head_report_page');
-    Route::post('/reset-inventory', 'resetInventory')->name('reset_inventory');
 });
 
 
@@ -43,6 +43,7 @@ Route::middleware('role:head')->controller(HeadController::class)->group(functio
 Route::middleware('role:receiver')->controller(ReceiverController::class)->group(function(){
     Route::get('/receiver-dashboard', 'receiverPage')->name('receiver_page');
     Route::post('/create-item', 'createItem')->name('create_item');
+    Route::post('/reset-inventory', 'resetInventory')->name('reset_inventory');
     Route::post('/add-receipt', 'addReceipt')->name('add_receipt');
     Route::post('/edit-receipt', 'editReceipt')->name('edit_receipt');
 });
