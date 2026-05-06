@@ -11,7 +11,7 @@ use Illuminate\Http\Request;
 class ReceiverController extends Controller
 {
     public function receiverPage(Request $request){
-        $UnitOfMeasure = UnitofMeasure::get();
+        $UnitOfMeasure = UnitofMeasure::query()->get();
         $items = Item::with('requests', 'quantities', 'issuances', 'history');
 
         if(filled($request->search)){
@@ -69,18 +69,17 @@ class ReceiverController extends Controller
     public function editReceipt(Request $request){
         $findItem = Item::findOrFail($request->item_id);
 
-        $oldTotal = Quantity::where('item_id', $request->item_id)->sum('quantity');
-
         foreach ($request->quantity as $item) {
-            Quantity::where('id', $item['id'])->update([
+            Quantity::query()->where('id', $item['id'])->update([
                 'quantity' => $item['quantity']
             ]);
         }
 
-        $newTotal = Quantity::where('item_id', $request->item_id)->sum('quantity');
+        $updatedQuantities = $findItem->quantities()->orderBy('id')->pluck('quantity')->all();
 
         $findItem->update([
-            'total' => $findItem->total + ($newTotal - $oldTotal)
+            'total' => array_sum($updatedQuantities),
+            'added_receipt' => $updatedQuantities
         ]);
 
         return back()->with('success', 'Receipt updated successfully');

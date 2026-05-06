@@ -238,7 +238,7 @@ export default function(){
                                             <div key={index} className="flex items-center justify-center gap-2 mb-4">
                                                 <input
                                                 type="number"
-                                                min="1"
+                                                min="0"
                                                 required
                                                 value={qty.quantity}
                                                 onChange={(e) => {
