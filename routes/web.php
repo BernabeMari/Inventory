@@ -37,6 +37,7 @@ Route::middleware('role:head')->controller(HeadController::class)->group(functio
     Route::get('/head-dashboard', 'headPage')->name('head_page');
     Route::get('/head-report', 'headReportPage')->name('head_report_page');
     Route::get('/download-report', 'downloadReportPdf')->name('download_report_pdf');
+    Route::get('/download-report-spreadsheet', 'downloadReportSpreadsheet')->name('download_report_spreadsheet');
 });
 
 
