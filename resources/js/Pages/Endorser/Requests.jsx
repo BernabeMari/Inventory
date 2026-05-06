@@ -71,7 +71,7 @@ export default function(){
                         <th>REQUEST</th>
                         <th>QUANTITY OF REQUEST</th>
                         <th>STATUS</th>
-                        <th>MESSAGE</th>
+                        <th>PURPOSE</th>
                         <th>ACTION</th>
                         </tr>
                     </thead>

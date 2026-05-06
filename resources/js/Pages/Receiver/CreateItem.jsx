@@ -138,10 +138,10 @@ export default function(){
                                             <td>{item.unit_of_measure}</td>
                                             <td>{lastHistory?.ending_balance}</td>
                                             <td>{item.added_receipt?.join(' + ')}</td>
-                                            <td>{item.total}</td>
+                                            <td>{item.computed_total}</td>
                                             <td>{item.less}</td>
                                             <td className="font-bold text-primary">
-                                                {item.total - item.less}
+                                                {item.total}
                                             </td>
                                         </tr>
                                     );
@@ -263,7 +263,7 @@ export default function(){
 
                 <td>
                     <div className="font-bold">
-                       {item.total}
+                       {item.computed_total}
                     </div>
                 </td>
                 

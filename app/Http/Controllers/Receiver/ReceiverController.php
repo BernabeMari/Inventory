@@ -21,6 +21,11 @@ class ReceiverController extends Controller
 
         $items = $items->get();
 
+        $items = $items->map(function ($item) {
+            $item->computed_total = $item->total + $item->less;
+            return $item;
+        });
+
         if($items->isEmpty() && filled($request->search)){
             return back()->with('error', 'No matching items found');
         }
@@ -95,16 +100,15 @@ class ReceiverController extends Controller
                 'item_id' => $item->id,
                 'unit_of_measure' => $item->unit_of_measure,
                 'add_receipts' => $item->added_receipt,
-                'total' => $item->total,
+                'total' => $item->total + ($item->added_receipt ? array_sum($item->added_receipt) : 0),
                 'less' => $item->less,
-                'ending_balance' => $item->total - $item->less,
+                'ending_balance' => $item->total - $item->less + ($item->added_receipt ? array_sum($item->added_receipt) : 0),
                 'beginning_inventory' => $lastHistory ? $lastHistory?->ending_balance : 0,
             ]);
         }
 
         foreach($items as $item){
             $item->update([
-            'total' => $item->total - $item->less,
             'less' => 0,
             'added_receipt' => [],
 

@@ -16,7 +16,6 @@ class HeadController extends Controller
     {
         $requestQuery = ModelsRequest::query();
         $issuanceQuery = Issuance::query();
-        $itemQuery = Item::query();
 
         if ($request->start_date && $request->end_date) {
             $startDateTime = $request->start_date . ' 00:00:00';
@@ -24,21 +23,11 @@ class HeadController extends Controller
 
             $requestQuery->where('created_at', '>=', $startDateTime)->where('created_at', '<=', $endDateTime);
             $issuanceQuery->where('created_at', '>=', $startDateTime)->where('created_at', '<=', $endDateTime);
-            $itemQuery->whereHas('history', function ($query) use ($startDateTime, $endDateTime) {
-                $query->where('created_at', '>=', $startDateTime)->where('created_at', '<=', $endDateTime);
-            });
         }
 
         $requests = $requestQuery->get();
         $issuances = $issuanceQuery->get();
-        $items = $itemQuery->with(['history' => function ($query) use ($request) {
-            if ($request->start_date && $request->end_date) {
-                $query->whereBetween('created_at', [
-                    $request->start_date . ' 00:00:00',
-                    $request->end_date . ' 23:59:59',
-                ]);
-            }
-        }])->get();
+        $items = Item::all();
 
         $statusChartData = [
             'Pending' => $requests->where('status', 'pending')->count(),
@@ -78,33 +67,10 @@ class HeadController extends Controller
 
         $itemsChartData = [];
         foreach ($items as $item) {
-            $histories = collect($item->history ?? []);
-            if ($histories->isEmpty()) {
-                continue;
-            }
-
-            $grouped = $histories->reduce(function ($acc, $history) {
-                if (! isset($acc[$history->item_id])) {
-                    $acc[$history->item_id] = [
-                        'item_id' => $history->item_id,
-                        'description' => $history->item?->description ?? '',
-                        'total' => 0,
-                        'less' => 0,
-                    ];
-                }
-
-                $acc[$history->item_id]['total'] += $history->total ?? 0;
-                $acc[$history->item_id]['less'] += $history->less ?? 0;
-
-                return $acc;
-            }, []);
-
-            foreach ($grouped as $history) {
-                $itemsChartData[] = [
-                    'name' => $item->description,
-                    'value' => $history['total'] - $history['less'],
-                ];
-            }
+            $itemsChartData[] = [
+                'name' => $item->description,
+                'value' => $item->total,
+            ];
         }
 
         return [
@@ -151,19 +117,10 @@ class HeadController extends Controller
         return inertia('Head/Graphs', $graphData);
     }
 
-    public function dashboard(){
-        $requests = ModelsRequest::all();
+    public function dashboard(Request $request){
+        $graphData = $this->buildGraphData($request);
 
-        $chartData = $requests->groupBy('status')->map(function ($items, $key) {
-            return [
-                'name' => $key,
-                'value' => count($items)
-            ];
-        })->values();
-
-        return inertia('Dashboard', [
-            'chartData' => $chartData
-        ]);
+        return inertia('Head/Graphs', $graphData);
     }
 
     public function headReportPage(Request $request){
