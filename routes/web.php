@@ -36,6 +36,7 @@ Route::middleware('role:admin')->controller(AdminController::class)->group(funct
 Route::middleware('role:head')->controller(HeadController::class)->group(function(){
     Route::get('/head-dashboard', 'headPage')->name('head_page');
     Route::get('/head-report', 'headReportPage')->name('head_report_page');
+    Route::get('/download-report', 'downloadReportPdf')->name('download_report_pdf');
 });
 
 

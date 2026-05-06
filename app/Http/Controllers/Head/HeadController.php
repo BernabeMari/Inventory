@@ -7,6 +7,7 @@ use App\Models\History;
 use App\Models\Issuance;
 use App\Models\Item;
 use App\Models\Request as ModelsRequest;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 
 class HeadController extends Controller
@@ -77,34 +78,69 @@ class HeadController extends Controller
     public function headReportPage(Request $request){
         $items = Item::with(['issuances', 'quantities', 'history' => function ($query) use ($request){
             if($request->start_date && $request->end_date){
-                if ($request->start_date > $request->end_date) {
-                    return back()->with('error', 'Start date cannot be greater than end date.');
-                }
-
                 $query->whereBetween('created_at', [
                     $request->start_date . ' 00:00:00',
                     $request->end_date . ' 23:59:59',
                 ]);
-
-                }
-                
+            }
         }]);
 
+        // Filter items to only those with history in the date range
+        if($request->start_date && $request->end_date){
+            $items->whereHas('history', function ($query) use ($request) {
+                $query->whereBetween('created_at', [
+                    $request->start_date . ' 00:00:00',
+                    $request->end_date . ' 23:59:59',
+                ]);
+            });
+        }
+
         if(filled($request->search)){
-            $items->where('description', 'like', '%' . $request->search . '%')
-            ->orWhere('unit_of_measure', 'like', '%' . $request->search . '%');
+            $items->where(function($q) use ($request) {
+                $q->where('description', 'like', '%' . $request->search . '%')
+                  ->orWhere('unit_of_measure', 'like', '%' . $request->search . '%');
+            });
         }
 
         
         $items = $items->get();
-        
-        
-        $snapshotPath = storage_path('app/ending_balances.json');
-        $beginnings = file_exists($snapshotPath) 
-            ? json_decode(file_get_contents($snapshotPath), true) 
-            : [];
             
-        return inertia('Head/Report', ['items' => $items, 'beginnings' => $beginnings]);
+        return inertia('Head/Report', ['items' => $items]);
         
+    }
+
+
+    public function downloadReportPdf(Request $httpRequest){
+        $items = Item::with(['issuances', 'quantities', 'history' => function ($query) use ($httpRequest){
+            if($httpRequest->start_date && $httpRequest->end_date){
+                $query->whereBetween('created_at', [
+                    $httpRequest->start_date . ' 00:00:00',
+                    $httpRequest->end_date . ' 23:59:59',
+                ]);
+            }
+        }]);
+
+        // Filter items to only those with history in the date range
+        if($httpRequest->start_date && $httpRequest->end_date){
+            $items->whereHas('history', function ($query) use ($httpRequest) {
+                $query->whereBetween('created_at', [
+                    $httpRequest->start_date . ' 00:00:00',
+                    $httpRequest->end_date . ' 23:59:59',
+                ]);
+            });
+        }
+
+        if(filled($httpRequest->search)){
+            $items->where(function($q) use ($httpRequest) {
+                $q->where('description', 'like', '%' . $httpRequest->search . '%')
+                  ->orWhere('unit_of_measure', 'like', '%' . $httpRequest->search . '%');
+            });
+        }
+
+        $items = $items->get();
+        
+        $pdf = Pdf::loadView('pdf.report', compact('items'));
+
+        return $pdf->stream('report_' . now()->format('Y-m-d_H-i-s') . '.pdf');
     }
 }

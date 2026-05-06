@@ -16,17 +16,32 @@ export default function(){
         end_date: null
     })
 
+    function getCurrentFilters(extra = {}) {
+        const params = new URLSearchParams(window.location.search)
+
+        return {
+            start_date: data.start_date || params.get('start_date') || '',
+            end_date: data.end_date || params.get('end_date') || '',
+            search: search || params.get('search') || '',
+            ...extra,
+        }
+    }
+
     function handleFilter(e){
         e.preventDefault()
-        router.get(route('head_report_page'),{
-            start_date: data.start_date,
-            end_date: data.end_date
-        })
+        router.get(route('head_report_page'), getCurrentFilters())
     }
 
     function handleSearch(e){
-        setSearch(e.target.value)
-        router.get(route('head_report_page'), {search: e.target.value})
+        const nextSearch = e.target.value
+        setSearch(nextSearch)
+        router.get(route('head_report_page'), getCurrentFilters({ search: nextSearch }))
+    }
+
+    function downloadPDF(e){
+        e.preventDefault()
+        const params = new URLSearchParams(getCurrentFilters())
+        window.location.href = `${route('download_report_pdf')}?${params.toString()}`
     }
 
     return(
@@ -36,6 +51,7 @@ export default function(){
         {flash.error && (<div className="alert alert-error mb-4">
                 {flash.error}
             </div>)}
+            
         {/* Search button */}
               <div className="p-4 flex flex-col md:flex-row md:justify-between md:items-center">
         
@@ -47,6 +63,18 @@ export default function(){
                     </p>
                 </div>
 
+                <div className="absolute top-0 right-0">
+                    <button onClick={downloadPDF} className="flex flex-row gap-3 btn" type="button">
+                        <div>
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5M16.5 12 12 16.5m0 0L7.5 12m4.5 4.5V3" />
+                            </svg>
+                        </div>
+                        <div>
+                            Download PDF
+                        </div>
+                    </button>
+                </div>
                 <div>
                     <form onSubmit={handleFilter}>
                         <input type="date" value={data.start_date} onChange={(e) => setData('start_date', e.target.value)}/> - <input type="date" value={data.end_date} onChange={(e) => setData('end_date', e.target.value)}/>                    
@@ -88,13 +116,13 @@ export default function(){
 
                         return acc;
                     }, {});
-
+                    const lastHistory = item.history[item.history.length - 1];
                     return Object.values(grouped || {}).map(history => (
                         <tr key={history.item_id}>
                             <td>{history.item_id}</td>
                             <td>{item.description}</td>
                             <td>{history.unit_of_measure}</td>
-                            <td>{history.beginning_inventory}</td>
+                            <td>{lastHistory?.beginning_inventory}</td>
                             <td>{history.add_receipts.join(' + ')}</td>
                             <td>{history.total}</td>
                             <td>{history.less}</td>

@@ -30,7 +30,7 @@ export default function Dashboard({ statusChartData = {}, quantityChartData = {}
     return (
         <SidebarLayout>
            <div className="flex-col flex overflow-auto">
-            <h3 className="font-bold text-lg m-4">Requests</h3> 
+            <h3 className="font-bold text-lg m-4">Graphs</h3> 
                 <div className="flex justify-end mb-5">
                     <form onSubmit={handleFilter}>
                         <input type="date" value={data.start_date} onChange={(e) => setData('start_date', e.target.value)}/> - <input type="date" value={data.end_date} onChange={(e) => setData('end_date', e.target.value)}/>                    

@@ -30,7 +30,7 @@ class LoginController extends Controller
             }elseif(Auth::user()->role === 'endorser' && Auth::user()->is_active){
                 return redirect()->route('endorser_page');
             }elseif(Auth::user()->role === 'head' && Auth::user()->is_active){
-                return redirect()->route('head_page');
+                return redirect()->route('head_report_page');
             }
 
             return back()->with('error', 'Your account is inactive. Please contact the administrator.');
