@@ -12,6 +12,109 @@ use Illuminate\Http\Request;
 
 class HeadController extends Controller
 {
+    private function buildGraphData(Request $request): array
+    {
+        $requestQuery = ModelsRequest::query();
+        $issuanceQuery = Issuance::query();
+        $itemQuery = Item::query();
+
+        if ($request->start_date && $request->end_date) {
+            $startDateTime = $request->start_date . ' 00:00:00';
+            $endDateTime = $request->end_date . ' 23:59:59';
+
+            $requestQuery->where('created_at', '>=', $startDateTime)->where('created_at', '<=', $endDateTime);
+            $issuanceQuery->where('created_at', '>=', $startDateTime)->where('created_at', '<=', $endDateTime);
+            $itemQuery->whereHas('history', function ($query) use ($startDateTime, $endDateTime) {
+                $query->where('created_at', '>=', $startDateTime)->where('created_at', '<=', $endDateTime);
+            });
+        }
+
+        $requests = $requestQuery->get();
+        $issuances = $issuanceQuery->get();
+        $items = $itemQuery->with(['history' => function ($query) use ($request) {
+            if ($request->start_date && $request->end_date) {
+                $query->whereBetween('created_at', [
+                    $request->start_date . ' 00:00:00',
+                    $request->end_date . ' 23:59:59',
+                ]);
+            }
+        }])->get();
+
+        $statusChartData = [
+            'Pending' => $requests->where('status', 'pending')->count(),
+            'Accepted' => $requests->where('status', 'approved')->count(),
+            'Rejected' => $requests->where('status', 'rejected')->count(),
+            'Cancelled' => $requests->where('status', 'cancelled')->count(),
+        ];
+
+        $fulfilledQuantity = $issuances->sum('fulfilled_quantity');
+        $unfulfilledQuantity = $issuances->sum('unfulfilled_quantity');
+
+        $quantityChartData = [
+            'Fulfilled' => $fulfilledQuantity,
+            'Unfulfilled' => $unfulfilledQuantity,
+        ];
+
+        $departmentCounts = $requests
+            ->loadMissing('user')
+            ->groupBy(function ($request) {
+                return $request->user->department ?? 'Unknown';
+            })
+            ->map(function ($group) {
+                return $group->sum(function ($request) {
+                    return is_array($request->item) ? count($request->item) : 0;
+                });
+            })
+            ->sortDesc()
+            ->toArray();
+
+        $departmentChartData = [];
+        foreach ($departmentCounts as $department => $count) {
+            $departmentChartData[] = [
+                'name' => $department,
+                'requests' => $count,
+            ];
+        }
+
+        $itemsChartData = [];
+        foreach ($items as $item) {
+            $histories = collect($item->history ?? []);
+            if ($histories->isEmpty()) {
+                continue;
+            }
+
+            $grouped = $histories->reduce(function ($acc, $history) {
+                if (! isset($acc[$history->item_id])) {
+                    $acc[$history->item_id] = [
+                        'item_id' => $history->item_id,
+                        'description' => $history->item?->description ?? '',
+                        'total' => 0,
+                        'less' => 0,
+                    ];
+                }
+
+                $acc[$history->item_id]['total'] += $history->total ?? 0;
+                $acc[$history->item_id]['less'] += $history->less ?? 0;
+
+                return $acc;
+            }, []);
+
+            foreach ($grouped as $history) {
+                $itemsChartData[] = [
+                    'name' => $item->description,
+                    'value' => $history['total'] - $history['less'],
+                ];
+            }
+        }
+
+        return [
+            'statusChartData' => $statusChartData,
+            'quantityChartData' => $quantityChartData,
+            'departmentChartData' => $departmentChartData,
+            'itemsChartData' => $itemsChartData,
+        ];
+    }
+
     private function buildReportItems(Request $request)
     {
         $items = Item::with(['issuances', 'quantities', 'history' => function ($query) use ($request){
@@ -42,52 +145,10 @@ class HeadController extends Controller
         return $items->get();
     }
 
-    public function headPage(){
-        $requests = ModelsRequest::all();
-        $issuances = Issuance::all();
+    public function headPage(Request $request){
+        $graphData = $this->buildGraphData($request);
 
-        $statusChartData = [
-            'Pending' => $requests->where('status', 'pending')->count(),
-            'Approved' => $requests->where('status', 'approved')->count(),
-            'Rejected' => $requests->where('status', 'rejected')->count(),
-        ];
-        
-
-        $fulfilledQuantity = $issuances->sum('fulfilled_quantity');
-        $unfulfilledQuantity = $issuances->sum('unfulfilled_quantity');
-
-        $quantityChartData = [
-            'Fulfilled' => $fulfilledQuantity,
-            'Unfulfilled' => $unfulfilledQuantity,
-        ];
-        
-
-        $departmentCounts = ModelsRequest::with('user')
-            ->get()
-            ->groupBy(function ($request) {
-                return $request->user->department ?? 'Unknown';
-            })
-            ->map(function ($group) {
-                return $group->sum(function ($request) {
-                    return is_array($request->item) ? count($request->item) : 0;
-                });
-            })
-            ->sortDesc()
-            ->toArray();
-
-        $departmentChartData = [];
-        foreach ($departmentCounts as $department => $count) {
-            $departmentChartData[] = [
-                'name' => $department,
-                'requests' => $count
-            ];
-        }
-
-        return inertia('Head/Graphs', [
-            'statusChartData' => $statusChartData,
-            'quantityChartData' => $quantityChartData,
-            'departmentChartData' => $departmentChartData,
-        ]);
+        return inertia('Head/Graphs', $graphData);
     }
 
     public function dashboard(){

@@ -2,7 +2,7 @@ import SidebarLayout from "@/Layouts/SidebarLayout";
 import { router, useForm } from "@inertiajs/react";
 import { PieChart, Pie, Cell, Tooltip, Legend, BarChart, Bar, XAxis, YAxis, CartesianGrid, ResponsiveContainer } from "recharts";
 
-export default function Dashboard({ statusChartData = {}, quantityChartData = {}, departmentChartData = [] }) {
+export default function Dashboard({ statusChartData = {}, quantityChartData = {}, departmentChartData = [], itemsChartData = [] }) {
     const {post, setData, data} = useForm({
         start_date: '',
         end_date: ''
@@ -12,19 +12,20 @@ export default function Dashboard({ statusChartData = {}, quantityChartData = {}
         value,
     }));
 
-    const approvedRejectedData = statusData.filter(item => item.name !== 'Pending');
-
     const quantityData = Object.entries(quantityChartData).map(([name, value]) => ({
         name,
         value,
     }));
 
+    const itemsData = Array.isArray(itemsChartData) ? itemsChartData : [];
+
     const COLORS = ["#4ade80", "#facc15", "#f87171", "#60a5fa"];
 
     function handleFilter(e){
+        e.preventDefault()
         router.get(route('head_page'),{
-            start_date: '',
-            end_date: '',
+            start_date: data.start_date,
+            end_date: data.end_date,
         })
     }
     return (
@@ -40,30 +41,7 @@ export default function Dashboard({ statusChartData = {}, quantityChartData = {}
                 <div className="flex overflow-auto flex-row gap-10 justify-center">
                     <div className="card bg-base-100 shadow">
                         <div className="card-body">
-                            <h2 className="card-title">Accepted / Rejected</h2>
-                            <PieChart width={350} height={300}>
-                                <Pie
-                                    data={approvedRejectedData}
-                                    dataKey="value"
-                                    nameKey="name"
-                                    cx="50%"
-                                    cy="50%"
-                                    outerRadius={90}
-                                    label
-                                >
-                                    {approvedRejectedData.map((entry, index) => (
-                                        <Cell key={entry.name} fill={COLORS[index % COLORS.length]} />
-                                    ))}
-                                </Pie>
-                                <Tooltip />
-                                <Legend verticalAlign="bottom" height={36} />
-                            </PieChart>
-                        </div>
-                    </div>
-                    
-                    <div className="card bg-base-100 shadow">
-                        <div className="card-body">
-                            <h2 className="card-title">Accepted / Rejected / Pending </h2>
+                            <h2 className="card-title">Pending / Accepted / Rejected / Cancelled</h2>
                             <PieChart width={350} height={300}>
                                 <Pie
                                     data={statusData}
@@ -123,6 +101,26 @@ export default function Dashboard({ statusChartData = {}, quantityChartData = {}
                                 <YAxis allowDecimals={false}/>
                                 <Tooltip />
                                 <Bar dataKey="requests" fill="#60a5fa" name="Number of Request Items" />
+                            </BarChart>
+                        </ResponsiveContainer>
+                    </div>
+                </div>
+
+                <div className="card mt-10 bg-base-100 shadow max-w-4xl mx-auto w-full">
+                    <div className="card-body">
+                        <h2 className="card-title">Items Inventory Balance</h2>
+                        <ResponsiveContainer width="100%" height={300}>
+                            <BarChart data={itemsData} margin={{ top: 20, right: 30, left: 0, bottom: 60 }}>
+                                <CartesianGrid strokeDasharray="3 3" />
+                                <XAxis 
+                                    dataKey="name" 
+                                    angle={-45}
+                                    textAnchor="end"
+                                    height={100}
+                                />
+                                <YAxis allowDecimals={false} />
+                                <Tooltip />
+                                <Bar dataKey="value" fill="#34d399" name="Ending Balance" />
                             </BarChart>
                         </ResponsiveContainer>
                     </div>
