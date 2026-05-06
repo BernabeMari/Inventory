@@ -13,7 +13,7 @@ class EndorserController extends Controller
 {
     public function endorserPage(Request $request){
         $requests = ModelsRequest::with('user', 'items', 'issuances')->where('status', '=', 'pending');
-        $items = Item::get();
+        $items = Item::all();
 
         if (filled($request->search)) {
         $requests->where(function ($query) use ($request) {
@@ -68,10 +68,10 @@ class EndorserController extends Controller
 
     public function actionApprove(Request $request){
         $findRequest = ModelsRequest::findOrFail($request->request_id);
-        $itemIds = is_array($request->item_id) ? $request->item_id : [$request->item_id];
-        $fulfilledQuantities = array_map('intval', (array) $request->fulfilled_quantity);
-        $unfulfilledQuantities = array_map('intval', (array) $request->unfulfilled_quantity);
-        $requestedQuantities = (array) $findRequest->quantity;
+        $itemIds = array_values(array_map('intval', (array) $request->item_id));
+        $fulfilledQuantities = array_values(array_map('intval', (array) $request->fulfilled_quantity));
+        $unfulfilledQuantities = array_values(array_map('intval', (array) $request->unfulfilled_quantity));
+        $requestedQuantities = array_values((array) $findRequest->quantity);
 
         if($findRequest->status === 'cancelled'){
             return back()->with('error', 'Request is Cancelled by Department');
@@ -101,35 +101,47 @@ class EndorserController extends Controller
             }
         }
 
-        // All validations passed — perform updates in a transaction
-        DB::transaction(function () use ($itemIds, $fulfilledQuantities, $unfulfilledQuantities, $findRequest, $request) {
-            $issuedItems = [];
+        try {
+            // Lock each item row before checking stock so the total cannot change mid-approval
+            DB::transaction(function () use ($itemIds, $fulfilledQuantities, $unfulfilledQuantities, $findRequest, $request) {
+                $issuedItems = [];
 
-            foreach ($itemIds as $index => $itemId) {
-                $findItem = Item::findOrFail($itemId);
-                $fulfilled = $fulfilledQuantities[$index];
+                foreach ($itemIds as $index => $itemId) {
+                    $findItem = Item::whereKey($itemId)->lockForUpdate()->firstOrFail();
+                    $fulfilled = $fulfilledQuantities[$index];
 
-                $issuedItems[] = $findItem->description;
-                $findItem->decrement('total', $fulfilled);
-                $findItem->increment('less', $fulfilled);
-            }
+                    if ($fulfilled < 0) {
+                        throw new \RuntimeException('Invalid fulfilled quantity for selected item: ' . $findItem->description);
+                    }
 
-            $findRequest->update([
-                'status' => 'approved',
-                'endorser_message' => $request->endorser_message,
-            ]);
+                    if ($findItem->total - $fulfilled < 0) {
+                        throw new \RuntimeException('Insufficient stock available for selected item: ' . $findItem->description);
+                    }
 
-            foreach ($itemIds as $index => $itemId) {
-                Issuance::create([
-                    'user_id' => $findRequest->user_id,
-                    'request_id' => $findRequest->id,
-                    'item_id' => $itemId,
-                    'issued_item' => $issuedItems[$index],
-                    'fulfilled_quantity' => $fulfilledQuantities[$index],
-                    'unfulfilled_quantity' => $unfulfilledQuantities[$index],
+                    $issuedItems[] = $findItem->description;
+                    $findItem->decrement('total', $fulfilled);
+                    $findItem->increment('less', $fulfilled);
+                }
+
+                $findRequest->update([
+                    'status' => 'approved',
+                    'endorser_message' => $request->endorser_message,
                 ]);
-            }
-        });
+
+                foreach ($itemIds as $index => $itemId) {
+                    Issuance::create([
+                        'user_id' => $findRequest->user_id,
+                        'request_id' => $findRequest->id,
+                        'item_id' => $itemId,
+                        'issued_item' => $issuedItems[$index],
+                        'fulfilled_quantity' => $fulfilledQuantities[$index],
+                        'unfulfilled_quantity' => $unfulfilledQuantities[$index],
+                    ]);
+                }
+            });
+        } catch (\Throwable $e) {
+            return back()->with('error', $e->getMessage());
+        }
 
         return back()->with('success', 'Request approved successfully');
     }
