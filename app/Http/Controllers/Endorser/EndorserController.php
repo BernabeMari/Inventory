@@ -7,6 +7,7 @@ use App\Models\Issuance;
 use App\Models\Item;
 use App\Models\Request as ModelsRequest;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class EndorserController extends Controller
 {
@@ -84,45 +85,51 @@ class EndorserController extends Controller
             return back()->with('error', 'Approval data does not match the request.');
         }
 
-        $issuedItems = [];
-
+        // First validate all items and quantities before making any DB changes
         foreach ($itemIds as $index => $itemId) {
             $findItem = Item::findOrFail($itemId);
             $fulfilled = $fulfilledQuantities[$index];
             $unfulfilled = $unfulfilledQuantities[$index];
             $requested = $requestedQuantities[$index];
 
-            if ($findItem->total < $fulfilled) {
-                return back()->with('error', 'Insufficient stock available for selected item.');
-            }
-
             if ($fulfilled + $unfulfilled != $requested) {
                 return back()->with('error', 'The fulfilled and unfulfilled items do not match the department’s request.');
             }
 
-            $issuedItems[] = $findItem->description;
-            $findItem->decrement('total', $fulfilled);
-            $findItem->increment('less', $fulfilled);
+            if ($findItem->total < $fulfilled) {
+                return back()->with('error', 'Insufficient stock available for selected item: ' . $findItem->description);
+            }
         }
 
-        $findRequest->update([
-            'status' => 'approved',
-        ]);
+        // All validations passed — perform updates in a transaction
+        DB::transaction(function () use ($itemIds, $fulfilledQuantities, $unfulfilledQuantities, $findRequest, $request) {
+            $issuedItems = [];
 
-        foreach ($itemIds as $index => $itemId) {
-            Issuance::create([
-                'user_id' => $findRequest->user_id,
-                'request_id' => $findRequest->id,
-                'item_id' => $itemId,
-                'issued_item' => $issuedItems[$index],
-                'fulfilled_quantity' => $fulfilledQuantities[$index],
-                'unfulfilled_quantity' => $unfulfilledQuantities[$index],
+            foreach ($itemIds as $index => $itemId) {
+                $findItem = Item::findOrFail($itemId);
+                $fulfilled = $fulfilledQuantities[$index];
+
+                $issuedItems[] = $findItem->description;
+                $findItem->decrement('total', $fulfilled);
+                $findItem->increment('less', $fulfilled);
+            }
+
+            $findRequest->update([
+                'status' => 'approved',
+                'endorser_message' => $request->endorser_message,
             ]);
-        }
 
-        $findRequest->update([
-            'endorser_message' => $request->endorser_message
-        ]);
+            foreach ($itemIds as $index => $itemId) {
+                Issuance::create([
+                    'user_id' => $findRequest->user_id,
+                    'request_id' => $findRequest->id,
+                    'item_id' => $itemId,
+                    'issued_item' => $issuedItems[$index],
+                    'fulfilled_quantity' => $fulfilledQuantities[$index],
+                    'unfulfilled_quantity' => $unfulfilledQuantities[$index],
+                ]);
+            }
+        });
 
         return back()->with('success', 'Request approved successfully');
     }
