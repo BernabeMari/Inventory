@@ -22,7 +22,15 @@ class ReceiverController extends Controller
         $items = $items->get();
 
         $items = $items->map(function ($item) {
-            $item->computed_total = $item->total + $item->less;
+            $addedReceiptTotal = array_sum(
+                array_map('intval', $item->added_receipt ?? [])
+            );
+
+            $item->computed_total =
+                $item->total +
+                $addedReceiptTotal - 
+                $item->less;
+
             return $item;
         });
 
@@ -66,25 +74,17 @@ class ReceiverController extends Controller
         ]);
 
         $item->update([
-            'added_receipt' => array_merge($item->added_receipt ?? [], [$request->quantity]),
-            'total' => $item->total + $request->quantity
+            'added_receipt' => array_merge($item->added_receipt ?? [], [$request->quantity])
         ]);
     }
 
     public function editReceipt(Request $request){
         $findItem = Item::findOrFail($request->item_id);
 
-        foreach ($request->quantity as $item) {
-            Quantity::query()->where('id', $item['id'])->update([
-                'quantity' => $item['quantity']
-            ]);
-        }
-
-        $updatedQuantities = $findItem->quantities()->orderBy('id')->pluck('quantity')->all();
+        $updatedReceipts = array_values(array_map('intval', (array) $request->quantity));
 
         $findItem->update([
-            'total' => array_sum($updatedQuantities),
-            'added_receipt' => $updatedQuantities
+            'added_receipt' => $updatedReceipts
         ]);
 
         return back()->with('success', 'Receipt updated successfully');
