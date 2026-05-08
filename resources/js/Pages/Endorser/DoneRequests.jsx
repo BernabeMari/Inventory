@@ -16,10 +16,30 @@ export default function(){
             <div className="flex-col flex overflow-auto">
                 <h3 className="font-bold text-lg m-4">Done Requests</h3>
                 {/* Search button */}
-                <div className="p-4">          
-                    <SearchField value={search} onChange={handleSearch} placeholder="Search items..."/>
-                        <p className="mt-4">You searched: {search}</p>
+            <div className="p-4 flex flex-col md:flex-row md:justify-between md:items-center">
+                <div>
+                    <SearchField value={search} onChange={handleSearch} placeholder="Search requests..."/>
+                    <p className="mt-4">
+                    You searched: {search}
+                    </p> 
                 </div>
+
+                <div className="gap-5 flex">
+                    <button value={''} onClick={handleSearch} className="btn bg-slate-500 p-2 text-white hover:bg-slate-600">
+                        All
+                    </button>
+                    <button value={'approved'} onClick={handleSearch} className="btn bg-green-500 p-2 text-white hover:bg-green-600">
+                        Approved
+                    </button>
+                    <button value={'rejected'} onClick={handleSearch} className="btn bg-red-500 p-2 text-white hover:bg-red-600">
+                        Rejected
+                    </button>
+                    <button value={'cancelled'} onClick={handleSearch} className="btn bg-gray-500 p-2 text-white hover:bg-gray-600">
+                        Cancelled
+                    </button>
+                </div>
+            </div>
+                
 
                 {/* Table */}
                 <div className="flex justify-center items-center">

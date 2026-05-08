@@ -2,6 +2,7 @@ import SearchField from "@/Components/SearchField";
 import SidebarLayout from "@/Layouts/SidebarLayout";
 import { router, useForm, usePage } from "@inertiajs/react";
 import { useState } from "react";
+import Select from 'react-select';
 
 export default function(){
     const [approveModal, setapproveModal] = useState(false)
@@ -172,33 +173,40 @@ export default function(){
 
 
                              <form onSubmit={approve} className="flex flex-col gap-4">
-                                <h3 className="font-bold text-lg m-4">Approve Request({data.item}){data.item_id}</h3>
+                                <h3 className="font-bold text-lg m-4">Approve Request</h3>
+                                {requests.map(request => (
+                                    <p>
+                                        {request.item.map((item, index) => (
+                                            <span key={index}>
+                                                {item} - ({request.quantity[index]})
+                                                <br />
+                                            </span>
+                                        ))}
+                                    </p>
+                                ))}
 
                                 {data.item.map((row, index) => (
-                                    <div key={index} className="flex flex-row gap-4">
-                                        <select value={data.item_id[index] || ""} onChange={(e) => {
-                                            const itemIds = [...(data.item_id || [])];
-                                            itemIds[index] = e.target.value;
-                                            setData('item_id', itemIds);
-                                        }} required className="select select-ghost" >
-                                            
-                                            <option value="" disabled>
-                                                Select an Item
-                                            </option>
+                                    <div key={index} className="flex flex-row gap-4 items-center">
+                                        <div className="w-64">
+                                            <Select
+                                                options={items.map(item => ({ value: item.id, label: `${item.description} - (${item.total})` }))}
+                                                value={items.map(i => ({ value: i.id, label: `${i.description} - (${i.total})` })).find(o => o.value === (data.item_id[index] || '')) || null}
+                                                onChange={(selected) => {
+                                                    const itemIds = [...(data.item_id || [])];
+                                                    itemIds[index] = selected ? selected.value : '';
+                                                    setData('item_id', itemIds);
+                                                }}
+                                                placeholder="Item"
+                                                isSearchable
+                                            />
+                                        </div>
 
-                                            {items.map(item => (
-                                                <option key={item.id} value={item.id}>
-                                                {item.description} - ({item.total})
-                                                </option>
-                                            ))}
-                                        </select>
-                                
-                                    <label className="input validator">
+                                    <label className="input validator w-28">
                                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="size-6">
                                     <path strokeLinecap="round" strokeLinejoin="round" d="M21.75 6.75a4.5 4.5 0 0 1-4.884 4.484c-1.076-.091-2.264.071-2.95.904l-7.152 8.684a2.548 2.548 0 1 1-3.586-3.586l8.684-7.152c.833-.686.995-1.874.904-2.95a4.5 4.5 0 0 1 6.336-4.486l-3.276 3.276a3.004 3.004 0 0 0 2.25 2.25l3.276-3.276c.256.565.398 1.192.398 1.852Z" />
                                     <path strokeLinecap="round" strokeLinejoin="round" d="M4.867 19.125h.008v.008h-.008v-.008Z" />
                                     </svg>
-                                    <input value={data.fulfilled_quantity[index] ?? ''} onChange={(e) => {const newFulfilled = [...(data.fulfilled_quantity || [])]; newFulfilled[index] = e.target.value; setData('fulfilled_quantity', newFulfilled);}} type="number" min={0} required placeholder="Issue Quantity" title="Put Issue Quantity Here"/>
+                                    <input className="input input-sm w-20" value={data.fulfilled_quantity[index] ?? ''} onChange={(e) => {const newFulfilled = [...(data.fulfilled_quantity || [])]; newFulfilled[index] = e.target.value; setData('fulfilled_quantity', newFulfilled);}} type="number" min={0} required placeholder="Quantity" title="Put Issue Quantity Here"/>
                                     </label>  
                                     
                                     
@@ -206,7 +214,7 @@ export default function(){
                                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="size-6">
                                     <path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" />
                                     </svg>
-                                    <input type="number" value={data.unfulfilled_quantity[index] ?? ''} onChange={(e) => {const newUnfulfilled = [...(data.unfulfilled_quantity || [])]; newUnfulfilled[index] = e.target.value; setData('unfulfilled_quantity', newUnfulfilled);}} min={0} required placeholder="Unfulfilled Quantity" title="Put Unfulfilled Quantity Here"/>
+                                    <input className="input input-sm w-20" type="number" value={data.unfulfilled_quantity[index] ?? ''} onChange={(e) => {const newUnfulfilled = [...(data.unfulfilled_quantity || [])]; newUnfulfilled[index] = e.target.value; setData('unfulfilled_quantity', newUnfulfilled);}} min={0} required placeholder="Unfulfilled" title="Put Unfulfilled Quantity Here"/>
                                     </label>  
                                 </div>
 
