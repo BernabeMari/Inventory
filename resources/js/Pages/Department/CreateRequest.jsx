@@ -70,6 +70,12 @@ export default function({requests}){
                 <button value={'approved'} onClick={handleSearch} className="btn bg-green-500 p-2 text-white hover:bg-green-600">
                     Approved
                 </button>
+                <button value={'on-hold'} onClick={handleSearch} className="btn bg-orange-500 p-2 text-white hover:bg-orange-600">
+                    On Hold
+                </button>
+                <button value={'for-pickup'} onClick={handleSearch} className="btn bg-emerald-500 p-2 text-white hover:bg-emerald-600">
+                    For Pickup
+                </button>
                 <button value={'rejected'} onClick={handleSearch} className="btn bg-red-500 p-2 text-white hover:bg-red-600">
                     Rejected
                 </button>
@@ -116,18 +122,24 @@ export default function({requests}){
 
                 <td>
                     <div className="font-bold">
-                       {request.status === 'pending' && (
-                        <span className="text-yellow-500">{request.status}</span>
-                       )}
-                       {request.status === 'approved' && (
-                        <span className="text-green-500">{request.status}</span>
-                       )}
-                       {request.status === 'rejected' && (
-                        <span className="text-red-500">{request.status}</span>
-                       )}
-                       {request.status === 'cancelled' && (
-                        <span className="text-orange-500">{request.status}</span>
-                       )}
+                        {request.status === 'pending' && (
+                            <span className="text-yellow-500">{request.status}</span>
+                        )}
+                        {request.status === 'approved' && (
+                            <span className="text-green-500">{request.status}</span>
+                        )}
+                        {request.status === 'rejected' && (
+                            <span className="text-red-500">{request.status}</span>
+                        )}
+                        {request.status === 'cancelled' && (
+                            <span className="text-gray-500">{request.status}</span>
+                        )}
+                        {request.status === 'on-hold' && (
+                            <span className="text-orange-500">{request.status}</span>
+                        )}
+                        {request.status === 'for-pickup' && (
+                            <span className="text-emerald-500">Ready for pick up</span>
+                        )}
                     </div>
                 </td>
                 

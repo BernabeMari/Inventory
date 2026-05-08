@@ -6,7 +6,9 @@ import Select from 'react-select';
 
 export default function(){
     const [approveModal, setapproveModal] = useState(false)
+    const [holdModal, setholdModal] = useState(false)
     const [rejectModal, setrejectModal] = useState(false)
+    const [pickupModal, setpickupModal] = useState(false)
     const { flash, requests, receiver, items } = usePage().props
     const [search, setSearch] = useState('')
     const {post, data, setData} = useForm({
@@ -34,6 +36,20 @@ export default function(){
         })
     }
 
+    function pickup(e){
+        e.preventDefault()
+        post(route('action_pickup'), {
+            onSuccess: () => setpickupModal(false)
+        })
+    }
+
+    function hold(e){
+        e.preventDefault()
+        post(route('action_hold'), {
+            onSuccess: () => setholdModal(false)
+        })
+    }
+
     function handleSearch(e){
         setSearch(e.target.value)
         router.get(route('endorser_page'), {search: e.target.value})
@@ -46,20 +62,30 @@ export default function(){
         {flash.error}
         </div>
         )}
-                {/* Search button */}
-                      <div className="p-4">
-                
-                        <SearchField
-                          value={search}
-                          onChange={handleSearch}
-                          placeholder="Search requests..."
-                          />
-                
-                        <p className="mt-4">
-                          You searched: {search}
-                        </p>
-                
-                      </div>
+            {/* Search button */}
+            <div className="p-4 flex flex-col md:flex-row md:justify-between md:items-center">
+                <div>
+                    <SearchField value={search} onChange={handleSearch} placeholder="Search requests..."/>
+                    <p className="mt-4">
+                    You searched: {search}
+                    </p> 
+                </div>
+
+                <div className="gap-5 flex">
+                    <button value={''} onClick={handleSearch} className="btn bg-slate-500 p-2 text-white hover:bg-slate-600">
+                        All
+                    </button>
+                    <button value={'pending'} onClick={handleSearch} className="btn bg-yellow-500 p-2 text-white hover:bg-yellow-600">
+                        Pending
+                    </button>
+                    <button value={'approved'} onClick={handleSearch} className="btn bg-green-500 p-2 text-white hover:bg-green-600">
+                        Approved
+                    </button>
+                    <button value={'on-hold'} onClick={handleSearch} className="btn bg-red-500 p-2 text-white hover:bg-red-600">
+                        On-Hold
+                    </button>
+                </div>
+            </div>       
         
                 {/* Table */}
                 <div className="flex justify-center items-center">
@@ -135,24 +161,50 @@ export default function(){
                             </div>
                         </td>
                        
-                        <td>
-                            <div className="font-bold flex-row flex">
+                       {/* action buttons */}
+                        <td className="flex-row flex gap-2 justify-start items-start">
+                            {request.status != 'approved' && (
+                                <div className="font-bold flex-row flex">
                                 <div className="tooltip tooltip-close tooltip-right">
-                                    <button onClick={(e) => {setapproveModal(true); setData({issuance_id: request.issuances?.id || null, request_id: request.id, item: request.item, item_id: Array(request.item.length).fill(''), fulfilled_quantity: request.fulfilled_quantity || [], unfulfilled_quantity: request.unfulfilled_quantity || []})}} className="btn">
+                                    <button onClick={(e) => {setapproveModal(true); setData({issuance_id: request.issuances?.id || null, request_id: request.id, quantity: request.quantity, item: request.item, item_id: Array(request.item.length).fill(''), fulfilled_quantity: request.fulfilled_quantity || [], unfulfilled_quantity: request.unfulfilled_quantity || []})}} className="btn">
                                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="size-6">
                                     <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
                                     </svg>
                                     </button>
                                 </div>
+                                
+                                {request.status === 'pending' && (
+                                    <div className="tooltip tooltip-close tooltip-right">
+                                        <button onClick={(e) => {setholdModal(true); setData({issuance_id: request.issuances?.id || null, request_id: request.id, quantity: request.quantity, item: request.item, item_id: Array(request.item.length).fill(''), fulfilled_quantity: request.fulfilled_quantity || [], unfulfilled_quantity: request.unfulfilled_quantity || []})}} className="btn">
+                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M14.25 9v6m-4.5 0V9M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                                        </svg>
+                                        </button>
+                                    </div>
+                                )}
 
                                 <div className="tooltip tooltip-close tooltip-right">
                                     <button onClick={(e) => {setrejectModal(true); setData({request_id: request.id})}} className="btn">
-                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="size-6">
-                                    <path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" />
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="m9.75 9.75 4.5 4.5m0-4.5-4.5 4.5M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
                                     </svg>
                                     </button>
                                 </div>
                             </div>
+                            )}
+
+                            {request.status === 'approved' && (
+                                <div className="font-bold flex-row flex">
+                                    <div className="tooltip tooltip-close tooltip-right">
+                                        <button onClick={(e) => {setpickupModal(true); setData({issuance_id: request.issuances?.id || null, request_id: request.id, quantity: request.quantity, item: request.item, item_id: Array(request.item.length).fill(''), fulfilled_quantity: request.fulfilled_quantity || [], unfulfilled_quantity: request.unfulfilled_quantity || []})}} className="btn">
+                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M9 3.75H6.912a2.25 2.25 0 0 0-2.15 1.588L2.35 13.177a2.25 2.25 0 0 0-.1.661V18a2.25 2.25 0 0 0 2.25 2.25h15A2.25 2.25 0 0 0 21.75 18v-4.162c0-.224-.034-.447-.1-.661L19.24 5.338a2.25 2.25 0 0 0-2.15-1.588H15M2.25 13.5h3.86a2.25 2.25 0 0 1 2.012 1.244l.256.512a2.25 2.25 0 0 0 2.013 1.244h3.218a2.25 2.25 0 0 0 2.013-1.244l.256-.512a2.25 2.25 0 0 1 2.013-1.244h3.859M12 3v8.25m0 0-3-3m3 3 3-3" />
+                                        </svg>
+                                        </button>
+                                    </div>
+                                </div>
+                            )}
+
                         </td>
         
                         </tr>
@@ -174,15 +226,11 @@ export default function(){
 
                              <form onSubmit={approve} className="flex flex-col gap-4">
                                 <h3 className="font-bold text-lg m-4">Approve Request</h3>
-                                {requests.map(request => (
-                                    <p>
-                                        {request.item.map((item, index) => (
-                                            <span key={index}>
-                                                {item} - ({request.quantity[index]})
-                                                <br />
-                                            </span>
-                                        ))}
-                                    </p>
+                                {data.item.map((item, index) => (
+                                    <div key={index}>
+                                        {item} - {data.quantity[index]}
+                                        <br />
+                                    </div>
                                 ))}
 
                                 {data.item.map((row, index) => (
@@ -236,6 +284,67 @@ export default function(){
                             </form>
 
 
+                        </div>
+                        </dialog>
+                    )}
+
+                    {/* Hold Modal */}
+                     {holdModal && (
+                        <dialog className="modal modal-open">
+                        <div className="modal-box">
+                            <button
+                            className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2"
+                            onClick={() => setholdModal(false)}
+                            >
+                            ✕
+                            </button>
+                            <p>Are you sure you want to <p className="badge badge-ghost bold badge-xl">HOLD</p> this request?</p>
+                            <form onSubmit={hold} className="flex flex-col mt-5 justify-center">
+                                
+                                <label className="input validator">
+                                <p>Enter Reason for putting on hold: </p>
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="size-6">
+                                    <path strokeLinecap="round" strokeLinejoin="round" d="M7.5 3v11.25m0 0A2.25 2.25 0 1 0 9.75 13.5M7.5 14.25v2.625c0 .621.504 1.125 1.125 1.125H17.25M6 20.25h12a2.25 2.25 0 0 0 2.25-2.25v-8.511a5.238 5.238 0 0 0-.521-2.079L14.695 3.152a5.192 5.192 0 0 0-2.079-.521H6Z" />
+                                    </svg>
+                                    <input value={data.endorser_message} onChange={(e) => setData('endorser_message', e.target.value)} type="text" min={0} required placeholder="Reason for putting on hold" title="Enter reason for putting on hold"/>
+                                </label> 
+
+                                <div className="flex flex-row gap-10 justify-center">
+                                    <button className="btn btn-success w-10">Yes</button>
+                                    <button onClick={() => setholdModal(false)} className="btn btn-error w-10">No</button>
+                                </div>
+                            </form>
+                        </div>
+                        </dialog>
+                    )}
+                   
+                   
+                    {/* Pickup Modal */}
+                     {pickupModal && (
+                        <dialog className="modal modal-open">
+                        <div className="modal-box">
+                            <button
+                            className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2"
+                            onClick={() => setpickupModal(false)}
+                            >
+                            ✕
+                            </button>
+                            <p>Are you sure you want to <p className="badge badge-ghost bold badge-xl">PICK UP</p> this request?</p>
+                            <form onSubmit={pickup} className="flex flex-col mt-5 justify-center">
+                                
+                                <label className="input validator">
+                                <p>Enter Reason for putting on hold: </p>
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="size-6">
+                                    <path strokeLinecap="round" strokeLinejoin="round" d="M7.5 3v11.25m0 0A2.25 2.25 0 1 0 9.75 13.5M7.5 14.25v2.625c0 .621.504 1.125 1.125 1.125H17.25M6 20.25h12a2.25 2.25 0 0 0 2.25-2.25v-8.511a5.238 5.238 0 0 0-.521-2.079L14.695 3.152a5.192 5.192 0 0 0-2.079-.521H6Z" />
+                                    </svg>
+                                    <input value={data.endorser_message} onChange={(e) => setData('endorser_message', e.target.value)} type="text" min={0} required placeholder="Reason for putting on hold" title="Enter reason for putting on hold"/>
+                                </label> 
+
+                                <div className="flex flex-row gap-10 justify-center">
+                                    <button className="btn btn-success w-10">Yes</button>
+                                    <button onClick={() => setholdModal(false)} className="btn btn-error w-10">No</button>
+                                </div>
+                            </form>
                         </div>
                         </dialog>
                     )}

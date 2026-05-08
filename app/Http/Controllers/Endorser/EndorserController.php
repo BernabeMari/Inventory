@@ -12,17 +12,18 @@ use Illuminate\Support\Facades\DB;
 class EndorserController extends Controller
 {
     public function endorserPage(Request $request){
-        $requests = ModelsRequest::with('user', 'items', 'issuances')->where('status', '=', 'pending');
+        $requests = ModelsRequest::with('user', 'items', 'issuances')->whereIn('status', ['approved', 'on-hold', 'pending']);
         $items = Item::all();
 
         if (filled($request->search)) {
         $requests->where(function ($query) use ($request) {
             $query->where('item', 'like', '%' . $request->search . '%')
                 ->orWhere('quantity', 'like', '%' . $request->search . '%')
+                ->orWhere('status', 'like', '%' . $request->search . '%')
                 ->orWhere('message', 'like', '%' . $request->search . '%');
         })
         ->orWhereHas('user', function ($query) use ($request) {
-            $query->where('department', 'like', '%' . $request->search . '%')->where('status', '=', 'pending');
+            $query->where('department', 'like', '%' . $request->search . '%')->whereIn('status', ['approved', 'on-hold', 'pending']);
         });
     }
 
@@ -33,9 +34,10 @@ class EndorserController extends Controller
     }
 
     public function endorserDoneRequestPage(Request $request){
-        $requests = ModelsRequest::with('user', 'issuances')->where('status', '!=', 'pending');
-
-        if (filled($request->search)) {
+    $requests = ModelsRequest::with('user', 'issuances')
+        ->whereIn('status', ['rejected', 'cancelled', 'for-pickup']);
+        
+    if (filled($request->search)) {
         $requests->where(function ($query) use ($request) {
             $query->where('item', 'like', '%' . $request->search . '%')
                 ->orWhere('quantity', 'like', '%' . $request->search . '%')
@@ -43,11 +45,7 @@ class EndorserController extends Controller
                 ->orWhere('message', 'like', '%' . $request->search . '%');
         })
         ->orWhereHas('user', function ($query) use ($request) {
-            $query->where('department', 'like', '%' . $request->search . '%')->where('status', '!=', 'pending');
-        })
-        ->orWhereHas('issuances', function ($query) use ($request) {
-            $query->where('fulfilled_quantity', 'like', '%' . $request->search . '%')->where('status', '!=', 'pending')
-            ->orWhere('unfulfilled_quantity', 'like', '%' . $request->search . '%')->where('status', '!=', 'pending');
+            $query->where('department', 'like', '%' . $request->search . '%')->whereIn('status', ['rejected', 'cancelled', 'for-pickup']);
         });
     }
 
@@ -102,7 +100,6 @@ class EndorserController extends Controller
         }
 
         try {
-            // Lock each item row before checking stock so the total cannot change mid-approval
             DB::transaction(function () use ($itemIds, $fulfilledQuantities, $unfulfilledQuantities, $findRequest, $request) {
                 $issuedItems = [];
 
@@ -144,5 +141,34 @@ class EndorserController extends Controller
         }
 
         return back()->with('success', 'Request approved successfully');
+    }
+
+    public function actionHold(Request $request){
+        $findRequest = ModelsRequest::findOrFail($request->request_id);
+
+        if($findRequest->status === 'cancelled'){
+            return back()->with('error', 'Request is Cancelled by Department');
+        }
+
+        $findRequest->update([
+            'status' => 'on-hold',
+            'endorser_message' => $request->endorser_message
+        ]);
+        
+        return back()->with('success', 'Request held successfully');
+    }
+
+    public function actionPickup(Request $request){
+        $findRequest = ModelsRequest::findOrFail($request->request_id);
+
+        if($findRequest->status === 'cancelled'){
+            return back()->with('error', 'Request is Cancelled by Department');
+        }
+
+        $findRequest->update([
+            'status' => 'for-pickup',
+        ]);
+        
+        return back()->with('success', 'Request marked as for pickup successfully');
     }
 }

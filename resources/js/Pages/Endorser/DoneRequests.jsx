@@ -28,13 +28,13 @@ export default function(){
                     <button value={''} onClick={handleSearch} className="btn bg-slate-500 p-2 text-white hover:bg-slate-600">
                         All
                     </button>
-                    <button value={'approved'} onClick={handleSearch} className="btn bg-green-500 p-2 text-white hover:bg-green-600">
-                        Approved
+                    <button value={'for-pickup'} onClick={handleSearch} className="btn bg-blue-500 p-2 text-white hover:bg-blue-600">
+                        For Pickup
                     </button>
                     <button value={'rejected'} onClick={handleSearch} className="btn bg-red-500 p-2 text-white hover:bg-red-600">
                         Rejected
                     </button>
-                    <button value={'cancelled'} onClick={handleSearch} className="btn bg-gray-500 p-2 text-white hover:bg-gray-600">
+                    <button value={'cancelled'} onClick={handleSearch} className="btn bg-orange-500 p-2 text-white hover:bg-orange-600">
                         Cancelled
                     </button>
                 </div>
@@ -85,13 +85,13 @@ export default function(){
                                 
                                 <td>
                                     <div className="font-bold">
-                                        {request.item}
+                                        {request.item.join(', ')}
                                     </div>
                                 </td>
                                
                                 <td>
                                     <div className="font-bold">
-                                        {request.quantity}
+                                        {request.quantity.join(', ')}
                                     </div>
                                 </td>
                                 
@@ -129,6 +129,10 @@ export default function(){
 
                                         {request.status === 'cancelled' && (
                                             <span className="text-orange-500">{request.status}</span>
+                                        )}
+
+                                        {request.status === 'for-pickup' && (
+                                            <span className="text-blue-500">Ready for pick up</span>
                                         )}
                                     </div>
                                 </td>
