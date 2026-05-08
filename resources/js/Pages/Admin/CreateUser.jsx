@@ -72,9 +72,19 @@ export default function({users}){
               <button onClick={(e) => setcreateUserModal(true)} className="btn btn-soft btn-secondary rounded-full p-4"><PlusIcon className="w-5 h-5" />Create User</button>
             </div>
         </div>
+      </div>
 
-        {/* Toggle switch active/inactive users */}
-        <div className="absolute right-20">
+      <div className="flex flex-row items-center gap-4 m-4">
+        <div>
+          {data.is_active ? (
+            <p className="text-sm text-gray-500 m-4">Showing active users</p>
+          ) : (
+            <p className="text-sm text-gray-500 m-4">Showing inactive users</p>
+          )}
+        </div>
+
+      {/* Toggle switch active/inactive users */}
+        <div className="">
           <label className="toggle text-base-content">
           <input type="checkbox" checked={!data.is_active} onChange={(e) => setData('is_active', !e.target.checked)} />
           <svg aria-label="enabled" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
@@ -97,11 +107,6 @@ export default function({users}){
         </div>
       </div>
 
-      {data.is_active ? (
-        <p className="text-sm text-gray-500 m-4">Showing active users</p>
-      ) : (
-        <p className="text-sm text-gray-500 m-4">Showing inactive users</p>
-      )}
       {/* Table */}
       <div className="flex justify-center items-center">
         <table className="table">

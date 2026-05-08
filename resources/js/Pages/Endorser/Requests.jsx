@@ -52,7 +52,7 @@ export default function(){
                         <SearchField
                           value={search}
                           onChange={handleSearch}
-                          placeholder="Search items..."
+                          placeholder="Search requests..."
                           />
                 
                         <p className="mt-4">

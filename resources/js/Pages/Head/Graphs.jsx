@@ -120,7 +120,7 @@ export default function Dashboard({ statusChartData = {}, quantityChartData = {}
                                 />
                                 <YAxis allowDecimals={false} />
                                 <Tooltip />
-                                <Bar dataKey="value" fill="#34d399" name="Ending Balance" />
+                                <Bar dataKey="value" fill="#34d399" name="Items" />
                             </BarChart>
                         </ResponsiveContainer>
                     </div>
