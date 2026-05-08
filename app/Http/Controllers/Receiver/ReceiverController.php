@@ -7,6 +7,7 @@ use App\Models\Item;
 use App\Models\Quantity;
 use App\Models\UnitofMeasure;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class ReceiverController extends Controller
 {
@@ -21,6 +22,18 @@ class ReceiverController extends Controller
 
         $items = $items->get();
 
+        $items = $items->map(function ($item) {
+            $addedReceiptTotal = array_sum(
+                array_map('intval', $item->added_receipt ?? [])
+            );
+
+            $item->computed_total_without_less =
+                $item->total +
+                $addedReceiptTotal;
+
+            return $item;
+        });
+        
         $items = $items->map(function ($item) {
             $addedReceiptTotal = array_sum(
                 array_map('intval', $item->added_receipt ?? [])
@@ -79,13 +92,37 @@ class ReceiverController extends Controller
     }
 
     public function editReceipt(Request $request){
-        $findItem = Item::findOrFail($request->item_id);
+        DB::transaction(function () use ($request) {
+            $findItem = Item::findOrFail($request->item_id);
+            $updatedReceipts = array_values(array_map('intval', (array) $request->quantity));
 
-        $updatedReceipts = array_values(array_map('intval', (array) $request->quantity));
+            $findItem->update([
+                'added_receipt' => $updatedReceipts,
+            ]);
 
-        $findItem->update([
-            'added_receipt' => $updatedReceipts
-        ]);
+            $receiptQuantities = $findItem->quantities()
+                ->orderBy('id')
+                ->get()
+                ->skip(1)
+                ->values();
+
+            foreach ($updatedReceipts as $index => $quantity) {
+                if (isset($receiptQuantities[$index])) {
+                    $receiptQuantities[$index]->update([
+                        'quantity' => $quantity,
+                    ]);
+                } else {
+                    Quantity::create([
+                        'item_id' => $findItem->id,
+                        'quantity' => $quantity,
+                    ]);
+                }
+            }
+
+            if ($receiptQuantities->count() > count($updatedReceipts)) {
+                $receiptQuantities->slice(count($updatedReceipts))->each->delete();
+            }
+        });
 
         return back()->with('success', 'Receipt updated successfully');
     }
@@ -109,6 +146,7 @@ class ReceiverController extends Controller
 
         foreach($items as $item){
             $item->update([
+            'total' =>$item->total - $item->less + ($item->added_receipt ? array_sum($item->added_receipt) : 0),
             'less' => 0,
             'added_receipt' => [],
 

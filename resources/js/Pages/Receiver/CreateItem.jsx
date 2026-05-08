@@ -121,10 +121,7 @@ export default function(){
                                 <th>DESCRIPTION</th>
                                 <th>UNIT</th>
                                 <th>BEGINNING</th>
-                                <th>ADD: RECEIPTS</th>
                                 <th>TOTAL</th>
-                                <th>LESS: ISSUANCE</th>
-                                <th>ENDING</th>
                                 </tr>
                             </thead>
 
@@ -137,12 +134,7 @@ export default function(){
                                             <td>{item.description}</td>
                                             <td>{item.unit_of_measure}</td>
                                             <td>{lastHistory?.ending_balance}</td>
-                                            <td>{item.added_receipt?.join(' + ')}</td>
-                                            <td>{item.computed_total}</td>
-                                            <td>{item.less}</td>
-                                            <td className="font-bold text-primary">
-                                                {item.total}
-                                            </td>
+                                            <td className="font-bold text-primary">{item.computed_total}</td>
                                         </tr>
                                     );
                                 })}
@@ -177,6 +169,7 @@ export default function(){
                 <th>ADD:RECEIPTS</th>
                 <th>TOTAL</th>
                 <th>LESS: ISSUANCE</th>
+                <th>ENDING BALANCE</th>
                 </tr>
             </thead>
             <tbody>
@@ -217,14 +210,13 @@ export default function(){
                         
                         <div>
                             <button onClick={() => {setaddReceiptModal(item.id); setData({item_id: item.id})}} className="btn btn-xs sm:btn-sm md:btn-md lg:btn-lg xl:btn-xl"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" className="size-5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" /></svg></button>
-                            <button onClick={() => {seteditItemModal(item.id); setData({item_id: item.id, quantity: Array.isArray(item.added_receipt) ? item.added_receipt.map((receipt, index) => ({id: index, quantity: receipt})) : []})}} className="btn btn-xs sm:btn-sm md:btn-md lg:btn-lg xl:btn-xl"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" className="size-5"><path stroke-linecap="round" stroke-linejoin="round" d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0 1 15.75 21H5.25A2.25 2.25 0 0 1 3 18.75V8.25A2.25 2.25 0 0 1 5.25 6H10" /></svg></button>
+                            <button onClick={() => {seteditItemModal(item.id); setData({item_id: item.id, quantity: Array.isArray(item.added_receipt) ? item.added_receipt : []})}} className="btn btn-xs sm:btn-sm md:btn-md lg:btn-lg xl:btn-xl"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" className="size-5"><path stroke-linecap="round" stroke-linejoin="round" d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0 1 15.75 21H5.25A2.25 2.25 0 0 1 3 18.75V8.25A2.25 2.25 0 0 1 5.25 6H10" /></svg></button>
                         </div>
-                        
+
                         {/* Edit Receipt Modal */}
-                        {editItemModal && (
+                        {editItemModal === item.id && (
                                 <dialog className="modal modal-open">
                                     <div className="modal-box">
-                                        {data.quantity_id}
                                         <h3 className="font-bold text-lg m-4">Edit Receipt</h3>
                                         <button
                                             className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2"
@@ -234,7 +226,7 @@ export default function(){
                                         </button>
 
                                         <form onSubmit={editReceipt} className="flex flex-col gap-4">
-                                            {data.quantity?.map((qty, index) => (
+                                            {Array.isArray(data.quantity) && data.quantity.map((qty, index) => (
                                             <div key={index} className="flex items-center justify-center gap-2 mb-4">
                                                 <input
                                                 type="number"
@@ -249,7 +241,7 @@ export default function(){
                                                 />
                                             </div>
                                             ))}
-                                            {!data.quantity?.length && (
+                                            {(!Array.isArray(data.quantity) || !data.quantity.length) && (
                                                 <p className="text-sm text-gray-500">No added receipts yet.</p>
                                             )}
                                             <button type="submit" className="btn btn-primary">Save Edit</button>
@@ -263,7 +255,7 @@ export default function(){
 
                 <td>
                     <div className="font-bold">
-                       {item.computed_total}
+                       {item.computed_total_without_less}
                     </div>
                 </td>
                 
@@ -271,6 +263,12 @@ export default function(){
                 <td>
                     <div className="font-bold">
                        {item.less}
+                    </div>
+                </td>
+                
+                <td>
+                    <div className="font-bold">
+                       {item.computed_total}
                     </div>
                 </td>
 
