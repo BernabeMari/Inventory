@@ -23,7 +23,7 @@ class Item extends Model
     }
 
     public function quantities(){
-        return $this->hasMany(Quantity::class, 'item_id');
+        return $this->hasMany(Quantity::class);
     }
 
     public function issuances(){

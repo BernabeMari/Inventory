@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\History;
 use App\Models\Issuance;
 use App\Models\Item;
+use App\Models\Quantity;
 use App\Models\Request as ModelsRequest;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
@@ -82,34 +83,20 @@ class HeadController extends Controller
     }
 
     private function buildReportItems(Request $request)
-    {
-        $items = Item::with(['issuances', 'quantities', 'history' => function ($query) use ($request){
-            if($request->start_date && $request->end_date){
-                $query->whereBetween('created_at', [
-                    $request->start_date . ' 00:00:00',
-                    $request->end_date . ' 23:59:59',
-                ]);
-            }
-        }]);
+{
+   $history = Item::with(['quantities' => function ($query) use ($request) {
 
-        if($request->start_date && $request->end_date){
-            $items->whereHas('history', function ($query) use ($request) {
-                $query->whereBetween('created_at', [
-                    $request->start_date . ' 00:00:00',
-                    $request->end_date . ' 23:59:59',
-                ]);
-            });
-        }
-
-        if(filled($request->search)){
-            $items->where(function($q) use ($request) {
-                $q->where('description', 'like', '%' . $request->search . '%')
-                  ->orWhere('unit_of_measure', 'like', '%' . $request->search . '%');
-            });
-        }
-
-        return $items->get();
+    if ($request->start_date && $request->end_date) {
+        $query->whereBetween('created_at', [
+            $request->start_date,
+            $request->end_date
+        ]);
     }
+
+}]);
+
+    return $history->get();
+}
 
     public function headPage(Request $request){
         $graphData = $this->buildGraphData($request);
@@ -124,10 +111,25 @@ class HeadController extends Controller
     }
 
     public function headReportPage(Request $request){
-        $items = $this->buildReportItems($request);
-            
-        return inertia('Head/Report', ['items' => $items]);
-        
+       $items = Item::withSum(['quantities as total_quantity' => function ($q) use ($request) {
+        if ($request->start_date && $request->end_date) {
+            $q->whereBetween('created_at', [
+                $request->start_date . ' 00:00:00',
+                $request->end_date . ' 23:59:59'
+            ]);
+        }
+    }], 'quantity')
+    ->withSum(['issuances as total_issued' => function ($q) use ($request) {
+        if ($request->start_date && $request->end_date) {
+            $q->whereBetween('created_at', [
+                $request->start_date . ' 00:00:00',
+                $request->end_date . ' 23:59:59'
+            ]);
+        }
+    }], 'fulfilled_quantity')
+    ->get();
+
+       return inertia('Head/Report', ['items' => $items]);
     }
 
 

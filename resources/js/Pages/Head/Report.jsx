@@ -119,35 +119,21 @@ export default function(){
                 </tr>
             </thead>
             <tbody>
-                {items.map(item => {
-                    const grouped = item.history?.reduce((acc, h) => {
-                        if(!acc[h.item_id]){
-                            acc[h.item_id] = {...h, total: 0, less: 0, add_receipts: []}
-                        }
+                {items.map(item => (
+                    <tr key={item.id}>
+                        <td>{item.id}</td>
+                        <td>{item.description}</td>
+                        <td>{item.unit_of_measure}</td>
+                        <td>{item.beginning_inventory}</td>
+                        <td>{item.added_receipt}</td>
 
-                        acc[h.item_id].total += h.total || 0;
-                        acc[h.item_id].less += h.less || 0;
-                        acc[h.item_id].add_receipts = [
-                            ...acc[h.item_id].add_receipts,
-                            ...(h.add_receipts || [])
-                        ];
+                        {/* THIS is the sum */}
 
-                        return acc;
-                    }, {});
-                    const lastHistory = item.history[item.history.length - 1];
-                    return Object.values(grouped || {}).map(history => (
-                        <tr key={history.item_id}>
-                            <td>{history.item_id}</td>
-                            <td>{item.description}</td>
-                            <td>{history.unit_of_measure}</td>
-                            <td>{lastHistory?.beginning_inventory}</td>
-                            <td>{history.add_receipts.join(' + ')}</td>
-                            <td>{history.total}</td>
-                            <td>{history.less}</td>
-                            <td>{history.total - history.less}</td>
-                        </tr>
-                    ));
-                })}
+                        <td>{item.total_quantity}</td>
+                        <td>{item.total_issued}</td>
+                        <td>{item.total - item.less}</td>
+                    </tr>
+                ))}
             </tbody>
             </table>
         </div>
