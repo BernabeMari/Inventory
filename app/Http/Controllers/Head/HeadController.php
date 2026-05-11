@@ -35,6 +35,8 @@ class HeadController extends Controller
             'Accepted' => $requests->where('status', 'approved')->count(),
             'Rejected' => $requests->where('status', 'rejected')->count(),
             'Cancelled' => $requests->where('status', 'cancelled')->count(),
+            'On-Hold' => $requests->where('status', 'on-hold')->count(),
+            'for-pickup' => $requests->where('status', 'for-pickup')->count(),
         ];
 
         $fulfilledQuantity = $issuances->sum('fulfilled_quantity');
@@ -70,7 +72,8 @@ class HeadController extends Controller
         foreach ($items as $item) {
             $itemsChartData[] = [
                 'name' => $item->description,
-                'value' => $item->total,
+                'value' =>  $item->quantities()->sum('quantity') -
+                            $item->issuances()->sum('fulfilled_quantity'),
             ];
         }
 
