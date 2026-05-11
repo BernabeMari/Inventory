@@ -13,8 +13,7 @@ class ReceiverController extends Controller
 {
     public function receiverPage(Request $request){
         $UnitOfMeasure = UnitofMeasure::query()->get();
-        $items = Item::with('requests', 'quantities', 'issuances', 'history')
-            ->withSum('quantities as total_quantity', 'quantity');
+        $items = Item::with('requests', 'quantities', 'issuances', 'history');
 
         if(filled($request->search)){
             $items->where('description', 'like', '%' . $request->search . '%')
@@ -26,7 +25,7 @@ class ReceiverController extends Controller
         
 
         $items = $items->map(function ($item) {
-            $totalQuantity = (int) ($item->total_quantity ?? 0);
+            $totalQuantity = (int) ($item->total ?? 0) + ($item->added_receipt ? array_sum($item->added_receipt) : 0);
             $fulfilledQuantity = $item->issuances->sum(function ($issuance) {
                 $fulfilled = $issuance->fulfilled_quantity;
 
@@ -41,7 +40,7 @@ class ReceiverController extends Controller
 
             $item->computed_total_without_less = $totalQuantity;
             $item->computed_less = $fulfilledQuantity;
-            $item->computed_total = $totalQuantity - $fulfilledQuantity;
+            $item->computed_total = $item->total - $item->less;
 
             return $item;
         });
@@ -86,7 +85,8 @@ class ReceiverController extends Controller
         ]);
 
         $item->update([
-            'added_receipt' => array_merge($item->added_receipt ?? [], [$request->quantity])
+            'added_receipt' => array_merge($item->added_receipt ?? [], [$request->quantity]),
+            'total' => $item->total + $request->quantity,
         ]);
     }
 
@@ -97,6 +97,7 @@ class ReceiverController extends Controller
 
             $findItem->update([
                 'added_receipt' => $updatedReceipts,
+                'total' => $findItem->total - ($findItem->added_receipt ? array_sum($findItem->added_receipt) : 0) + array_sum($updatedReceipts),
             ]);
 
             $receiptQuantities = $findItem->quantities()
@@ -145,7 +146,7 @@ class ReceiverController extends Controller
 
         foreach($items as $item){
             $item->update([
-            'total' =>$item->total - $item->less + ($item->added_receipt ? array_sum($item->added_receipt) : 0),
+            'total' =>$item->total - $item->less,
             'less' => 0,
             'added_receipt' => [],
 

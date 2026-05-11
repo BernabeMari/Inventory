@@ -255,14 +255,14 @@ export default function(){
 
                 <td>
                     <div className="font-bold">
-                       {item.computed_total_without_less}
+                       {item.total}
                     </div>
                 </td>
                 
                 
                 <td>
                     <div className="font-bold">
-                       {item.computed_less}
+                       {item.less}
                     </div>
                 </td>
                 

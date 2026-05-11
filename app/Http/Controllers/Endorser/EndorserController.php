@@ -133,7 +133,6 @@ class EndorserController extends Controller
                     $newLess = $currentLess + $fulfilled;
                     $findItem->update([
                         'less' => $newLess,
-                        'total' => max($baseQuantityTotal - $newLess, 0),
                     ]);
                 }
 
