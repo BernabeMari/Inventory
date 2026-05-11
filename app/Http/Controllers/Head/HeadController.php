@@ -87,18 +87,41 @@ class HeadController extends Controller
 
     private function buildReportItems(Request $request)
 {
-   $history = Item::with(['quantities' => function ($query) use ($request) {
+   $items = Item::with(['quantities', 'issuances'])->get();
 
+    // Calculate beginning inventory and filter receipts/issuances by date
     if ($request->start_date && $request->end_date) {
-        $query->whereBetween('created_at', [
-            $request->start_date,
-            $request->end_date
-        ]);
+        $startDateTime = $request->start_date . ' 00:00:00';
+        $endDateTime = $request->end_date . ' 23:59:59';
+
+        $items = $items->map(function ($item) use ($startDateTime, $endDateTime) {
+            // Beginning inventory: all quantities and issuances before the start date
+            $beginningQuantities = $item->quantities
+                ->where('created_at', '<', $startDateTime)
+                ->sum('quantity');
+            
+            $beginningIssuances = $item->issuances
+                ->where('created_at', '<', $startDateTime)
+                ->sum('fulfilled_quantity');
+
+            $item->beginning_inventory = max($beginningQuantities - $beginningIssuances, 0);
+
+            // Filter quantities within the date range
+            $item->quantities = $item->quantities->whereBetween('created_at', [$startDateTime, $endDateTime])->values();
+
+            // Filter issuances within the date range
+            $item->issuances = $item->issuances->whereBetween('created_at', [$startDateTime, $endDateTime])->values();
+
+            return $item;
+        });
+    } else {
+        $items = $items->map(function ($item) {
+            $item->beginning_inventory = $item->quantities->sum('quantity') - $item->issuances->sum('fulfilled_quantity');
+            return $item;
+        });
     }
 
-}]);
-
-    return $history->get();
+    return $items;
 }
 
     public function headPage(Request $request){
@@ -114,20 +137,18 @@ class HeadController extends Controller
     }
 
     public function headReportPage(Request $request){
-       $items = Item::withSum(['quantities as total_quantity' => function ($q) use ($request) {
-        if ($request->start_date && $request->end_date) {
-            $q->whereDate('created_at', '<', $request->end_date);
-        }
-    }], 'quantity')
-    ->withSum(['issuances as total_issued' => function ($q) use ($request) {
-        if ($request->start_date && $request->end_date) {
-            $q->whereBetween('created_at', [
-                $request->start_date . ' 00:00:00',
-                $request->end_date . ' 23:59:59'
-            ]);
-        }
-    }], 'fulfilled_quantity')
-    ->get();
+       $items = $this->buildReportItems($request)->map(function ($item) {
+            $receipts = $item->quantities->sum('quantity');
+            $issuances = $item->issuances->sum('fulfilled_quantity');
+            $total = $item->beginning_inventory + $receipts;
+
+            $item->setAttribute('added_receipt', $receipts);
+            $item->setAttribute('total', $total);
+            $item->setAttribute('less', $issuances);
+            $item->setAttribute('ending_balance', max($total - $issuances, 0));
+
+            return $item;
+        });
 
        return inertia('Head/Report', ['items' => $items]);
     }
@@ -161,45 +182,22 @@ class HeadController extends Controller
             ]);
 
             foreach ($items as $item) {
-                $histories = collect($item->history ?? []);
-                if ($histories->isEmpty()) {
-                    continue;
-                }
+                $beginningInventory = $item->beginning_inventory ?? 0;
+                $receipts = $item->quantities->sum('quantity') ?? 0;
+                $issuances = $item->issuances->sum('fulfilled_quantity') ?? 0;
+                $total = $beginningInventory + $receipts;
+                $endingBalance = $total - $issuances;
 
-                $grouped = $histories->reduce(function ($acc, $history) {
-                    if (! isset($acc[$history->item_id])) {
-                        $acc[$history->item_id] = [
-                            'item_id' => $history->item_id,
-                            'unit_of_measure' => $history->unit_of_measure,
-                            'total' => 0,
-                            'less' => 0,
-                            'add_receipts' => [],
-                        ];
-                    }
-
-                    $acc[$history->item_id]['total'] += $history->total ?? 0;
-                    $acc[$history->item_id]['less'] += $history->less ?? 0;
-                    $receipts = is_array($history->add_receipts) ? $history->add_receipts : [];
-                    $acc[$history->item_id]['add_receipts'] = array_merge($acc[$history->item_id]['add_receipts'], $receipts);
-
-                    return $acc;
-                }, []);
-
-                $firstHistory = $histories->first();
-                $beginningInventory = $firstHistory?->beginning_inventory ?? 0;
-
-                foreach ($grouped as $history) {
-                    fputcsv($output, [
-                        $history['item_id'],
-                        $item->description,
-                        $history['unit_of_measure'],
-                        $beginningInventory,
-                        implode(' + ', $history['add_receipts']) ?: '0',
-                        $history['total'],
-                        $history['less'],
-                        $history['total'] - $history['less'],
-                    ]);
-                }
+                fputcsv($output, [
+                    $item->id,
+                    $item->description,
+                    $item->unit_of_measure,
+                    $beginningInventory,
+                    $receipts ?: '0',
+                    $total,
+                    $issuances,
+                    max($endingBalance, 0),
+                ]);
             }
 
             fclose($output);

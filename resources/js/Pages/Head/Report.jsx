@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 
 export default function(){
     const [search, setSearch] = useState('')
-    const {beginnings, items, flash} = usePage().props
+    const {items = [], flash = {}} = usePage().props
     const [error, setError] = useState(flash.error)
     const {post, data, setData, reset} = useForm({
         unit_of_measure: '',
@@ -126,12 +126,9 @@ export default function(){
                         <td>{item.unit_of_measure}</td>
                         <td>{item.beginning_inventory}</td>
                         <td>{item.added_receipt}</td>
-
-                        {/* THIS is the sum */}
-
-                        <td>{item.total_quantity}</td>
-                        <td>{item.total_issued}</td>
-                        <td>{item.total - item.less}</td>
+                        <td>{item.total}</td>
+                        <td>{item.less}</td>
+                        <td>{item.ending_balance}</td>
                     </tr>
                 ))}
             </tbody>

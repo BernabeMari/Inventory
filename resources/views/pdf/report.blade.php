@@ -73,41 +73,23 @@
         </thead>
         <tbody>
             @foreach($items as $item)
-                @if($item->history->count() > 0)
-                    @php
-                        $grouped = collect($item->history)->reduce(function($acc, $h) {
-                            if(!isset($acc[$h->item_id])){
-                                $acc[$h->item_id] = [
-                                    'item_id' => $h->item_id,
-                                    'unit_of_measure' => $h->unit_of_measure,
-                                    'total' => 0,
-                                    'less' => 0,
-                                    'add_receipts' => []
-                                ];
-                            }
-                            $acc[$h->item_id]['total'] += $h->total ?? 0;
-                            $acc[$h->item_id]['less'] += $h->less ?? 0;
-                            $receipts = is_array($h->add_receipts) ? $h->add_receipts : [];
-                            $acc[$h->item_id]['add_receipts'] = array_merge($acc[$h->item_id]['add_receipts'], $receipts);
-                            return $acc;
-                        }, []);
-                        
-                        $firstHistory = $item->history->first();
-                        $beginningInventory = $firstHistory?->beginning_inventory ?? 0;
-                    @endphp
-                    @foreach($grouped as $history)
-                    <tr>
-                        <td>{{ $history['item_id'] }}</td>
-                        <td>{{ $item->description }}</td>
-                        <td>{{ $history['unit_of_measure'] }}</td>
-                        <td class="text-right">{{ $beginningInventory }}</td>
-                        <td class="text-right">{{ implode(' + ', $history['add_receipts']) ?: '0' }}</td>
-                        <td class="text-right">{{ $history['total'] }}</td>
-                        <td class="text-right">{{ $history['less'] }}</td>
-                        <td class="text-right">{{ $history['total'] - $history['less'] }}</td>
-                    </tr>
-                    @endforeach
-                @endif
+                @php
+                    $beginningInventory = $item->beginning_inventory ?? 0;
+                    $receipts = $item->quantities->sum('quantity') ?? 0;
+                    $issuances = $item->issuances->sum('fulfilled_quantity') ?? 0;
+                    $total = $beginningInventory + $receipts;
+                    $endingBalance = $total - $issuances;
+                @endphp
+                <tr>
+                    <td>{{ $item->id }}</td>
+                    <td>{{ $item->description }}</td>
+                    <td>{{ $item->unit_of_measure }}</td>
+                    <td class="text-right">{{ $beginningInventory }}</td>
+                    <td class="text-right">{{ $receipts ?: '0' }}</td>
+                    <td class="text-right">{{ $total }}</td>
+                    <td class="text-right">{{ $issuances }}</td>
+                    <td class="text-right">{{ max($endingBalance, 0) }}</td>
+                </tr>
             @endforeach
         </tbody>
     </table>
