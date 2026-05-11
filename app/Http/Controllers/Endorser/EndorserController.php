@@ -13,7 +13,14 @@ class EndorserController extends Controller
 {
     public function endorserPage(Request $request){
         $requests = ModelsRequest::with('user', 'items', 'issuances')->whereIn('status', ['approved', 'on-hold', 'pending']);
-        $items = Item::all();
+        $items = Item::withSum('quantities as total_quantity', 'quantity')
+            ->get()
+            ->map(function ($item) {
+                $availableStock = ((int) ($item->total_quantity ?? 0)) - (int) $item->less;
+                $item->setAttribute('available_stock', max($availableStock, 0));
+
+                return $item;
+            });
 
         if (filled($request->search)) {
         $requests->where(function ($query) use ($request) {
@@ -85,16 +92,17 @@ class EndorserController extends Controller
 
         // First validate all items and quantities before making any DB changes
         foreach ($itemIds as $index => $itemId) {
-            $findItem = Item::findOrFail($itemId);
+            $findItem = Item::withSum('quantities as total_quantity', 'quantity')->findOrFail($itemId);
             $fulfilled = $fulfilledQuantities[$index];
             $unfulfilled = $unfulfilledQuantities[$index];
             $requested = $requestedQuantities[$index];
+            $availableStock = ((int) ($findItem->total_quantity ?? 0)) - (int) $findItem->less;
 
             if ($fulfilled + $unfulfilled != $requested) {
                 return back()->with('error', 'The fulfilled and unfulfilled items do not match the department’s request.');
             }
 
-            if ($findItem->total < $fulfilled) {
+            if ($availableStock < $fulfilled) {
                 return back()->with('error', 'Insufficient stock available for selected item: ' . $findItem->description);
             }
         }
@@ -104,20 +112,29 @@ class EndorserController extends Controller
                 $issuedItems = [];
 
                 foreach ($itemIds as $index => $itemId) {
-                    $findItem = Item::whereKey($itemId)->lockForUpdate()->firstOrFail();
+                    $findItem = Item::withSum('quantities as total_quantity', 'quantity')
+                        ->whereKey($itemId)
+                        ->lockForUpdate()
+                        ->firstOrFail();
                     $fulfilled = $fulfilledQuantities[$index];
+                    $baseQuantityTotal = (int) ($findItem->total_quantity ?? 0);
+                    $currentLess = (int) $findItem->less;
+                    $availableStock = $baseQuantityTotal - $currentLess;
 
                     if ($fulfilled < 0) {
                         throw new \RuntimeException('Invalid fulfilled quantity for selected item: ' . $findItem->description);
                     }
 
-                    if ($findItem->total - $fulfilled < 0) {
+                    if ($availableStock - $fulfilled < 0) {
                         throw new \RuntimeException('Insufficient stock available for selected item: ' . $findItem->description);
                     }
 
                     $issuedItems[] = $findItem->description;
-                    $findItem->decrement('total', $fulfilled);
-                    $findItem->increment('less', $fulfilled);
+                    $newLess = $currentLess + $fulfilled;
+                    $findItem->update([
+                        'less' => $newLess,
+                        'total' => max($baseQuantityTotal - $newLess, 0),
+                    ]);
                 }
 
                 $findRequest->update([

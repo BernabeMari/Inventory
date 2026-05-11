@@ -13,7 +13,8 @@ class ReceiverController extends Controller
 {
     public function receiverPage(Request $request){
         $UnitOfMeasure = UnitofMeasure::query()->get();
-        $items = Item::with('requests', 'quantities', 'issuances', 'history');
+        $items = Item::with('requests', 'quantities', 'issuances', 'history')
+            ->withSum('quantities as total_quantity', 'quantity');
 
         if(filled($request->search)){
             $items->where('description', 'like', '%' . $request->search . '%')
@@ -21,28 +22,26 @@ class ReceiverController extends Controller
         }
 
         $items = $items->get();
-
-        $items = $items->map(function ($item) {
-            $addedReceiptTotal = array_sum(
-                array_map('intval', $item->added_receipt ?? [])
-            );
-
-            $item->computed_total_without_less =
-                $item->total +
-                $addedReceiptTotal;
-
-            return $item;
-        });
         
-        $items = $items->map(function ($item) {
-            $addedReceiptTotal = array_sum(
-                array_map('intval', $item->added_receipt ?? [])
-            );
+        
 
-            $item->computed_total =
-                $item->total +
-                $addedReceiptTotal - 
-                $item->less;
+        $items = $items->map(function ($item) {
+            $totalQuantity = (int) ($item->total_quantity ?? 0);
+            $fulfilledQuantity = $item->issuances->sum(function ($issuance) {
+                $fulfilled = $issuance->fulfilled_quantity;
+
+                if (is_array($fulfilled)) {
+                    return collect($fulfilled)->sum(function ($quantity) {
+                        return (int) $quantity;
+                    });
+                }
+
+                return (int) $fulfilled;
+            });
+
+            $item->computed_total_without_less = $totalQuantity;
+            $item->computed_less = $fulfilledQuantity;
+            $item->computed_total = $totalQuantity - $fulfilledQuantity;
 
             return $item;
         });

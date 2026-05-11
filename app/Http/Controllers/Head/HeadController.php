@@ -116,10 +116,7 @@ class HeadController extends Controller
     public function headReportPage(Request $request){
        $items = Item::withSum(['quantities as total_quantity' => function ($q) use ($request) {
         if ($request->start_date && $request->end_date) {
-            $q->whereBetween('created_at', [
-                $request->start_date . ' 00:00:00',
-                $request->end_date . ' 23:59:59'
-            ]);
+            $q->whereDate('created_at', '<', $request->end_date);
         }
     }], 'quantity')
     ->withSum(['issuances as total_issued' => function ($q) use ($request) {

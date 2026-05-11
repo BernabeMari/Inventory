@@ -54,6 +54,12 @@ export default function(){
         setSearch(e.target.value)
         router.get(route('endorser_page'), {search: e.target.value})
     }
+
+    const itemOptions = items.map(item => ({
+        value: item.id,
+        label: `${item.description} - (${item.available_stock ?? 0})`,
+    }))
+
     return(
     <SidebarLayout>
          <div className="flex-col flex overflow-auto">
@@ -237,8 +243,8 @@ export default function(){
                                     <div key={index} className="flex flex-row gap-4 items-center">
                                         <div className="w-64">
                                             <Select
-                                                options={items.map(item => ({ value: item.id, label: `${item.description} - (${item.total})` }))}
-                                                value={items.map(i => ({ value: i.id, label: `${i.description} - (${i.total})` })).find(o => o.value === (data.item_id[index] || '')) || null}
+                                                options={itemOptions}
+                                                value={itemOptions.find(o => o.value === (data.item_id[index] || '')) || null}
                                                 onChange={(selected) => {
                                                     const itemIds = [...(data.item_id || [])];
                                                     itemIds[index] = selected ? selected.value : '';

@@ -262,7 +262,7 @@ export default function(){
                 
                 <td>
                     <div className="font-bold">
-                       {item.less}
+                       {item.computed_less}
                     </div>
                 </td>
                 
