@@ -89,8 +89,11 @@ class HeadController extends Controller
 {
    $items = Item::with(['quantities', 'issuances'])->get();
 
+    // Skip filtering if start_date > end_date
+    $shouldFilterByDate = $request->start_date && $request->end_date && $request->start_date <= $request->end_date;
+
     // Calculate beginning inventory and filter receipts/issuances by date
-    if ($request->start_date && $request->end_date) {
+    if ($shouldFilterByDate) {
         $startDateTime = $request->start_date . ' 00:00:00';
         $endDateTime = $request->end_date . ' 23:59:59';
 
@@ -137,6 +140,14 @@ class HeadController extends Controller
     }
 
     public function headReportPage(Request $request){
+       // Set dates to today if not provided
+       if (!$request->start_date) {
+           $request->merge(['start_date' => now()->toDateString()]);
+       }
+       if (!$request->end_date) {
+           $request->merge(['end_date' => now()->toDateString()]);
+       }
+
        $items = $this->buildReportItems($request)->map(function ($item) {
             $receipts = $item->quantities->sum('quantity');
             $issuances = $item->issuances->sum('fulfilled_quantity');
@@ -155,6 +166,14 @@ class HeadController extends Controller
 
 
     public function downloadReportPdf(Request $httpRequest){
+        // Set dates to today if not provided
+        if (!$httpRequest->start_date) {
+            $httpRequest->merge(['start_date' => now()->toDateString()]);
+        }
+        if (!$httpRequest->end_date) {
+            $httpRequest->merge(['end_date' => now()->toDateString()]);
+        }
+
         $items = $this->buildReportItems($httpRequest);
         
         $pdf = Pdf::loadView('pdf.report', compact('items'));
@@ -164,6 +183,14 @@ class HeadController extends Controller
 
     public function downloadReportSpreadsheet(Request $request)
     {
+        // Set dates to today if not provided
+        if (!$request->start_date) {
+            $request->merge(['start_date' => now()->toDateString()]);
+        }
+        if (!$request->end_date) {
+            $request->merge(['end_date' => now()->toDateString()]);
+        }
+
         $items = $this->buildReportItems($request);
         $filename = 'report_' . now()->format('Y-m-d_H-i-s') . '.csv';
 

@@ -7,14 +7,26 @@ export default function(){
     const [search, setSearch] = useState('')
     const {items = [], flash = {}} = usePage().props
     const [error, setError] = useState(flash.error)
+    const today = new Date().toISOString().split('T')[0]
     const {post, data, setData, reset} = useForm({
         unit_of_measure: '',
         description: '',
         total: '',
         quantity: [''],
-        start_date: null,
-        end_date: null
+        start_date: today,
+        end_date: today
     })
+
+    useEffect(() => {
+        const params = new URLSearchParams(window.location.search)
+        const startDate = params.get('start_date') || today
+        const endDate = params.get('end_date') || today
+        setData({
+            ...data,
+            start_date: startDate,
+            end_date: endDate
+        })
+    }, [])
 
     function getCurrentFilters(extra = {}) {
         const params = new URLSearchParams(window.location.search)
