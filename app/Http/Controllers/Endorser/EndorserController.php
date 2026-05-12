@@ -11,13 +11,21 @@ use Illuminate\Support\Facades\DB;
 
 class EndorserController extends Controller
 {
+    private function getAvailableStock(Item $item): int
+    {
+        $totalQuantity = (int) ($item->total_quantity ?? $item->quantities->sum('quantity'));
+        $fulfilledQuantity = (int) $item->issuances->sum(fn ($issuance) => (int) $issuance->fulfilled_quantity);
+
+        return max($totalQuantity - $fulfilledQuantity, 0);
+    }
+
     public function endorserPage(Request $request){
         $requests = ModelsRequest::with('user', 'items', 'issuances')->whereIn('status', ['approved', 'on-hold', 'pending']);
         $items = Item::withSum('quantities as total_quantity', 'quantity')
+            ->with('issuances')
             ->get()
             ->map(function ($item) {
-                $availableStock = ((int) ($item->total_quantity ?? 0)) - (int) $item->less;
-                $item->setAttribute('available_stock', max($availableStock, 0));
+                $item->setAttribute('available_stock', $this->getAvailableStock($item));
 
                 return $item;
             });
@@ -92,11 +100,13 @@ class EndorserController extends Controller
 
         // First validate all items and quantities before making any DB changes
         foreach ($itemIds as $index => $itemId) {
-            $findItem = Item::withSum('quantities as total_quantity', 'quantity')->findOrFail($itemId);
+            $findItem = Item::withSum('quantities as total_quantity', 'quantity')
+                ->with('issuances')
+                ->findOrFail($itemId);
             $fulfilled = $fulfilledQuantities[$index];
             $unfulfilled = $unfulfilledQuantities[$index];
             $requested = $requestedQuantities[$index];
-            $availableStock = ((int) ($findItem->total_quantity ?? 0)) - (int) $findItem->less;
+            $availableStock = $this->getAvailableStock($findItem);
 
             if ($fulfilled + $unfulfilled != $requested) {
                 return back()->with('error', 'The fulfilled and unfulfilled items do not match the department’s request.');
@@ -113,13 +123,12 @@ class EndorserController extends Controller
 
                 foreach ($itemIds as $index => $itemId) {
                     $findItem = Item::withSum('quantities as total_quantity', 'quantity')
+                        ->with('issuances')
                         ->whereKey($itemId)
                         ->lockForUpdate()
                         ->firstOrFail();
                     $fulfilled = $fulfilledQuantities[$index];
-                    $baseQuantityTotal = (int) ($findItem->total_quantity ?? 0);
-                    $currentLess = (int) $findItem->less;
-                    $availableStock = $baseQuantityTotal - $currentLess;
+                    $availableStock = $this->getAvailableStock($findItem);
 
                     if ($fulfilled < 0) {
                         throw new \RuntimeException('Invalid fulfilled quantity for selected item: ' . $findItem->description);
@@ -130,7 +139,7 @@ class EndorserController extends Controller
                     }
 
                     $issuedItems[] = $findItem->description;
-                    $newLess = $currentLess + $fulfilled;
+                    $newLess = (int) $findItem->less + $fulfilled;
                     $findItem->update([
                         'less' => $newLess,
                     ]);
