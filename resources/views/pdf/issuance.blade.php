@@ -11,7 +11,6 @@
         <th>Issued Item</th>
         <th>Fulfilled Quantity</th>
         <th>Unfulfilled Quantity</th>
-        <th>Status</th>
     </tr>
 
     @php
@@ -31,9 +30,6 @@
         <td>{{ optional($issuance)->issued_item ?? '' }}</td>
         <td>{{ optional($issuance)->fulfilled_quantity ?? '' }}</td>
         <td>{{ optional($issuance)->unfulfilled_quantity ?? '' }}</td>
-        @if($loop->first)
-            <td rowspan="{{ count($items) }}" class="text-center">{{ $request->status }}</td>
-        @endif
     </tr>
     @endforeach
     
