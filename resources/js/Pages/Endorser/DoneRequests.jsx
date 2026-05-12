@@ -14,7 +14,7 @@ export default function(){
     return(
         <SidebarLayout>
             <div className="flex-col flex overflow-auto">
-                <h3 className="font-bold text-lg m-4">Done Requests</h3>
+                <h3 className="font-bold text-3xl m-4 bg-gradient-to-r from-[#8b1c1c] via-[#b91c1c] to-[#d4a017] bg-clip-text text-transparent">Done Requests</h3>
                 {/* Search button */}
             <div className="p-4 flex flex-col md:flex-row md:justify-between md:items-center">
                 <div>

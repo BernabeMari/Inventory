@@ -65,8 +65,8 @@ export default function(){
     return(
     <SidebarLayout>
          <div className="flex-col flex overflow-auto">
-            <h3 className="font-bold text-lg m-4">Requests</h3>
-        {flash.error && (<div className="alert alert-error mb-4">
+            <h3 className="font-bold text-3xl m-4 bg-gradient-to-r from-[#8b1c1c] via-[#b91c1c] to-[#d4a017] bg-clip-text text-transparent">Requests</h3>
+        {flash.error && (<div className="bg-red-100 border-2 border-red-400 text-red-800 mb-4 rounded-lg p-4">
         {flash.error}
         </div>
         )}
@@ -80,42 +80,42 @@ export default function(){
                 </div>
 
                 <div className="gap-5 flex">
-                    <button value={''} onClick={handleSearch} className="btn bg-slate-500 p-2 text-white hover:bg-slate-600">
+                    <button value={''} onClick={handleSearch} className="bg-gray-500 hover:bg-gray-600 text-white font-semibold py-2 px-4 rounded-lg transition">
                         All
                     </button>
-                    <button value={'pending'} onClick={handleSearch} className="btn bg-yellow-500 p-2 text-white hover:bg-yellow-600">
+                    <button value={'pending'} onClick={handleSearch} className="bg-yellow-500 hover:bg-yellow-600 text-white font-semibold py-2 px-4 rounded-lg transition">
                         Pending
                     </button>
-                    <button value={'approved'} onClick={handleSearch} className="btn bg-green-500 p-2 text-white hover:bg-green-600">
+                    <button value={'approved'} onClick={handleSearch} className="bg-green-500 hover:bg-green-600 text-white font-semibold py-2 px-4 rounded-lg transition">
                         Approved
                     </button>
-                    <button value={'on-hold'} onClick={handleSearch} className="btn bg-red-500 p-2 text-white hover:bg-red-600">
+                    <button value={'on-hold'} onClick={handleSearch} className="bg-red-500 hover:bg-red-600 text-white font-semibold py-2 px-4 rounded-lg transition">
                         On-Hold
                     </button>
                 </div>
             </div>       
         
                 {/* Table */}
-                <div className="flex justify-center items-center">
-                    <table className="table">
+                <div className="flex justify-center items-center p-4 overflow-x-auto">
+                    <table className="w-full border-collapse border border-[#d8b36b]">
                     {/* head */}
-                    <thead>
+                    <thead className="bg-gradient-to-r from-[#7f1717] via-[#a91f1f] to-[#c99a1b]">
                         <tr>
-                        <th></th>
-                        <th>DEPARTMENT</th>
-                        <th>REQUEST</th>
-                        <th>QUANTITY OF REQUEST</th>
-                        <th>STATUS</th>
-                        <th>PURPOSE</th>
-                        <th>ACTION</th>
+                        <th className="border border-[#d8b36b] text-white p-3 font-semibold"></th>
+                        <th className="border border-[#d8b36b] text-white p-3 font-semibold">DEPARTMENT</th>
+                        <th className="border border-[#d8b36b] text-white p-3 font-semibold">REQUEST</th>
+                        <th className="border border-[#d8b36b] text-white p-3 font-semibold">QUANTITY</th>
+                        <th className="border border-[#d8b36b] text-white p-3 font-semibold">STATUS</th>
+                        <th className="border border-[#d8b36b] text-white p-3 font-semibold">PURPOSE</th>
+                        <th className="border border-[#d8b36b] text-white p-3 font-semibold">ACTION</th>
                         </tr>
                     </thead>
                     <tbody>
                         {requests.map(request => (
-                            <tr> 
+                            <tr className="hover:bg-[#fff7ea]"> 
         
         
-                        <td>
+                        <td className="border border-[#d8b36b] p-2">
                             <div className="font-bold">
                             {request.user?.image ? (
                             <img src={`/storage/${request.user.image}`} alt="" className="ml-2 rounded-full h-10 w-10"/>) 
@@ -136,21 +136,21 @@ export default function(){
                         </td>
         
         
-                        <td>
+                        <td className="border border-[#d8b36b] p-2">
                             <div className="font-bold">
                                 {request.item.join(', ')}
                             </div>
                         </td>
         
         
-                        <td>
+                        <td className="border border-[#d8b36b] p-2">
                             <div className="font-bold">
                                {request.quantity.join(', ')}
                             </div>
                         </td>
                         
                         
-                        <td>
+                        <td className="border border-[#d8b36b] p-2">
                             <div className="font-bold">
                                {request.status === 'pending' ? (
                                     <span className="text-yellow-500">{request.status}</span>
@@ -163,18 +163,18 @@ export default function(){
                         </td>
                        
                        
-                        <td>
+                        <td className="border border-[#d8b36b] p-2">
                             <div className="font-bold">
                                {request.message}
                             </div>
                         </td>
                        
                        {/* action buttons */}
-                        <td className="flex-row flex gap-2 justify-start items-start">
+                        <td className="border border-[#d8b36b] p-2 flex-row flex gap-2 justify-center items-center">
                             {request.status != 'approved' && (
-                                <div className="font-bold flex-row flex">
+                                <div className="font-bold flex-row flex gap-1">
                                 <div className="tooltip tooltip-close tooltip-right">
-                                    <button onClick={(e) => {setapproveModal(true); setData({issuance_id: request.issuances?.id || null, request_id: request.id, quantity: request.quantity, item: request.item, item_id: Array(request.item.length).fill(''), fulfilled_quantity: request.fulfilled_quantity || [], unfulfilled_quantity: request.unfulfilled_quantity || []})}} className="btn">
+                                    <button onClick={(e) => {setapproveModal(true); setData({issuance_id: request.issuances?.id || null, request_id: request.id, quantity: request.quantity, item: request.item, item_id: Array(request.item.length).fill(''), fulfilled_quantity: request.fulfilled_quantity || [], unfulfilled_quantity: request.unfulfilled_quantity || []})}} className="bg-green-500 hover:bg-green-600 text-white p-2 rounded transition">
                                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="size-6">
                                     <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
                                     </svg>
@@ -184,14 +184,13 @@ export default function(){
                                 {request.status === 'on-hold' && (
                                     <div className="tooltip tooltip-close tooltip-right">
                                         {Array.isArray(request.clearance) && request.clearance.length > 0 && (
-                                <button type="button"className="btn"
+                                <button type="button"className="bg-purple-500 hover:bg-purple-600 text-white p-2 rounded transition"
                                     onClick={() => {
                                         setClearanceImages(request.clearance)
                                         setClearanceModal(true)}}>
                                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
                                     <path stroke-linecap="round" stroke-linejoin="round" d="m18.375 12.739-7.693 7.693a4.5 4.5 0 0 1-6.364-6.364l10.94-10.94A3 3 0 1 1 19.5 7.372L8.552 18.32m.009-.01-.01.01m5.699-9.941-7.81 7.81a1.5 1.5 0 0 0 2.112 2.13" />
                                     </svg>
-                                    ({request.clearance.length})
                                 </button>
                             )}
                             </div>
@@ -199,7 +198,7 @@ export default function(){
                             
                                 {request.status === 'pending' && (
                                     <div className="tooltip tooltip-close tooltip-right">
-                                        <button onClick={(e) => {setholdModal(true); setData({issuance_id: request.issuances?.id || null, request_id: request.id, quantity: request.quantity, item: request.item, item_id: Array(request.item.length).fill(''), fulfilled_quantity: request.fulfilled_quantity || [], unfulfilled_quantity: request.unfulfilled_quantity || []})}} className="btn">
+                                        <button onClick={(e) => {setholdModal(true); setData({issuance_id: request.issuances?.id || null, request_id: request.id, quantity: request.quantity, item: request.item, item_id: Array(request.item.length).fill(''), fulfilled_quantity: request.fulfilled_quantity || [], unfulfilled_quantity: request.unfulfilled_quantity || []})}} className="bg-yellow-500 hover:bg-yellow-600 text-white p-2 rounded transition">
                                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
                                         <path stroke-linecap="round" stroke-linejoin="round" d="M14.25 9v6m-4.5 0V9M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
                                         </svg>
@@ -208,7 +207,7 @@ export default function(){
                                 )}
 
                                 <div className="tooltip tooltip-close tooltip-right">
-                                    <button onClick={(e) => {setrejectModal(true); setData({request_id: request.id})}} className="btn">
+                                    <button onClick={(e) => {setrejectModal(true); setData({request_id: request.id})}} className="bg-red-500 hover:bg-red-600 text-white p-2 rounded transition">
                                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
                                     <path stroke-linecap="round" stroke-linejoin="round" d="m9.75 9.75 4.5 4.5m0-4.5-4.5 4.5M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
                                     </svg>
@@ -221,7 +220,7 @@ export default function(){
                             {request.status === 'approved' && (
                                 <div className="font-bold flex-row flex">
                                     <div className="tooltip tooltip-close tooltip-right">
-                                        <button onClick={(e) => {setpickupModal(true); setData({issuance_id: request.issuances?.id || null, request_id: request.id, quantity: request.quantity, item: request.item, item_id: Array(request.item.length).fill(''), fulfilled_quantity: request.fulfilled_quantity || [], unfulfilled_quantity: request.unfulfilled_quantity || []})}} className="btn">
+                                        <button onClick={(e) => {setpickupModal(true); setData({issuance_id: request.issuances?.id || null, request_id: request.id, quantity: request.quantity, item: request.item, item_id: Array(request.item.length).fill(''), fulfilled_quantity: request.fulfilled_quantity || [], unfulfilled_quantity: request.unfulfilled_quantity || []})}} className="bg-blue-500 hover:bg-blue-600 text-white p-2 rounded transition">
                                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
                                         <path stroke-linecap="round" stroke-linejoin="round" d="M9 3.75H6.912a2.25 2.25 0 0 0-2.15 1.588L2.35 13.177a2.25 2.25 0 0 0-.1.661V18a2.25 2.25 0 0 0 2.25 2.25h15A2.25 2.25 0 0 0 21.75 18v-4.162c0-.224-.034-.447-.1-.661L19.24 5.338a2.25 2.25 0 0 0-2.15-1.588H15M2.25 13.5h3.86a2.25 2.25 0 0 1 2.012 1.244l.256.512a2.25 2.25 0 0 0 2.013 1.244h3.218a2.25 2.25 0 0 0 2.013-1.244l.256-.512a2.25 2.25 0 0 1 2.013-1.244h3.859M12 3v8.25m0 0-3-3m3 3 3-3" />
                                         </svg>
@@ -240,7 +239,7 @@ export default function(){
                 {/* Approve Modal */}
                      {approveModal && (
                         <dialog className="modal modal-open">
-                        <div className="modal-box">
+                        <div className="modal-box bg-[#fffdf8] border-2 border-[#e4c57c]/70 max-w-2xl">
                             <button
                             className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2"
                             onClick={() => setapproveModal(false)}
@@ -248,15 +247,15 @@ export default function(){
                             ✕
                             </button>
 
-
-                             <form onSubmit={approve} className="flex flex-col gap-4">
-                                <h3 className="font-bold text-lg m-4">Approve Request</h3>
+                            <form onSubmit={approve} className="flex flex-col gap-4">
+                                <h3 className="font-bold text-2xl bg-gradient-to-r from-[#8b1c1c] via-[#b91c1c] to-[#d4a017] bg-clip-text text-transparent mb-2">Approve Request</h3>
+                                <div className="bg-[#fff7ea] border-l-4 border-[#d4a017] p-3 rounded text-sm">
                                 {data.item.map((item, index) => (
-                                    <div key={index}>
-                                        {item} - {data.quantity[index]}
-                                        <br />
+                                    <div key={index} className="text-gray-700 font-medium">
+                                        <strong>{item}</strong> - Qty: {data.quantity[index]}
                                     </div>
                                 ))}
+                                </div>
 
                                 {data.item.map((row, index) => (
                                     <div key={index} className="flex flex-row gap-4 items-center">
@@ -302,9 +301,9 @@ export default function(){
                                         </label>
                                     </div>
 
-                                <div className="flex flex-row gap-10 mt-5 justify-center">
-                                <button type="submit" className="btn btn-success w-10">Yes</button>
-                                <button onClick={() => setapproveModal(false)} className="btn btn-error w-10">No</button>
+                                <div className="flex flex-row gap-4 mt-5 justify-center">
+                                <button type="submit" className="bg-green-500 hover:bg-green-600 text-white font-semibold py-2 px-6 rounded-lg transition">Approve</button>
+                                <button onClick={() => setapproveModal(false)} className="bg-gray-400 hover:bg-gray-500 text-white font-semibold py-2 px-6 rounded-lg transition">Cancel</button>
                                 </div>
                             </form>
 
@@ -316,28 +315,17 @@ export default function(){
                     {/* Hold Modal */}
                      {holdModal && (
                         <dialog className="modal modal-open">
-                        <div className="modal-box">
+                        <div className="modal-box bg-[#fffdf8] border-2 border-[#e4c57c]/70">
                             <button
                             className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2"
                             onClick={() => setholdModal(false)}
                             >
                             ✕
                             </button>
-                            <p>Are you sure you want to <p className="badge badge-ghost bold badge-xl">HOLD</p> this request?</p>
-                            <form onSubmit={hold} className="flex flex-col mt-5 justify-center">
-                                
-                                <label className="input validator">
-                                <p>Enter Reason for putting on hold: </p>
-                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="size-6">
-                                    <path strokeLinecap="round" strokeLinejoin="round" d="M7.5 3v11.25m0 0A2.25 2.25 0 1 0 9.75 13.5M7.5 14.25v2.625c0 .621.504 1.125 1.125 1.125H17.25M6 20.25h12a2.25 2.25 0 0 0 2.25-2.25v-8.511a5.238 5.238 0 0 0-.521-2.079L14.695 3.152a5.192 5.192 0 0 0-2.079-.521H6Z" />
-                                    </svg>
-                                    <input value={data.endorser_message} onChange={(e) => setData('endorser_message', e.target.value)} type="text" min={0} required placeholder="Reason for putting on hold" title="Enter reason for putting on hold"/>
-                                </label> 
-
-                                <div className="flex flex-row gap-10 justify-center">
-                                    <button className="btn btn-success w-10">Yes</button>
-                                    <button onClick={() => setholdModal(false)} className="btn btn-error w-10">No</button>
-                                </div>
+                            <h3 className="font-bold text-2xl bg-gradient-to-r from-[#8b1c1c] via-[#b91c1c] to-[#d4a017] bg-clip-text text-transparent mb-4">Put Request on Hold</h3>
+                            <p className="text-gray-700 mb-4">Enter the reason for putting this request on hold:</p>
+                            <form onSubmit={hold} className="flex flex-col gap-4">
+                                <textarea value={data.endorser_message} onChange={(e) => setData('endorser_message', e.target.value)} required placeholder="Reason for putting on hold" title="Enter reason for putting on hold" className="w-full px-3 py-2 border border-[#d8b36b] rounded bg-white text-[#2d1208] rows-3" />
                             </form>
                         </div>
                         </dialog>
@@ -347,27 +335,19 @@ export default function(){
                     {/* Pickup Modal */}
                      {pickupModal && (
                         <dialog className="modal modal-open">
-                        <div className="modal-box">
+                        <div className="modal-box bg-[#fffdf8] border-2 border-[#e4c57c]/70">
                             <button
                             className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2"
                             onClick={() => setpickupModal(false)}
                             >
                             ✕
                             </button>
-                            <p>Are you sure you want to <p className="badge badge-ghost bold badge-xl">PICK UP</p> this request?</p>
-                            <form onSubmit={pickup} className="flex flex-col mt-5 justify-center">
-                                
-                                <label className="input validator">
-                                <p>Enter Reason for putting on hold: </p>
-                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="size-6">
-                                    <path strokeLinecap="round" strokeLinejoin="round" d="M7.5 3v11.25m0 0A2.25 2.25 0 1 0 9.75 13.5M7.5 14.25v2.625c0 .621.504 1.125 1.125 1.125H17.25M6 20.25h12a2.25 2.25 0 0 0 2.25-2.25v-8.511a5.238 5.238 0 0 0-.521-2.079L14.695 3.152a5.192 5.192 0 0 0-2.079-.521H6Z" />
-                                    </svg>
-                                    <input value={data.endorser_message} onChange={(e) => setData('endorser_message', e.target.value)} type="text" min={0} required placeholder="Reason for putting on hold" title="Enter reason for putting on hold"/>
-                                </label> 
-
-                                <div className="flex flex-row gap-10 justify-center">
-                                    <button className="btn btn-success w-10">Yes</button>
-                                    <button onClick={() => setholdModal(false)} className="btn btn-error w-10">No</button>
+                            <h3 className="font-bold text-2xl bg-gradient-to-r from-[#8b1c1c] via-[#b91c1c] to-[#d4a017] bg-clip-text text-transparent mb-4">Set For Pickup</h3>
+                            <p className="text-gray-700 mb-4">Are you ready to set this approved request for pickup?</p>
+                            <form onSubmit={pickup} className="flex flex-col gap-4">
+                                <div className="flex flex-row gap-4 justify-center">
+                                    <button type="submit" className="bg-yellow-500 hover:bg-yellow-600 text-white font-semibold py-2 px-6 rounded-lg transition">Set For Pickup</button>
+                                    <button type="button" onClick={() => setpickupModal(false)} className="bg-gray-400 hover:bg-gray-500 text-white font-semibold py-2 px-6 rounded-lg transition">Cancel</button>
                                 </div>
                             </form>
                         </div>
@@ -378,27 +358,20 @@ export default function(){
                 {/* Reject Modal */}
                      {rejectModal && (
                         <dialog className="modal modal-open">
-                        <div className="modal-box">
+                        <div className="modal-box bg-[#fffdf8] border-2 border-[#e4c57c]/70">
                             <button
                             className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2"
                             onClick={() => setrejectModal(false)}
                             >
                             ✕
                             </button>
-                            <p>Are you sure you want to <p className="badge badge-ghost bold badge-xl">REJECT</p> this request?</p>
-                            <form onSubmit={reject} className="flex flex-col mt-5 justify-center">
-                                
-                                <label className="input validator">
-                                <p>Enter Reason for rejecting: </p>
-                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="size-6">
-                                    <path strokeLinecap="round" strokeLinejoin="round" d="M7.5 8.25h9m-9 3H12m-9.75 1.51c0 1.6 1.123 2.994 2.707 3.227 1.129.166 2.27.293 3.423.379.35.026.67.21.865.501L12 21l2.755-4.133a1.14 1.14 0 0 1 .865-.501 48.172 48.172 0 0 0 3.423-.379c1.584-.233 2.707-1.626 2.707-3.228V6.741c0-1.602-1.123-2.995-2.707-3.228A48.394 48.394 0 0 0 12 3c-2.392 0-4.744.175-7.043.513C3.373 3.746 2.25 5.14 2.25 6.741v6.018Z" />
-                                    </svg>
-                                    <input value={data.endorser_message} onChange={(e) => setData('endorser_message', e.target.value)} type="text" min={0} required placeholder="Issue Quantity" title="Put Issue Quantity Here"/>
-                                </label> 
-
-                                <div className="flex flex-row gap-10 justify-center">
-                                    <button className="btn btn-success w-10">Yes</button>
-                                    <button onClick={() => setrejectModal(false)} className="btn btn-error w-10">No</button>
+                            <h3 className="font-bold text-2xl bg-gradient-to-r from-[#8b1c1c] via-[#b91c1c] to-[#d4a017] bg-clip-text text-transparent mb-4">Reject Request</h3>
+                            <p className="text-gray-700 mb-4">Please enter the reason for rejecting this request:</p>
+                            <form onSubmit={reject} className="flex flex-col gap-4">
+                                <textarea value={data.endorser_message} onChange={(e) => setData('endorser_message', e.target.value)} required placeholder="Rejection reason" title="Enter reason for rejection" className="w-full px-3 py-2 border border-[#d8b36b] rounded bg-white text-[#2d1208] rows-3" />
+                                <div className="flex flex-row gap-4 justify-center">
+                                    <button type="submit" className="bg-red-500 hover:bg-red-600 text-white font-semibold py-2 px-6 rounded-lg transition">Reject Request</button>
+                                    <button type="button" onClick={() => setrejectModal(false)} className="bg-gray-400 hover:bg-gray-500 text-white font-semibold py-2 px-6 rounded-lg transition">Cancel</button>
                                 </div>
                             </form>
                         </div>
@@ -408,7 +381,7 @@ export default function(){
                 {/* Clearance Images Modal */}
                 {clearanceModal && (
                     <dialog className="modal modal-open">
-                        <div className="modal-box max-w-4xl">
+                        <div className="modal-box bg-[#fffdf8] border-2 border-[#e4c57c]/70 max-w-4xl">
                             <button
                                 className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2"
                                 onClick={() => {
@@ -419,7 +392,7 @@ export default function(){
                                 ✕
                             </button>
 
-                            <h3 className="font-bold text-lg mb-4">Department Uploaded Images</h3>
+                            <h3 className="font-bold text-2xl bg-gradient-to-r from-[#8b1c1c] via-[#b91c1c] to-[#d4a017] bg-clip-text text-transparent mb-4">Department Clearance Images</h3>
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 {clearanceImages.map((imagePath, index) => (
                                     <a

@@ -60,14 +60,14 @@ export default function(){
     return(
     <SidebarLayout>
     <div className="flex-col flex overflow-auto relative">
-        <h3 className="font-bold text-lg m-4">Create Item</h3>
+        <h3 className="font-bold text-3xl m-4 bg-gradient-to-r from-[#8b1c1c] via-[#b91c1c] to-[#d4a017] bg-clip-text text-transparent">Create Item</h3>
         {flash.success && (
-            <div className="alert alert-success mb-4">
+            <div className="alert bg-green-100 border-2 border-green-400 text-green-800 mb-4 rounded-lg">
                 {flash.success}
             </div>
         )}
         {flash.error && (
-            <div className="alert alert-error mb-4">
+            <div className="alert bg-red-100 border-2 border-red-400 text-red-800 mb-4 rounded-lg">
                 {flash.error}
             </div>
         )}
@@ -83,8 +83,8 @@ export default function(){
                 </div>
 
                 {/* Add Item Button */}
-                <div className="bg-white m-6 rounded-full border border-black ">
-                    <button onClick={(e) => setcreateItemModal(true)} className="btn btn-soft btn-secondary rounded-full p-4"><PlusIcon className="w-5 h-5" />Create Item</button>
+                <div className="m-6">
+                    <button onClick={(e) => setcreateItemModal(true)} className="bg-gradient-to-r from-[#8b1c1c] via-[#b91c1c] to-[#d4a017] hover:shadow-lg text-white font-semibold py-2 px-6 rounded-lg flex items-center gap-2 transition"><PlusIcon className="w-5 h-5" />Create Item</button>
                 </div>
               </div>
 
@@ -100,7 +100,7 @@ export default function(){
                 {/* reset Modal */}
             {resetModal && (
                 <dialog className="modal modal-open">
-                <div className="modal-box">
+                <div className="modal-box bg-[#fffdf8] border-2 border-[#e4c57c]/70">
                     <button
                     className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2"
                     onClick={() => setResetModal(false)}
@@ -109,19 +109,19 @@ export default function(){
                     </button>
 
                     <form onSubmit={resetInventory} className="flex flex-col gap-4">
-                        <p>Are you sure you want to <p className="badge badge-ghost bold badge-xl">RESET</p> this month with:</p>                 
+                        <p>Are you sure you want to <span className="inline-block px-3 py-1 bg-[#ffd700]/30 border border-[#d4a017] text-[#5a3a1a] rounded font-bold">RESET</span> this month with:</p>                 
                         <div className="flex justify-center items-center">
                         <div className="overflow-x-auto w-full max-h-[400px] overflow-y-auto">
                             
-                            <table className="table table-zebra text-sm">
+                            <table className="w-full border-collapse border border-[#d8b36b]">
                             
-                            <thead className="sticky top-0 bg-base-100 z-10">
+                            <thead className="sticky top-0 bg-gradient-to-r from-[#7f1717] via-[#a91f1f] to-[#c99a1b] z-10">
                                 <tr>
-                                <th>ITEM NO.</th>
-                                <th>DESCRIPTION</th>
-                                <th>UNIT</th>
-                                <th>BEGINNING</th>
-                                <th>TOTAL</th>
+                                <th className="border border-[#d8b36b] text-white p-2">ITEM NO.</th>
+                                <th className="border border-[#d8b36b] text-white p-2">DESCRIPTION</th>
+                                <th className="border border-[#d8b36b] text-white p-2">UNIT</th>
+                                <th className="border border-[#d8b36b] text-white p-2">BEGINNING</th>
+                                <th className="border border-[#d8b36b] text-white p-2">TOTAL</th>
                                 </tr>
                             </thead>
 
@@ -129,12 +129,12 @@ export default function(){
                                 {items.map(item => {
                                     const lastHistory = item.history[item.history.length - 1];
                                     return (
-                                        <tr key={item.id}>
-                                            <td>{item.id}</td>
-                                            <td>{item.description}</td>
-                                            <td>{item.unit_of_measure}</td>
-                                            <td>{lastHistory?.ending_balance}</td>
-                                            <td className="font-bold text-primary">{item.computed_total}</td>
+                                        <tr key={item.id} className="hover:bg-[#fff7ea]">
+                                            <td className="border border-[#d8b36b] p-2">{item.id}</td>
+                                            <td className="border border-[#d8b36b] p-2">{item.description}</td>
+                                            <td className="border border-[#d8b36b] p-2">{item.unit_of_measure}</td>
+                                            <td className="border border-[#d8b36b] p-2">{lastHistory?.ending_balance}</td>
+                                            <td className="border border-[#d8b36b] p-2 font-bold text-[#8b1c1c]">{item.computed_total}</td>
                                         </tr>
                                     );
                                 })}
@@ -147,8 +147,8 @@ export default function(){
                         </div>
 
                                 <div className="flex flex-row gap-10 justify-center">
-                                    <button type="submit" className="btn btn-success w-10">Yes</button>
-                                    <button onClick={() => setResetModal(false)} className="btn btn-error w-10">No</button>
+                                    <button type="submit" className="bg-[#16a34a] hover:bg-[#15803d] text-white font-semibold py-2 px-6 rounded-lg transition">Yes</button>
+                                    <button onClick={() => setResetModal(false)} className="bg-[#dc2626] hover:bg-[#b91c1c] text-white font-semibold py-2 px-6 rounded-lg transition">No</button>
                                 </div>
                     </form>
                 
@@ -158,66 +158,66 @@ export default function(){
 
 
         {/* Table */}
-        <div className="flex justify-center items-center">
-            <table className="table">
+        <div className="flex justify-center items-center p-4">
+            <table className="w-full border-collapse border border-[#d8b36b]">
             {/* head */}
-            <thead>
+            <thead className="bg-gradient-to-r from-[#7f1717] via-[#a91f1f] to-[#c99a1b]">
                 <tr>
-                <th>ITEM NO.</th>
-                <th>DESCRIPTION</th>
-                <th>UNIT OF MEASURE</th>
-                <th>ADD:RECEIPTS</th>
-                <th>TOTAL</th>
-                <th>LESS: ISSUANCE</th>
-                <th>ENDING BALANCE</th>
+                <th className="border border-[#d8b36b] text-white p-3 font-semibold">ITEM NO.</th>
+                <th className="border border-[#d8b36b] text-white p-3 font-semibold">DESCRIPTION</th>
+                <th className="border border-[#d8b36b] text-white p-3 font-semibold">UNIT OF MEASURE</th>
+                <th className="border border-[#d8b36b] text-white p-3 font-semibold">ADD:RECEIPTS</th>
+                <th className="border border-[#d8b36b] text-white p-3 font-semibold">TOTAL</th>
+                <th className="border border-[#d8b36b] text-white p-3 font-semibold">LESS: ISSUANCE</th>
+                <th className="border border-[#d8b36b] text-white p-3 font-semibold">ENDING BALANCE</th>
                 </tr>
             </thead>
             <tbody>
                 {items.map(item => (
-                <tr> 
+                <tr className="hover:bg-[#fff7ea]"> 
 
 
-                <td>
+                <td className="border border-[#d8b36b] p-2">
                     <div className="font-bold">
                         {item.id}
                     </div>
                 </td>
 
 
-                <td>
+                <td className="border border-[#d8b36b] p-2">
                     <div className="font-bold">
                         {item.description}
                     </div>
                 </td>
 
 
-                <td>
+                <td className="border border-[#d8b36b] p-2">
                     <div className="font-bold">
                         {item.unit_of_measure}
                     </div>
                 </td>
                 
-                <td>
-                     <div className="flex justify-between items-center">
+                <td className="border border-[#d8b36b] p-2">
+                     <div className="flex justify-between items-center gap-2">
                         {item.added_receipt?.join(' + ')}
                         
                         {addReceiptModal === item.id && (<div>
                             <form onSubmit={addReceipt}>
-                                <input value={data.quantity} min="1" onChange={(e) => setData('quantity', e.target.value)} placeholder="Add Receipt" type="number" required/>
-                                <button type="submit"></button>
+                                <input value={data.quantity} min="1" onChange={(e) => setData('quantity', e.target.value)} placeholder="Add Receipt" type="number" required className="px-3 py-2 border border-[#d8b36b] rounded bg-white text-[#2d1208]"/>
+                                <button type="submit" className="ml-2 bg-[#16a34a] hover:bg-[#15803d] text-white py-2 px-3 rounded text-sm font-semibold transition">Save</button>
                             </form>
                         </div>)}
                         
-                        <div>
-                            <button onClick={() => {setaddReceiptModal(item.id); setData({item_id: item.id})}} className="btn btn-xs sm:btn-sm md:btn-md lg:btn-lg xl:btn-xl"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" className="size-5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" /></svg></button>
-                            <button onClick={() => {seteditItemModal(item.id); setData({item_id: item.id, quantity: Array.isArray(item.added_receipt) ? item.added_receipt : []})}} className="btn btn-xs sm:btn-sm md:btn-md lg:btn-lg xl:btn-xl"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" className="size-5"><path stroke-linecap="round" stroke-linejoin="round" d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0 1 15.75 21H5.25A2.25 2.25 0 0 1 3 18.75V8.25A2.25 2.25 0 0 1 5.25 6H10" /></svg></button>
+                        <div className="flex gap-1">
+                            <button onClick={() => {setaddReceiptModal(item.id); setData({item_id: item.id})}} className="bg-gradient-to-r from-[#8b1c1c] via-[#b91c1c] to-[#d4a017] hover:shadow-md text-white p-2 rounded transition"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" className="size-5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" /></svg></button>
+                            <button onClick={() => {seteditItemModal(item.id); setData({item_id: item.id, quantity: Array.isArray(item.added_receipt) ? item.added_receipt : []})}} className="bg-[#8b5a2b] hover:bg-[#6b4423] text-white p-2 rounded transition"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" className="size-5"><path stroke-linecap="round" stroke-linejoin="round" d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0 1 15.75 21H5.25A2.25 2.25 0 0 1 3 18.75V8.25A2.25 2.25 0 0 1 5.25 6H10" /></svg></button>
                         </div>
 
                         {/* Edit Receipt Modal */}
                         {editItemModal === item.id && (
                                 <dialog className="modal modal-open">
-                                    <div className="modal-box">
-                                        <h3 className="font-bold text-lg m-4">Edit Receipt</h3>
+                                    <div className="modal-box bg-[#fffdf8] border-2 border-[#e4c57c]/70">
+                                        <h3 className="font-bold text-xl bg-gradient-to-r from-[#8b1c1c] via-[#b91c1c] to-[#d4a017] bg-clip-text text-transparent m-4">Edit Receipt</h3>
                                         <button
                                             className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2"
                                             onClick={() => seteditItemModal(false)}
@@ -238,13 +238,14 @@ export default function(){
                                                     newQuantity[index] = e.target.value;
                                                     setData('quantity', newQuantity);
                                                 }}
+                                                className="px-3 py-2 border border-[#d8b36b] rounded bg-white text-[#2d1208] flex-1"
                                                 />
                                             </div>
                                             ))}
                                             {(!Array.isArray(data.quantity) || !data.quantity.length) && (
                                                 <p className="text-sm text-gray-500">No added receipts yet.</p>
                                             )}
-                                            <button type="submit" className="btn btn-primary">Save Edit</button>
+                                            <button type="submit" className="bg-gradient-to-r from-[#8b1c1c] via-[#b91c1c] to-[#d4a017] hover:shadow-lg text-white font-semibold py-2 rounded-lg transition">Save Edit</button>
                                         </form>
                                      </div>
                                 </dialog>
@@ -253,21 +254,21 @@ export default function(){
                     </div>
                 </td>
 
-                <td>
+                <td className="border border-[#d8b36b] p-2">
                     <div className="font-bold">
                        {item.total}
                     </div>
                 </td>
                 
                 
-                <td>
+                <td className="border border-[#d8b36b] p-2">
                     <div className="font-bold">
                        {item.less}
                     </div>
                 </td>
                 
-                <td>
-                    <div className="font-bold">
+                <td className="border border-[#d8b36b] p-2">
+                    <div className="font-bold text-[#8b1c1c]">
                        {item.computed_total}
                     </div>
                 </td>
@@ -281,7 +282,7 @@ export default function(){
     {/* Create Item */}
       {createItemModal && (
         <dialog className="modal modal-open">
-          <div className="modal-box">
+          <div className="modal-box bg-[#fffdf8] border-2 border-[#e4c57c]/70">
             <button
               className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2"
               onClick={() => setcreateItemModal(false)}
@@ -290,31 +291,23 @@ export default function(){
             </button>
 
             <form onSubmit={createItem} className="flex flex-col gap-4">
-                <h3 className="font-bold text-lg m-4">Create Item</h3>
+                <h3 className="font-bold text-xl bg-gradient-to-r from-[#8b1c1c] via-[#b91c1c] to-[#d4a017] bg-clip-text text-transparent m-4">Create Item</h3>
 
                 <div className="flex flex-row gap-4">
-                    <label className="input validator">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="size-6">
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M21.75 6.75a4.5 4.5 0 0 1-4.884 4.484c-1.076-.091-2.264.071-2.95.904l-7.152 8.684a2.548 2.548 0 1 1-3.586-3.586l8.684-7.152c.833-.686.995-1.874.904-2.95a4.5 4.5 0 0 1 6.336-4.486l-3.276 3.276a3.004 3.004 0 0 0 2.25 2.25l3.276-3.276c.256.565.398 1.192.398 1.852Z" />
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M4.867 19.125h.008v.008h-.008v-.008Z" />
-                    </svg>
-                    <input value={data.description} onChange={(e) => setData('description', e.target.value)} type="text" required placeholder="Item" title="Create Items Here"/>
-                    </label> 
+                    <div className="flex-1">
+                    <label className="block text-sm font-semibold text-[#4a2814] mb-2">Item Description</label>
+                    <input value={data.description} onChange={(e) => setData('description', e.target.value)} type="text" required placeholder="Item" title="Create Items Here" className="w-full px-3 py-2 border border-[#d8b36b] rounded bg-white text-[#2d1208]"/>
+                    </div> 
                 
                 
-                    <label className="input validator">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="size-6">
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M5.25 8.25h15m-16.5 7.5h15m-1.8-13.5-3.9 19.5m-2.1-19.5-3.9 19.5" />
-                    </svg>
-                    <input value={data.quantity} onChange={(e) => setData('quantity', e.target.value)} min={0} type="number" required placeholder="Quantity" title="Input Quantity of Item Here"/>
-                    </label> 
+                    <div className="flex-1">
+                    <label className="block text-sm font-semibold text-[#4a2814] mb-2">Quantity</label>
+                    <input value={data.quantity} onChange={(e) => setData('quantity', e.target.value)} min={0} type="number" required placeholder="Quantity" title="Input Quantity of Item Here" className="w-full px-3 py-2 border border-[#d8b36b] rounded bg-white text-[#2d1208]"/>
+                    </div> 
                 </div>
 
-                <div className="flex justify-center">
-                    <label className="input validator">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="size-6">
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 15.75V18m-7.5-6.75h.008v.008H8.25v-.008Zm0 2.25h.008v.008H8.25V13.5Zm0 2.25h.008v.008H8.25v-.008Zm0 2.25h.008v.008H8.25V18Zm2.498-6.75h.007v.008h-.007v-.008Zm0 2.25h.007v.008h-.007V13.5Zm0 2.25h.007v.008h-.007v-.008Zm0 2.25h.007v.008h-.007V18Zm2.504-6.75h.008v.008h-.008v-.008Zm0 2.25h.008v.008h-.008V13.5Zm0 2.25h.008v.008h-.008v-.008Zm0 2.25h.008v.008h-.008V18Zm2.498-6.75h.008v.008h-.008v-.008Zm0 2.25h.008v.008h-.008V13.5ZM8.25 6h7.5v2.25h-7.5V6ZM12 2.25c-1.892 0-3.758.11-5.593.322C5.307 2.7 4.5 3.65 4.5 4.757V19.5a2.25 2.25 0 0 0 2.25 2.25h10.5a2.25 2.25 0 0 0 2.25-2.25V4.757c0-1.108-.806-2.057-1.907-2.185A48.507 48.507 0 0 0 12 2.25Z" />
-                    </svg>
+                <div className="w-full">
+                    <label className="block text-sm font-semibold text-[#4a2814] mb-2">Unit of Measure</label>
                     <CreatableSelect className="w-full"
                         maxMenuHeight={200}
                         menuPortalTarget={document.body}
@@ -330,11 +323,10 @@ export default function(){
                         options={unitOptions}
                         isSearchable
                     />        
-                    </label> 
                 </div>
                
                {/* Create Item Button */}
-                <button className="btn btn-primary">Create Item</button>
+                <button className="bg-gradient-to-r from-[#8b1c1c] via-[#b91c1c] to-[#d4a017] hover:shadow-lg text-white font-semibold py-2 rounded-lg transition w-full">Create Item</button>
             </form>
           
           </div>

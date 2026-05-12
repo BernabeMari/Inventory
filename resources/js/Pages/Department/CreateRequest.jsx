@@ -56,7 +56,7 @@ export default function({requests}){
     return(
         <SidebarLayout>
         <div className="flex-col flex overflow-auto relative">
-        <h3 className="font-bold text-lg m-4">Create Request</h3>
+        <h3 className="font-bold text-3xl m-4 bg-gradient-to-r from-[#8b1c1c] via-[#b91c1c] to-[#d4a017] bg-clip-text text-transparent">Create Request</h3>
         {flash.success && (
             <div className="alert alert-success mb-4">
                 {flash.success}
@@ -73,7 +73,7 @@ export default function({requests}){
 
             {/* Add Item Button */}
             <div className="bg-white absolute top-0 right-0 m-6 rounded-full border border-black ">
-                <button onClick={(e) => {setrequestItemModal(true);setData({user_id: data.id, item: [''], quantity: ['']})}} className="btn btn-soft btn-secondary rounded-full p-4"><PlusIcon className="w-5 h-5" />Create Request</button>
+                <button onClick={(e) => {setrequestItemModal(true);setData({user_id: data.id, item: [''], quantity: ['']})}} className="bg-gradient-to-r from-[#8b1c1c] via-[#b91c1c] to-[#d4a017] hover:from-[#6b0d0d] hover:via-[#8b1515] hover:to-[#9c7f0c] text-white font-semibold py-3 px-6 rounded-full transition flex items-center gap-2"><PlusIcon className="w-5 h-5" />Create Request</button>
             </div>
 
             <div className="gap-5 flex">
@@ -177,18 +177,18 @@ export default function({requests}){
                 <td>
                     <div className="font-bold">
                        {request.status === 'for-pickup' ? (
-                        <button onClick={() => window.open(`/requests/${request.id}/pdf`, '_blank')} className="underline" type="button">View Issuance</button>
+                        <button onClick={() => window.open(`/requests/${request.id}/pdf`, '_blank')} className="text-blue-500 hover:text-blue-700 underline font-semibold" type="button">View Issuance</button>
                        ) : request.status === 'pending' ? (
-                        <button className="btn btn-sm btn-circle btn-ghost" onClick={() => {setCancelModal(true); setData({request_id: request.id})}}> ✕ </button> 
+                        <button className="bg-red-500 hover:bg-red-600 text-white font-semibold py-2 px-4 rounded-lg transition" onClick={() => {setCancelModal(true); setData({request_id: request.id})}}> Cancel </button> 
                        ) : request.status === 'on-hold' ? (
                         <div className="flex items-center gap-2">
-                            <button className="btn text-red-600" onClick={() => {setAttachModal(true); setSelectedAttachRequest(request); setData('request_id', request.id); setData('clearance', [])}}>
+                            <button className="bg-purple-500 hover:bg-purple-600 text-white font-semibold py-2 px-4 rounded-lg transition" onClick={() => {setAttachModal(true); setSelectedAttachRequest(request); setData('request_id', request.id); setData('clearance', [])}}>
                                 {Array.isArray(request.clearance) && request.clearance.length > 0 ? 'Update Files' : 'Attach File'}
                             </button>
                             {Array.isArray(request.clearance) && request.clearance.length > 0 ? (
-                                <span className="badge badge-success">Uploaded ({request.clearance.length})</span>
+                                <span className="bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm font-semibold">Uploaded ({request.clearance.length})</span>
                             ) : (
-                                <span className="badge badge-warning">Not Uploaded</span>
+                                <span className="bg-yellow-100 text-yellow-800 px-3 py-1 rounded-full text-sm font-semibold">Not Uploaded</span>
                             )}
                         </div>
                        ) : null}
@@ -206,7 +206,7 @@ export default function({requests}){
             {/* Create Request */}
             {requestItem && (
                 <dialog className="modal modal-open">
-                <div className="modal-box">
+                <div className="modal-box bg-[#fffdf8] border-2 border-[#e4c57c]/70 max-w-2xl">
                     <button
                     className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2"
                     onClick={() => setrequestItemModal(false)}
@@ -215,7 +215,7 @@ export default function({requests}){
                     </button>
 
                     <form onSubmit={request_item} className="flex flex-col gap-4">
-                        <h3 className="font-bold text-lg m-4">Create Request</h3>
+                        <h3 className="font-bold text-2xl bg-gradient-to-r from-[#8b1c1c] via-[#b91c1c] to-[#d4a017] bg-clip-text text-transparent mb-2">Create Request</h3>
 
                         <div className="flex flex-col gap-4">
                             {data.item.map((item, index) => (
@@ -278,8 +278,8 @@ export default function({requests}){
                         <button type="button" onClick={() => {
                             setData('item', [...data.item, '']);
                             setData('quantity', [...data.quantity, '']);
-                        }}>+</button>
-                        <button className="btn btn-primary">Send Request</button>
+                        }} className="bg-green-500 hover:bg-green-600 text-white font-semibold py-2 px-4 rounded-lg transition">+ Add Item</button>
+                        <button type="submit" className="bg-gradient-to-r from-[#8b1c1c] via-[#b91c1c] to-[#d4a017] hover:from-[#6b0d0d] hover:via-[#8b1515] hover:to-[#9c7f0c] text-white font-semibold py-2 px-6 rounded-lg transition">Send Request</button>
                     </form>
                 
                 </div>
@@ -290,7 +290,7 @@ export default function({requests}){
             {/* Cancel Request */}
             {cancelModal && (
                 <dialog className="modal modal-open">
-                <div className="modal-box">
+                <div className="modal-box bg-[#fffdf8] border-2 border-[#e4c57c]/70">
                     <button
                     className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2"
                     onClick={() => setCancelModal(false)}
@@ -299,10 +299,11 @@ export default function({requests}){
                     </button>
 
                     <form onSubmit={cancel_request} className="flex flex-col gap-4">
-                        <p>Are you sure you want to <p className="badge badge-ghost bold badge-xl">CANCEL</p> this request?</p>                 
-                                <div className="flex flex-row gap-10 justify-center">
-                                    <button type="submit" className="btn btn-success w-10">Yes</button>
-                                    <button onClick={() => setCancelModal(false)} className="btn btn-error w-10">No</button>
+                        <h3 className="font-bold text-2xl bg-gradient-to-r from-[#8b1c1c] via-[#b91c1c] to-[#d4a017] bg-clip-text text-transparent mb-4">Cancel Request</h3>
+                        <p className="text-gray-700 mb-4">Are you sure you want to cancel this request? This action cannot be undone.</p>
+                                <div className="flex flex-row gap-4 justify-center">
+                                    <button type="submit" className="bg-red-500 hover:bg-red-600 text-white font-semibold py-2 px-6 rounded-lg transition">Yes, Cancel</button>
+                                    <button type="button" onClick={() => setCancelModal(false)} className="bg-gray-400 hover:bg-gray-500 text-white font-semibold py-2 px-6 rounded-lg transition">No, Keep</button>
                                 </div>
                     </form>
                 
@@ -314,7 +315,7 @@ export default function({requests}){
             {/* Attach file Request */}
             {attachModal && (
                 <dialog className="modal modal-open">
-                <div className="modal-box">
+                <div className="modal-box bg-[#fffdf8] border-2 border-[#e4c57c]/70">
                     <button
                     className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2"
                     onClick={() => setAttachModal(false)}
@@ -323,7 +324,8 @@ export default function({requests}){
                     </button>
 
                     <form onSubmit={attach_file} className="flex flex-col gap-4">
-                        <p>Attach clearance images for this request.</p>
+                        <h3 className="font-bold text-2xl bg-gradient-to-r from-[#8b1c1c] via-[#b91c1c] to-[#d4a017] bg-clip-text text-transparent mb-2">Upload Clearance</h3>
+                        <p className="text-gray-700 mb-2">Attach clearance images for this request.</p>
                         <div className="text-sm">
                             {Array.isArray(selectedAttachRequest?.clearance) && selectedAttachRequest.clearance.length > 0 ? (
                                 <span className="text-green-600 font-semibold">Current status: Uploaded ({selectedAttachRequest.clearance.length} image/s)</span>
@@ -337,16 +339,16 @@ export default function({requests}){
                             accept="image/*"
                             multiple
                             onChange={(e) => setData('clearance', Array.from(e.target.files || []))}
-                            className="file-input file-input-bordered w-full"
+                            className="file-input file-input-bordered w-full border-[#d8b36b] bg-white text-[#2d1208]"
                             required
                         />
 
                         {Array.isArray(data.clearance) && data.clearance.length > 0 && (
                             <div className="rounded border p-3">
-                                <p className="font-semibold mb-2">Selected files ({data.clearance.length})</p>
+                                <p className="font-semibold mb-2 text-[#2d1208]">Selected files ({data.clearance.length})</p>
                                 <ul className="text-sm list-disc list-inside">
                                     {data.clearance.map((file, index) => (
-                                        <li key={index}>{file.name}</li>
+                                        <li key={index} className="text-[#2d1208]">{file.name}</li>
                                     ))}
                                 </ul>
                             </div>
@@ -357,10 +359,10 @@ export default function({requests}){
                         </p>
 
                                 <div className="flex flex-row gap-10 justify-center">
-                                    <button type="submit" className="btn btn-success" disabled={processing}>
+                                    <button type="submit" className="bg-green-500 hover:bg-green-600 text-white font-semibold py-2 px-6 rounded-lg transition disabled:opacity-50" disabled={processing}>
                                         {processing ? 'Uploading...' : 'Upload'}
                                     </button>
-                                    <button type="button" onClick={() => {setAttachModal(false); setSelectedAttachRequest(null)}} className="btn btn-error" disabled={processing}>Cancel</button>
+                                    <button type="button" onClick={() => {setAttachModal(false); setSelectedAttachRequest(null)}} className="bg-gray-400 hover:bg-gray-500 text-white font-semibold py-2 px-6 rounded-lg transition disabled:opacity-50" disabled={processing}>Cancel</button>
                                 </div>
                     </form>
                 
