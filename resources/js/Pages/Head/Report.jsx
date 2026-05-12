@@ -65,6 +65,7 @@ export default function(){
     return(
     <SidebarLayout>
     <div className="flex-col flex overflow-auto relative">
+        <p className="text-sm font-bold uppercase tracking-[0.35em] text-[#b91c1c]">Head</p>
         <h3 className="font-bold text-3xl m-4 bg-gradient-to-r from-[#8b1c1c] via-[#b91c1c] to-[#d4a017] bg-clip-text text-transparent">Report</h3>
         {flash.error && (<div className="bg-red-100 border-2 border-red-400 text-red-800 mb-4 rounded-lg p-4">
                 {flash.error}

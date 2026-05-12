@@ -65,6 +65,7 @@ export default function(){
     return(
     <SidebarLayout>
          <div className="flex-col flex overflow-auto">
+            <p className="text-sm font-bold uppercase tracking-[0.35em] text-[#b91c1c]">Endorser</p>
             <h3 className="font-bold text-3xl m-4 bg-gradient-to-r from-[#8b1c1c] via-[#b91c1c] to-[#d4a017] bg-clip-text text-transparent">Requests</h3>
         {flash.error && (<div className="bg-red-100 border-2 border-red-400 text-red-800 mb-4 rounded-lg p-4">
         {flash.error}
@@ -116,7 +117,7 @@ export default function(){
         
         
                         <td className="border border-[#d8b36b] p-2">
-                            <div className="font-bold">
+                            <div className="font-bold flex justify-center items-center">
                             {request.user?.image ? (
                             <img src={`/storage/${request.user.image}`} alt="" className="ml-2 rounded-full h-10 w-10"/>) 
                             : (<div className="ml-2 w-10 h-10 rounded-full bg-gray-300 flex items-center justify-center">
@@ -130,7 +131,7 @@ export default function(){
         
         
                         <td>
-                            <div className="font-bold flex-row flex items-center gap-2">
+                            <div className="font-bold flex-row flex justify-center items-center gap-2">
                                 {request.user?.department}
                             </div>
                         </td>
@@ -151,13 +152,13 @@ export default function(){
                         
                         
                         <td className="border border-[#d8b36b] p-2">
-                            <div className="font-bold">
+                            <div className="font-bold flex-row flex justify-center gap-2">
                                {request.status === 'pending' ? (
-                                    <span className="text-yellow-500">{request.status}</span>
+                                    <span className="bg-yellow-100 text-yellow-800 px-3 py-1 rounded-full text-sm font-semibold">{request.status}</span>
                                 ) : request.status === 'approved' ? (
-                                    <span className="text-green-500">{request.status}</span>
+                                    <span className="bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm font-semibold">{request.status}</span>
                                 ) : (
-                                    <span className="text-red-500">{request.status}</span>
+                                    <span className="bg-red-100 text-red-800 px-3 py-1 rounded-full text-sm font-semibold">{request.status}</span>
                                 )}
                             </div>
                         </td>
@@ -326,6 +327,10 @@ export default function(){
                             <p className="text-gray-700 mb-4">Enter the reason for putting this request on hold:</p>
                             <form onSubmit={hold} className="flex flex-col gap-4">
                                 <textarea value={data.endorser_message} onChange={(e) => setData('endorser_message', e.target.value)} required placeholder="Reason for putting on hold" title="Enter reason for putting on hold" className="w-full px-3 py-2 border border-[#d8b36b] rounded bg-white text-[#2d1208] rows-3" />
+                                <div className="flex flex-row gap-4 justify-center">
+                                    <button type="submit" className="bg-yellow-500 hover:bg-yellow-600 text-white font-semibold py-2 px-6 rounded-lg transition">Set Hold</button>
+                                    <button type="button" onClick={() => setholdModal(false)} className="bg-gray-400 hover:bg-gray-500 text-white font-semibold py-2 px-6 rounded-lg transition">Cancel</button>
+                                </div>
                             </form>
                         </div>
                         </dialog>

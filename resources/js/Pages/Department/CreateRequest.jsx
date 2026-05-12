@@ -9,6 +9,8 @@ export default function({requests}){
     const [cancelModal, setCancelModal] = useState(false)
     const [attachModal, setAttachModal] = useState(false)
     const [selectedAttachRequest, setSelectedAttachRequest] = useState(null)
+    const [endorserModal, setEndorserModal] = useState(false)
+    const [endorserMessage, setEndorserMessage] = useState('')
     const [search, setSearch] = useState('')
     const {auth, flash} = usePage().props
     const {post, data, setData, reset, processing} = useForm({
@@ -56,6 +58,7 @@ export default function({requests}){
     return(
         <SidebarLayout>
         <div className="flex-col flex overflow-auto relative">
+        <p className="text-sm font-bold uppercase tracking-[0.35em] text-[#b91c1c]">Department: {auth.user.department}</p>
         <h3 className="font-bold text-3xl m-4 bg-gradient-to-r from-[#8b1c1c] via-[#b91c1c] to-[#d4a017] bg-clip-text text-transparent">Create Request</h3>
         {flash.success && (
             <div className="alert alert-success mb-4">
@@ -168,8 +171,21 @@ export default function({requests}){
                 
                 
                 <td>
-                    <div className="font-bold">
-                       {request.endorser_message}
+                    <div className="font-bold flex justify-start items-center">
+                       {request.endorser_message ? (
+                        <button
+                            type="button"
+                            onClick={() => { setEndorserMessage(request.endorser_message); setEndorserModal(true); }}
+                            className="text-left w-auto max-w-xs sm:max-w-sm md:max-w-md px-3 py-1 bg-white border border-[#d8b36b] rounded-md text-[#2d1208] truncate"
+                            title={request.endorser_message}
+                        >
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M8.625 9.75a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0H8.25m4.125 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0H12m4.125 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0h-.375m-13.5 3.01c0 1.6 1.123 2.994 2.707 3.227 1.087.16 2.185.283 3.293.369V21l4.184-4.183a1.14 1.14 0 0 1 .778-.332 48.294 48.294 0 0 0 5.83-.498c1.585-.233 2.708-1.626 2.708-3.228V6.741c0-1.602-1.123-2.995-2.707-3.228A48.394 48.394 0 0 0 12 3c-2.392 0-4.744.175-7.043.513C3.373 3.746 2.25 5.14 2.25 6.741v6.018Z" />
+                            </svg>
+                        </button>
+                       ) : (
+                        <span className="text-gray-500">-</span>
+                       )}
                     </div>
                 </td>
                 
@@ -366,6 +382,30 @@ export default function({requests}){
                                 </div>
                     </form>
                 
+                </div>
+                </dialog>
+            )}
+
+            {/* Endorser Message Modal */}
+            {endorserModal && (
+                <dialog className="modal modal-open">
+                <div className="modal-box bg-[#fffdf8] border-2 border-[#e4c57c]/70 max-w-2xl">
+                    <button
+                    className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2"
+                    onClick={() => setEndorserModal(false)}
+                    >
+                    ✕
+                    </button>
+
+                    <h3 className="font-bold text-2xl bg-gradient-to-r from-[#8b1c1c] via-[#b91c1c] to-[#d4a017] bg-clip-text text-transparent mb-4">Endorser Message</h3>
+
+                    <div className="text-[#2d1208] whitespace-pre-wrap break-words p-2 border border-transparent rounded">
+                        {endorserMessage}
+                    </div>
+
+                    <div className="flex justify-center mt-4">
+                        <button type="button" onClick={() => setEndorserModal(false)} className="bg-gray-400 hover:bg-gray-500 text-white font-semibold py-2 px-6 rounded-lg transition">Close</button>
+                    </div>
                 </div>
                 </dialog>
             )}
