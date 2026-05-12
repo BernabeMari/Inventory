@@ -56,7 +56,7 @@
 </head>
 <body>
     <h2>INVENTORY REPORT</h2>
-    <div class="date">Date: {{ now()->format('F d, Y') }}</div>
+    <div class="date">Date: {{ \Carbon\Carbon::parse($startDate)->format('F d, Y') }}</div>
 
     <table>
         <thead>
@@ -75,10 +75,10 @@
             @foreach($items as $item)
                 @php
                     $beginningInventory = $item->beginning_inventory ?? 0;
-                    $receipts = $item->quantities->sum('quantity') ?? 0;
-                    $issuances = $item->issuances->sum('fulfilled_quantity') ?? 0;
-                    $total = $beginningInventory + $receipts;
-                    $endingBalance = $total - $issuances;
+                    $receipts = $item->added_receipt ?? ($item->quantities->sum('quantity') ?? 0);
+                    $issuances = $item->less ?? ($item->issuances->sum('fulfilled_quantity') ?? 0);
+                    $total = $item->total ?? ($beginningInventory + $receipts);
+                    $endingBalance = $item->ending_balance ?? ($total - $issuances);
                 @endphp
                 <tr>
                     <td>{{ $item->id }}</td>

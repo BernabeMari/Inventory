@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 
 export default function(){
     const [search, setSearch] = useState('')
-    const {items = [], flash = {}} = usePage().props
+    const {items = [], flash = {}, start_date: reportStartDate = '', end_date: reportEndDate = ''} = usePage().props
     const [error, setError] = useState(flash.error)
     const today = new Date().toISOString().split('T')[0]
     const {post, data, setData, reset} = useForm({
@@ -13,14 +13,14 @@ export default function(){
         description: '',
         total: '',
         quantity: [''],
-        start_date: today,
-        end_date: today
+        start_date: reportStartDate || today,
+        end_date: reportEndDate || today
     })
 
     useEffect(() => {
         const params = new URLSearchParams(window.location.search)
-        const startDate = params.get('start_date') || today
-        const endDate = params.get('end_date') || today
+        const startDate = params.get('start_date') || reportStartDate || today
+        const endDate = params.get('end_date') || reportEndDate || today
         setData({
             ...data,
             start_date: startDate,
@@ -78,6 +78,9 @@ export default function(){
         
                     <p className="mt-4">
                     You searched: {search}
+                    </p>
+                    <p className="mt-2 text-sm opacity-70">
+                    Report date: {data.start_date}
                     </p>
                 </div>
 

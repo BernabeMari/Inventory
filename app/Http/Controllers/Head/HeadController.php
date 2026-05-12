@@ -87,39 +87,95 @@ class HeadController extends Controller
 
     private function buildReportItems(Request $request)
 {
-   $items = Item::with(['quantities', 'issuances'])->get();
+    $items = Item::with(['quantities', 'issuances', 'history'])->get();
 
     // Skip filtering if start_date > end_date
     $shouldFilterByDate = $request->start_date && $request->end_date && $request->start_date <= $request->end_date;
+    $startDateTime = $request->start_date ? $request->start_date . ' 00:00:00' : null;
+    $endDateTime = $request->end_date ? $request->end_date . ' 23:59:59' : null;
 
-    // Calculate beginning inventory and filter receipts/issuances by date
+    // Calculate beginning inventory from history and filter movements within the range
     if ($shouldFilterByDate) {
-        $startDateTime = $request->start_date . ' 00:00:00';
-        $endDateTime = $request->end_date . ' 23:59:59';
-
         $items = $items->map(function ($item) use ($startDateTime, $endDateTime) {
-            // Beginning inventory: all quantities and issuances before the start date
-            $beginningQuantities = $item->quantities
-                ->where('created_at', '<', $startDateTime)
-                ->sum('quantity');
-            
-            $beginningIssuances = $item->issuances
-                ->where('created_at', '<', $startDateTime)
-                ->sum('fulfilled_quantity');
+            // Beginning inventory: the latest history record at or before the start date
+            $historyBeforeOrAtStart = $item->history
+                ->where('created_at', '<=', $startDateTime)
+                ->sortByDesc('created_at')
+                ->sortByDesc('id')
+                ->first();
 
-            $item->beginning_inventory = max($beginningQuantities - $beginningIssuances, 0);
+            $beginningInventory = (int) ($historyBeforeOrAtStart?->beginning_inventory ?? 0);
+            $item->setAttribute('beginning_inventory', $beginningInventory);
 
-            // Filter quantities within the date range
-            $item->quantities = $item->quantities->whereBetween('created_at', [$startDateTime, $endDateTime])->values();
+            // History records within the selected range (ascending)
+            $historyInRange = $item->history
+                ->where('created_at', '>=', $startDateTime)
+                ->where('created_at', '<=', $endDateTime)
+                ->sortBy('created_at')
+                ->values();
 
-            // Filter issuances within the date range
-            $item->issuances = $item->issuances->whereBetween('created_at', [$startDateTime, $endDateTime])->values();
+            // Quantities (receipts) and Issuances within the selected range
+            $receiptsInRange = $item->quantities
+                ->where('created_at', '>=', $startDateTime)
+                ->where('created_at', '<=', $endDateTime)
+                ->values();
+
+            $issuancesInRange = $item->issuances
+                ->where('created_at', '>=', $startDateTime)
+                ->where('created_at', '<=', $endDateTime)
+                ->values();
+
+            $receiptsSum = $receiptsInRange->sum('quantity');
+            $issuancesSum = $issuancesInRange->sum('fulfilled_quantity');
+
+            // Total calculation:
+            // - If there is a history record inside the range, start from the first recorded total
+            //   within the range, then add receipts that happened after that history record (but still within range).
+            // - Otherwise, start from beginning inventory and add all receipts within the range.
+            $firstHistoryInRange = $historyInRange->first();
+
+            if ($firstHistoryInRange) {
+                $baseTotal = (int) ($firstHistoryInRange->total ?? 0);
+
+                // receipts after the first history record within the range
+                $receiptsAfterFirstHistory = $receiptsInRange->where('created_at', '>', $firstHistoryInRange->created_at)->sum('quantity');
+                $total = $baseTotal + $receiptsAfterFirstHistory;
+            } else {
+                $total = $beginningInventory + $receiptsSum;
+            }
+
+            $endingBalance = max($total - $issuancesSum, 0);
+
+            // Set filtered lists and computed attributes for downstream use (PDF/CSV/UI)
+            $item->quantities = $receiptsInRange;
+            $item->issuances = $issuancesInRange;
+
+            $item->setAttribute('added_receipt', $receiptsSum);
+            $item->setAttribute('total', $total);
+            $item->setAttribute('less', $issuancesSum);
+            $item->setAttribute('ending_balance', $endingBalance);
 
             return $item;
         });
     } else {
+        // No date filter: use most recent history and all movements
         $items = $items->map(function ($item) {
-            $item->beginning_inventory = $item->quantities->sum('quantity') - $item->issuances->sum('fulfilled_quantity');
+            $history = $item->history->sortByDesc('created_at')->sortByDesc('id')->first();
+
+            $beginningInventory = (int) ($history?->beginning_inventory ?? 0);
+            $receiptsSum = $item->quantities->sum('quantity');
+            $issuancesSum = $item->issuances->sum('fulfilled_quantity');
+            $total = $beginningInventory + $receiptsSum;
+
+            $item->setAttribute('beginning_inventory', $beginningInventory);
+            $item->setAttribute('added_receipt', $receiptsSum);
+            $item->setAttribute('total', $total);
+            $item->setAttribute('less', $issuancesSum);
+            $item->setAttribute('ending_balance', max($total - $issuancesSum, 0));
+
+            $item->quantities = $item->quantities->sortByDesc('created_at')->values();
+            $item->issuances = $item->issuances->sortByDesc('created_at')->values();
+
             return $item;
         });
     }
@@ -154,9 +210,10 @@ class HeadController extends Controller
        }
 
        $items = $this->buildReportItems($request)->map(function ($item) {
-            $receipts = $item->quantities->sum('quantity');
-            $issuances = $item->issuances->sum('fulfilled_quantity');
-            $total = $item->beginning_inventory + $receipts;
+            // Prefer computed attributes from buildReportItems when available
+            $receipts = $item->added_receipt ?? $item->quantities->sum('quantity');
+            $issuances = $item->less ?? $item->issuances->sum('fulfilled_quantity');
+            $total = $item->total ?? (($item->beginning_inventory ?? 0) + $receipts);
 
             $item->setAttribute('added_receipt', $receipts);
             $item->setAttribute('total', $total);
@@ -173,7 +230,11 @@ class HeadController extends Controller
            })->values();
        }
 
-       return inertia('Head/Report', ['items' => $items]);
+       return inertia('Head/Report', [
+           'items' => $items,
+           'start_date' => $request->start_date,
+           'end_date' => $request->end_date,
+       ]);
     }
 
 
@@ -193,7 +254,11 @@ class HeadController extends Controller
 
         $items = $this->buildReportItems($httpRequest);
         
-        $pdf = Pdf::loadView('pdf.report', compact('items'));
+        $pdf = Pdf::loadView('pdf.report', [
+            'items' => $items,
+            'startDate' => $httpRequest->start_date,
+            'endDate' => $httpRequest->end_date,
+        ]);
 
         return $pdf->stream('report_' . now()->format('Y-m-d_H-i-s') . '.pdf');
     }
@@ -232,10 +297,10 @@ class HeadController extends Controller
 
             foreach ($items as $item) {
                 $beginningInventory = $item->beginning_inventory ?? 0;
-                $receipts = $item->quantities->sum('quantity') ?? 0;
-                $issuances = $item->issuances->sum('fulfilled_quantity') ?? 0;
-                $total = $beginningInventory + $receipts;
-                $endingBalance = $total - $issuances;
+                $receipts = $item->added_receipt ?? $item->quantities->sum('quantity') ?? 0;
+                $issuances = $item->less ?? $item->issuances->sum('fulfilled_quantity') ?? 0;
+                $total = $item->total ?? ($beginningInventory + $receipts);
+                $endingBalance = $item->ending_balance ?? ($total - $issuances);
 
                 fputcsv($output, [
                     $item->id,

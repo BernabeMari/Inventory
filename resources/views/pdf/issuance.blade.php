@@ -1,5 +1,6 @@
 <h2>REQUEST ISSUANCE</h2>
 
+<p>Department: {{ Auth::user()->department }}</p>
 <p>Date: {{ now()->format('F d, Y') }}</p>
 
 <table width="100%" border="1">

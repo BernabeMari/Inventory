@@ -136,11 +136,11 @@ class ReceiverController extends Controller
             $item->history()->create([
                 'item_id' => $item->id,
                 'unit_of_measure' => $item->unit_of_measure,
-                'add_receipts' => $item->added_receipt,
-                'total' => $item->total + ($item->added_receipt ? array_sum($item->added_receipt) : 0),
+                'total' => $item->total,
                 'less' => $item->less,
-                'ending_balance' => $item->total - $item->less + ($item->added_receipt ? array_sum($item->added_receipt) : 0),
+                'ending_balance' => $item->total - $item->less,
                 'beginning_inventory' => $lastHistory ? $lastHistory?->ending_balance : 0,
+                'add_receipts' => $item->added_receipt ?? [],
             ]);
         }
 
