@@ -9,6 +9,8 @@ export default function(){
     const [holdModal, setholdModal] = useState(false)
     const [rejectModal, setrejectModal] = useState(false)
     const [pickupModal, setpickupModal] = useState(false)
+    const [clearanceModal, setClearanceModal] = useState(false)
+    const [clearanceImages, setClearanceImages] = useState([])
     const { flash, requests, receiver, items } = usePage().props
     const [search, setSearch] = useState('')
     const {post, data, setData} = useForm({
@@ -179,6 +181,22 @@ export default function(){
                                     </button>
                                 </div>
                                 
+                                {request.status === 'on-hold' && (
+                                    <div className="tooltip tooltip-close tooltip-right">
+                                        {Array.isArray(request.clearance) && request.clearance.length > 0 && (
+                                <button type="button"className="btn"
+                                    onClick={() => {
+                                        setClearanceImages(request.clearance)
+                                        setClearanceModal(true)}}>
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="m18.375 12.739-7.693 7.693a4.5 4.5 0 0 1-6.364-6.364l10.94-10.94A3 3 0 1 1 19.5 7.372L8.552 18.32m.009-.01-.01.01m5.699-9.941-7.81 7.81a1.5 1.5 0 0 0 2.112 2.13" />
+                                    </svg>
+                                    ({request.clearance.length})
+                                </button>
+                            )}
+                            </div>
+                                )}
+                            
                                 {request.status === 'pending' && (
                                     <div className="tooltip tooltip-close tooltip-right">
                                         <button onClick={(e) => {setholdModal(true); setData({issuance_id: request.issuances?.id || null, request_id: request.id, quantity: request.quantity, item: request.item, item_id: Array(request.item.length).fill(''), fulfilled_quantity: request.fulfilled_quantity || [], unfulfilled_quantity: request.unfulfilled_quantity || []})}} className="btn">
@@ -198,6 +216,7 @@ export default function(){
                                 </div>
                             </div>
                             )}
+                            
 
                             {request.status === 'approved' && (
                                 <div className="font-bold flex-row flex">
@@ -385,6 +404,42 @@ export default function(){
                         </div>
                         </dialog>
                     )}
+
+                {/* Clearance Images Modal */}
+                {clearanceModal && (
+                    <dialog className="modal modal-open">
+                        <div className="modal-box max-w-4xl">
+                            <button
+                                className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2"
+                                onClick={() => {
+                                    setClearanceModal(false)
+                                    setClearanceImages([])
+                                }}
+                            >
+                                ✕
+                            </button>
+
+                            <h3 className="font-bold text-lg mb-4">Department Uploaded Images</h3>
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                {clearanceImages.map((imagePath, index) => (
+                                    <a
+                                        key={index}
+                                        href={`/storage/${imagePath}`}
+                                        target="_blank"
+                                        rel="noreferrer"
+                                        className="border rounded p-2 block"
+                                    >
+                                        <img
+                                            src={`/storage/${imagePath}`}
+                                            alt={`clearance-${index + 1}`}
+                                            className="w-full h-56 object-cover rounded"
+                                        />
+                                    </a>
+                                ))}
+                            </div>
+                        </div>
+                    </dialog>
+                )}
 
                 </div>
             </div>

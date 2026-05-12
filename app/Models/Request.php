@@ -13,11 +13,13 @@ class Request extends Model
         'message',
         'user_id',
         'endorser_message',
+        'clearance',
     ];
 
     protected $casts = [
         'item' => 'array',
         'quantity' => 'array',
+        'clearance' => 'array',
     ];
 
     public function user(){

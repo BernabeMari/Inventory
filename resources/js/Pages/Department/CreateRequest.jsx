@@ -7,15 +7,19 @@ import { useState } from "react"
 export default function({requests}){
     const [requestItem, setrequestItemModal] = useState(false)
     const [cancelModal, setCancelModal] = useState(false)
+    const [attachModal, setAttachModal] = useState(false)
+    const [selectedAttachRequest, setSelectedAttachRequest] = useState(null)
     const [search, setSearch] = useState('')
     const {auth, flash} = usePage().props
-    const {post, data, setData, reset} = useForm({
+    const {post, data, setData, reset, processing} = useForm({
         item: [''],
         quantity: [''],
         status: '',
         message: '',
         user_id: '',
-        pending: ''
+        pending: '',
+        request_id: '',
+        clearance: []
     })
 
     function request_item(e){
@@ -29,6 +33,18 @@ export default function({requests}){
         e.preventDefault()
         post(route('cancel_request'),{
             onSuccess: () => setCancelModal(false)
+        })
+    }
+
+    function attach_file(e){
+        e.preventDefault()
+        post(route('attach_file'), {
+            forceFormData: true,
+            onSuccess: () => {
+                setAttachModal(false)
+                setData('clearance', [])
+                setSelectedAttachRequest(null)
+            }
         })
     }
 
@@ -164,6 +180,17 @@ export default function({requests}){
                         <button onClick={() => window.open(`/requests/${request.id}/pdf`, '_blank')} className="underline" type="button">View Issuance</button>
                        ) : request.status === 'pending' ? (
                         <button className="btn btn-sm btn-circle btn-ghost" onClick={() => {setCancelModal(true); setData({request_id: request.id})}}> ✕ </button> 
+                       ) : request.status === 'on-hold' ? (
+                        <div className="flex items-center gap-2">
+                            <button className="btn text-red-600" onClick={() => {setAttachModal(true); setSelectedAttachRequest(request); setData('request_id', request.id); setData('clearance', [])}}>
+                                {Array.isArray(request.clearance) && request.clearance.length > 0 ? 'Update Files' : 'Attach File'}
+                            </button>
+                            {Array.isArray(request.clearance) && request.clearance.length > 0 ? (
+                                <span className="badge badge-success">Uploaded ({request.clearance.length})</span>
+                            ) : (
+                                <span className="badge badge-warning">Not Uploaded</span>
+                            )}
+                        </div>
                        ) : null}
                     </div>
                 </td>
@@ -276,6 +303,64 @@ export default function({requests}){
                                 <div className="flex flex-row gap-10 justify-center">
                                     <button type="submit" className="btn btn-success w-10">Yes</button>
                                     <button onClick={() => setCancelModal(false)} className="btn btn-error w-10">No</button>
+                                </div>
+                    </form>
+                
+                </div>
+                </dialog>
+            )}
+
+
+            {/* Attach file Request */}
+            {attachModal && (
+                <dialog className="modal modal-open">
+                <div className="modal-box">
+                    <button
+                    className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2"
+                    onClick={() => setAttachModal(false)}
+                    >
+                    ✕
+                    </button>
+
+                    <form onSubmit={attach_file} className="flex flex-col gap-4">
+                        <p>Attach clearance images for this request.</p>
+                        <div className="text-sm">
+                            {Array.isArray(selectedAttachRequest?.clearance) && selectedAttachRequest.clearance.length > 0 ? (
+                                <span className="text-green-600 font-semibold">Current status: Uploaded ({selectedAttachRequest.clearance.length} image/s)</span>
+                            ) : (
+                                <span className="text-orange-600 font-semibold">Current status: Not uploaded</span>
+                            )}
+                        </div>
+
+                        <input
+                            type="file"
+                            accept="image/*"
+                            multiple
+                            onChange={(e) => setData('clearance', Array.from(e.target.files || []))}
+                            className="file-input file-input-bordered w-full"
+                            required
+                        />
+
+                        {Array.isArray(data.clearance) && data.clearance.length > 0 && (
+                            <div className="rounded border p-3">
+                                <p className="font-semibold mb-2">Selected files ({data.clearance.length})</p>
+                                <ul className="text-sm list-disc list-inside">
+                                    {data.clearance.map((file, index) => (
+                                        <li key={index}>{file.name}</li>
+                                    ))}
+                                </ul>
+                            </div>
+                        )}
+
+                        <p className="text-xs opacity-70">
+                            Upload status: {processing ? 'Uploading...' : 'Ready'}
+                        </p>
+
+                                <div className="flex flex-row gap-10 justify-center">
+                                    <button type="submit" className="btn btn-success" disabled={processing}>
+                                        {processing ? 'Uploading...' : 'Upload'}
+                                    </button>
+                                    <button type="button" onClick={() => {setAttachModal(false); setSelectedAttachRequest(null)}} className="btn btn-error" disabled={processing}>Cancel</button>
                                 </div>
                     </form>
                 

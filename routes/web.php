@@ -66,6 +66,7 @@ Route::middleware('role:endorser')->controller(EndorserController::class)->group
 Route::middleware('role:department')->controller(RequestController::class)->group(function(){
     Route::post('/request-item', 'requestItem')->name('request_item');
     Route::post('/cancel-request', 'cancelRequest')->name('cancel_request');
+    Route::post('/attach-file', 'attachFile')->name('attach_file');
     });
     
     Route::middleware('role:department')->controller(DepartmentController::class)->group(function(){

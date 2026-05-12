@@ -18,6 +18,7 @@ return new class extends Migration
             $table->enum('status', ['pending', 'approved', 'rejected', 'on-hold' ,'cancelled', 'for-pickup'])->default('pending');
             $table->string('message')->nullable();
             $table->string('endorser_message')->nullable();
+            $table->json('clearance')->nullable();
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->timestamps();
         });
