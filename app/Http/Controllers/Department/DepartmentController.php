@@ -13,7 +13,7 @@ use Illuminate\Support\Facades\Auth;
 class DepartmentController extends Controller
 {
     public function departmentPage(Request $request){
-        $requests = ModelsRequest::query();
+        $requests = ModelsRequest::with('items')->where('user_id', Auth::id());
         
         if(filled($request->search)){
             $requests->where('item', 'like', '%' . $request->search . '%')

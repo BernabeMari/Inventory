@@ -160,7 +160,7 @@ export default function({requests}){
                 
                 <td>
                     <div className="font-bold">
-                       {request.status === 'approved' ? (
+                       {request.status === 'for-pickup' ? (
                         <button onClick={() => window.open(`/requests/${request.id}/pdf`, '_blank')} className="underline" type="button">View Issuance</button>
                        ) : request.status === 'pending' ? (
                         <button className="btn btn-sm btn-circle btn-ghost" onClick={() => {setCancelModal(true); setData({request_id: request.id})}}> ✕ </button> 
