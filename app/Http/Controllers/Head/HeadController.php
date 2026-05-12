@@ -148,6 +148,11 @@ class HeadController extends Controller
            $request->merge(['end_date' => now()->toDateString()]);
        }
 
+       // Validate dates
+       if ($request->start_date > $request->end_date) {
+           return back()->with('error', 'Start date cannot be greater than end date.');
+       }
+
        $items = $this->buildReportItems($request)->map(function ($item) {
             $receipts = $item->quantities->sum('quantity');
             $issuances = $item->issuances->sum('fulfilled_quantity');
@@ -161,6 +166,13 @@ class HeadController extends Controller
             return $item;
         });
 
+       // Filter by description if search term provided
+       if (filled($request->search)) {
+           $items = $items->filter(function ($item) use ($request) {
+               return stripos($item->description, $request->search) !== false;
+           })->values();
+       }
+
        return inertia('Head/Report', ['items' => $items]);
     }
 
@@ -172,6 +184,11 @@ class HeadController extends Controller
         }
         if (!$httpRequest->end_date) {
             $httpRequest->merge(['end_date' => now()->toDateString()]);
+        }
+
+        // Validate dates
+        if ($httpRequest->start_date > $httpRequest->end_date) {
+            return back()->with('error', 'Start date cannot be greater than end date.');
         }
 
         $items = $this->buildReportItems($httpRequest);
@@ -189,6 +206,11 @@ class HeadController extends Controller
         }
         if (!$request->end_date) {
             $request->merge(['end_date' => now()->toDateString()]);
+        }
+
+        // Validate dates
+        if ($request->start_date > $request->end_date) {
+            return back()->with('error', 'Start date cannot be greater than end date.');
         }
 
         $items = $this->buildReportItems($request);
