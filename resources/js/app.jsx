@@ -1,3 +1,4 @@
+import React from 'react';
 import '../css/app.css';
 import './bootstrap';
 
@@ -14,11 +15,13 @@ createInertiaApp({
             `./Pages/${name}.jsx`,
             import.meta.glob('./Pages/**/*.jsx'),
         ),
+
     setup({ el, App, props }) {
         const root = createRoot(el);
 
         root.render(<App {...props} />);
     },
+
     progress: {
         color: '#4B5563',
     },

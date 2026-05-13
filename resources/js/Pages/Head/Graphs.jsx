@@ -1,6 +1,7 @@
 import SidebarLayout from "@/Layouts/SidebarLayout";
 import { router, useForm } from "@inertiajs/react";
 import { PieChart, Pie, Cell, Tooltip, Legend, BarChart, Bar, XAxis, YAxis, CartesianGrid, ResponsiveContainer } from "recharts";
+import React from 'react';
 
 export default function Dashboard({ statusChartData = {}, quantityChartData = {}, departmentChartData = [], itemsChartData = [] }) {
     const {post, setData, data} = useForm({

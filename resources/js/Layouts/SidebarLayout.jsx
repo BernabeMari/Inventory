@@ -1,9 +1,18 @@
 import { Link, useForm, usePage, router } from "@inertiajs/react"
+import React from 'react';
 
 export default function({children}){
     const {post, data, setData} = useForm()
     const {auth} = usePage().props
     const currentRoute = route().current()
+
+    function closeDrawer(){
+        const drawer = document.getElementById('my-drawer-4')
+
+        if(drawer instanceof HTMLInputElement){
+            drawer.checked = false
+        }
+    }
     
     function logout(){
         post(route('logout'))
@@ -12,9 +21,14 @@ export default function({children}){
     <div className="drawer lg:drawer-open bg-[#fbf6ee] text-[#2d1208]">
     <input id="my-drawer-4" type="checkbox" className="drawer-toggle" />
     <div className="drawer-content">
+        <label htmlFor="my-drawer-4" className="btn btn-square btn-ghost fixed left-4 top-4 z-50 lg:hidden text-white bg-[#8a1f1f] border-none shadow-lg shadow-[#7f1717]/30 hover:bg-[#731818]" aria-label="Open menu">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="2" stroke="currentColor" className="h-6 w-6">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16" />
+            </svg>
+        </label>
         {/* Navbar */}
         <nav className="navbar w-full border-b border-[#dfc57e]/70 bg-gradient-to-r from-[#781717] via-[#a91f1f] to-[#c99a1b] text-white shadow-lg shadow-[#7f1717]/18">
-        <div className="flex-1">
+        <div className="flex-1 gap-3 pl-16 lg:pl-0">
             <div className="px-4 flex-row flex items-center gap-3">
                 <div className="flex h-12 w-12 items-center justify-center rounded-full bg-white/15 ring-1 ring-white/25">
                     <img src={`/storage/tcu-logo.jpg`} alt="" className="rounded-full h-10 w-10 object-cover"/>
@@ -50,7 +64,7 @@ export default function({children}){
          
 
          {/* Open Sidebar */}
-          <li className="flex items-center">
+          <li className="hidden lg:flex items-center">
             <label htmlFor="my-drawer-4" className="btn btn-square btn-ghost">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" strokeLinejoin="round" strokeLinecap="round" strokeWidth="2" fill="none" stroke="currentColor" className="my-1.5 inline-block size-4"><path d="M4 4m0 2a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v12a2 2 0 0 1 -2 2h-12a2 2 0 0 1 -2 -2z"></path><path d="M9 4v16"></path><path d="M14 10l2 2l-2 2"></path></svg>
             </label>
@@ -58,7 +72,7 @@ export default function({children}){
          
            {/* Admin Createe User */}
            {auth.user.role === 'admin' && (
-            <Link href={route('admin_page')}>
+            <Link href={route('admin_page')} onClick={closeDrawer}>
             <li className={`flex items-center w-full ${currentRoute === 'admin_page' ? 'bg-[#b91c1c] text-white rounded-md shadow' : ''}`}>
             <div className="tooltip tooltip-close tooltip-right w-full">
             <button className={`btn w-full ${currentRoute === 'admin_page' ? 'border-transparent bg-transparent text-white hover:bg-transparent shadow-none' : 'border-[#d7be7b] bg-white/75 text-[#4a2814] hover:bg-[#fff5e0]'}`}><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" className="my-1.5 inline-block size-4">
@@ -72,7 +86,7 @@ export default function({children}){
            
            {/* Admin Set Interval */}
            {auth.user.role === 'admin' && (
-            <Link href={route('admin_set_interval')}>
+            <Link href={route('admin_set_interval')} onClick={closeDrawer}>
             <li className={`flex items-center w-full ${currentRoute === 'admin_set_interval' ? 'bg-[#b91c1c] text-white rounded-md shadow' : ''}`}>
             <div className="tooltip tooltip-close tooltip-right w-full">
             <button className={`btn w-full ${currentRoute === 'admin_set_interval' ? 'border-transparent bg-transparent text-white hover:bg-transparent shadow-none' : 'border-[#d7be7b] bg-white/75 text-[#4a2814] hover:bg-[#fff5e0]'}`}><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" className="my-1.5 inline-block size-4">
@@ -88,7 +102,7 @@ export default function({children}){
 
            {/* Head Reports Page */}
            {auth.user.role === 'head' && (
-            <Link href={route('head_report_page')}>
+            <Link href={route('head_report_page')} onClick={closeDrawer}>
             <li className={`flex items-center w-full ${currentRoute === 'head_report_page' ? 'bg-[#b91c1c] text-white rounded-md shadow' : ''}`}>
             <div className="tooltip tooltip-close tooltip-right w-full">
             <button className={`btn w-full ${currentRoute === 'head_report_page' ? 'border-transparent bg-transparent text-white hover:bg-transparent shadow-none' : 'border-[#d7be7b] bg-white/75 text-[#4a2814] hover:bg-[#fff5e0]'}`}><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" className="my-1.5 inline-block size-4">
@@ -102,7 +116,7 @@ export default function({children}){
            
            {/* Head Graphs Page */}
            {auth.user.role === 'head' && (
-               <Link href={route('head_page')}>
+               <Link href={route('head_page')} onClick={closeDrawer}>
             <li className={`flex items-center w-full ${currentRoute === 'head_page' ? 'bg-[#b91c1c] text-white rounded-md shadow' : ''}`}>
             <div className="tooltip tooltip-close tooltip-right w-full">
             <button className={`btn w-full ${currentRoute === 'head_page' ? 'border-transparent bg-transparent text-white hover:bg-transparent shadow-none' : 'border-[#d7be7b] bg-white/75 text-[#4a2814] hover:bg-[#fff5e0]'}`}><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" className="my-1.5 inline-block size-4">
@@ -117,7 +131,7 @@ export default function({children}){
 
            {/* Receiver Create Item */}
            {auth.user.role === 'receiver' && (
-            <Link href={route('receiver_page')}>
+            <Link href={route('receiver_page')} onClick={closeDrawer}>
             <li className={`flex items-center w-full ${currentRoute === 'receiver_page' ? 'bg-[#b91c1c] text-white rounded-md shadow' : ''}`}>
             <div className="tooltip tooltip-close tooltip-right w-full">
             <button className={`btn w-full ${currentRoute === 'receiver_page' ? 'border-transparent bg-transparent text-white hover:bg-transparent shadow-none' : 'border-[#d7be7b] bg-white/75 text-[#4a2814] hover:bg-[#fff5e0]'}`}><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" className="my-1.5 inline-block size-4">
@@ -133,7 +147,7 @@ export default function({children}){
            
            {/* Endorser Action Page */}
            {auth.user.role === 'endorser' && (
-            <Link href={route('endorser_page')}>
+            <Link href={route('endorser_page')} onClick={closeDrawer}>
             <li className={`flex items-center w-full ${currentRoute === 'endorser_page' ? 'bg-[#b91c1c] text-white rounded-md shadow' : ''}`}>
             <div className="tooltip tooltip-close tooltip-right w-full">
             <button className={`btn w-full ${currentRoute === 'endorser_page' ? 'border-transparent bg-transparent text-white hover:bg-transparent shadow-none' : 'border-[#d7be7b] bg-white/75 text-[#4a2814] hover:bg-[#fff5e0]'}`}><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" className="my-1.5 inline-block size-4">
@@ -148,7 +162,7 @@ export default function({children}){
            
            {/* Endorser Done Requests */}
            {auth.user.role === 'endorser' && (
-            <Link href={route('endorser_done_request_page')}>
+            <Link href={route('endorser_done_request_page')} onClick={closeDrawer}>
             <li className={`flex items-center w-full ${currentRoute === 'endorser_done_request_page' ? 'bg-[#b91c1c] text-white rounded-md shadow' : ''}`}>
             <div className="tooltip tooltip-close tooltip-right w-full">
             <button className={`btn w-full ${currentRoute === 'endorser_done_request_page' ? 'border-transparent bg-transparent text-white hover:bg-transparent shadow-none' : 'border-[#d7be7b] bg-white/75 text-[#4a2814] hover:bg-[#fff5e0]'}`}><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" className="my-1.5 inline-block size-4">
@@ -163,10 +177,10 @@ export default function({children}){
           
           {/* Department Request item */}
            {auth.user.role === 'department' && (
-            <Link href={route('department_page')}>
+                        <Link href={route('department_page')} onClick={closeDrawer}>
             <li className={`flex items-center w-full ${currentRoute === 'department_page' ? 'bg-[#b91c1c] text-white rounded-md shadow' : ''}`}>
             <div className="tooltip tooltip-close tooltip-right w-full">
-            <button className="btn w-full border-[#d8b36b] bg-white/70 text-[#4a2814] hover:bg-[#fff3dd]"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" className="my-1.5 inline-block size-4">
+            <button className={`btn w-full ${currentRoute === 'department_page' ? 'border-transparent bg-transparent text-white hover:bg-transparent shadow-none' : 'border-[#d7be7b] bg-white/75 text-[#4a2814] hover:bg-[#fff5e0]'}`}><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" className="my-1.5 inline-block size-4">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h3.75M9 15h3.75M9 18h3.75m3 .75H18a2.25 2.25 0 0 0 2.25-2.25V6.108c0-1.135-.845-2.098-1.976-2.192a48.424 48.424 0 0 0-1.123-.08m-5.801 0c-.065.21-.1.433-.1.664 0 .414.336.75.75.75h4.5a.75.75 0 0 0 .75-.75 2.25 2.25 0 0 0-.1-.664m-5.8 0A2.251 2.251 0 0 1 13.5 2.25H15c1.012 0 1.867.668 2.15 1.586m-5.8 0c-.376.023-.75.05-1.124.08C9.095 4.01 8.25 4.973 8.25 6.108V8.25m0 0H4.875c-.621 0-1.125.504-1.125 1.125v11.25c0 .621.504 1.125 1.125 1.125h9.75c.621 0 1.125-.504 1.125-1.125V9.375c0-.621-.504-1.125-1.125-1.125H8.25ZM6.75 12h.008v.008H6.75V12Zm0 3h.008v.008H6.75V15Zm0 3h.008v.008H6.75V18Z" />
                 </svg>
                 <span className="is-drawer-close:hidden">Create Request</span></button>
@@ -178,7 +192,7 @@ export default function({children}){
 
             {/* Department Profile */}
             {auth.user.role === 'department' && (
-            <Link href={route('profile_department_page')}>
+            <Link href={route('profile_department_page')} onClick={closeDrawer}>
             <li className={`flex items-center w-full ${currentRoute === 'profile_department_page' ? 'bg-[#b91c1c] text-white rounded-md shadow' : ''}`}>
             <div className="tooltip tooltip-close tooltip-right w-full">
             <button className={`btn w-full ${currentRoute === 'profile_department_page' ? 'border-transparent bg-transparent text-white hover:bg-transparent shadow-none' : 'border-[#d7be7b] bg-white/75 text-[#4a2814] hover:bg-[#fff5e0]'}`}>
@@ -194,7 +208,7 @@ export default function({children}){
 
 
             {/* Logout Button */}
-            <button onClick={logout} className="btn flex items-center absolute bottom-2 flex-0 border-[#9f2020] bg-[#8a1f1f] text-white hover:bg-[#731818]">
+            <button onClick={() => { closeDrawer(); logout(); }} className="btn flex items-center absolute bottom-2 flex-0 border-[#9f2020] bg-[#8a1f1f] text-white hover:bg-[#731818]">
             <li>
             <div className="tooltip tooltip-close tooltip-right">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" className="my-1.5 inline-block size-4">

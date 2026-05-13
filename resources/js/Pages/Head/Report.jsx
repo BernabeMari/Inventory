@@ -2,6 +2,7 @@ import SearchField from "@/Components/SearchField";
 import SidebarLayout from "@/Layouts/SidebarLayout";
 import { router, useForm, usePage } from "@inertiajs/react";
 import { useEffect, useState } from "react";
+import React from 'react';
 
 export default function(){
     const [search, setSearch] = useState('')
@@ -75,11 +76,14 @@ export default function(){
               <div className="p-4 flex flex-col md:flex-row md:justify-between md:items-center">
         
                 <div>
-                    <SearchField value={search} onChange={handleSearch} placeholder="Search items..."/>
-        
-                    <p className="mt-4">
-                    You searched: {search}
-                    </p>
+                    <div className="flex flex-row items-center gap-2">
+                        <SearchField value={search} onChange={handleSearch} placeholder="Search items..."/><button type="button" value={''} onClick={handleSearch} className="btn"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
+                        </svg></button>
+                    </div>        
+                        <p className="mt-4">
+                        You searched: {search}
+                        </p>
                     <p className="mt-2 text-sm opacity-70">
                     Report date: {data.start_date}
                     </p>

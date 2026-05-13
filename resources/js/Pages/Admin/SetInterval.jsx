@@ -1,4 +1,5 @@
 import SidebarLayout from "@/Layouts/SidebarLayout";
+import React from 'react';
 
 export default function(){
     return(

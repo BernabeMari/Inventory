@@ -1,5 +1,6 @@
 import SidebarLayout from "@/Layouts/SidebarLayout";
 import { useForm, usePage } from "@inertiajs/react"
+import React from 'react';
 
 export default function({profile}){
     const {auth} = usePage().props;

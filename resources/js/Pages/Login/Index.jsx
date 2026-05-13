@@ -1,4 +1,5 @@
 import { useForm, usePage } from "@inertiajs/react"
+import React from 'react';
 
 export default function(){
     const {post, setData, data} = useForm({
@@ -75,13 +76,13 @@ export default function(){
 
               <label className="form-control w-full">
                 <div className="label pb-2">
-                  <span className="label-text font-semibold text-[#4a2814]">Email</span>
+                  <span className="label-text font-semibold text-[#4a2814]">Username</span>
                 </div>
                 <input
                   value={data.username}
                   onChange={(e) => setData('username', e.target.value)}
                   type="text"
-                  placeholder="Enter your email"
+                  placeholder="Enter your username"
                   className="input input-bordered h-12 w-full border-[#d8b36b] bg-white text-[#2d1208] placeholder:text-[#b28f68] focus:border-[#b91c1c] focus:outline-none"
                 />
               </label>

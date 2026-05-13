@@ -3,6 +3,7 @@ import { useForm } from "@inertiajs/react"
 import { useState } from "react"
 import { PlusIcon, PencilSquareIcon, TrashIcon  } from "@heroicons/react/24/solid";
 import SidebarLayout from "@/Layouts/SidebarLayout";
+import React from 'react';
 
 export default function({users}){
   const [editModal, setEditModal] = useState(false)
