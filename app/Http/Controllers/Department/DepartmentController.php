@@ -13,7 +13,8 @@ use Illuminate\Support\Facades\Auth;
 class DepartmentController extends Controller
 {
     public function departmentPage(Request $request){
-        $requests = ModelsRequest::with('items')->where('user_id', Auth::id());
+        $requests = ModelsRequest::with('items')->where('user_id', Auth::id())
+        ->orderByRaw("FIELD(status, 'pending', 'on-hold', 'approved', 'rejected', 'cancelled', 'for-pickup')");
         
         if(filled($request->search)){
             $requests->where('item', 'like', '%' . $request->search . '%')
@@ -23,7 +24,7 @@ class DepartmentController extends Controller
             ->orWhere('endorser_message', 'like', '%' . $request->search . '%');
         }
         
-        $requests = $requests->get();
+        $requests = $requests->paginate(10)->withQueryString();
 
         return inertia('Department/CreateRequest', ['requests' => $requests]);
     }

@@ -20,11 +20,9 @@ class ReceiverController extends Controller
             ->orWhere('unit_of_measure', 'like', '%' . $request->search . '%');
         }
 
-        $items = $items->get();
-        
-        
+        $items = $items->paginate(10)->withQueryString();
 
-        $items = $items->map(function ($item) {
+        $items->through(function ($item) {
             $totalQuantity = (int) ($item->total ?? 0) + ($item->added_receipt ? array_sum($item->added_receipt) : 0);
             $fulfilledQuantity = $item->issuances->sum(function ($issuance) {
                 $fulfilled = $issuance->fulfilled_quantity;

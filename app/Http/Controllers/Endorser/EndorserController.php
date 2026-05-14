@@ -20,7 +20,8 @@ class EndorserController extends Controller
     }
 
     public function endorserPage(Request $request){
-        $requests = ModelsRequest::with('user', 'items', 'issuances')->whereIn('status', ['approved', 'on-hold', 'pending']);
+        $requests = ModelsRequest::with('user', 'items', 'issuances')->whereIn('status', ['approved', 'on-hold', 'pending'])
+        ->orderByRaw("FIELD(status, 'pending', 'on-hold', 'approved')");
         $items = Item::withSum('quantities as total_quantity', 'quantity')
             ->with('issuances')
             ->get()
@@ -35,6 +36,7 @@ class EndorserController extends Controller
             $query->where('item', 'like', '%' . $request->search . '%')
                 ->orWhere('quantity', 'like', '%' . $request->search . '%')
                 ->orWhere('status', 'like', '%' . $request->search . '%')
+                ->orWhere('id', 'like', '%' . $request->search . '%')
                 ->orWhere('message', 'like', '%' . $request->search . '%');
         })
         ->orWhereHas('user', function ($query) use ($request) {
@@ -43,14 +45,15 @@ class EndorserController extends Controller
     }
 
 
-        $requests = $requests->get();
+        $requests = $requests->paginate(10)->withQueryString();
 
         return inertia('Endorser/Requests', ['requests' => $requests, 'items' => $items]);
     }
 
     public function endorserDoneRequestPage(Request $request){
     $requests = ModelsRequest::with('user', 'issuances')
-        ->whereIn('status', ['rejected', 'cancelled', 'for-pickup']);
+        ->whereIn('status', ['rejected', 'cancelled', 'for-pickup'])
+        ->orderByRaw("FIELD(status, 'for-pickup', 'rejected', 'cancelled')");
         
     if (filled($request->search)) {
         $requests->where(function ($query) use ($request) {
@@ -66,7 +69,7 @@ class EndorserController extends Controller
     }
 
 
-        $requests = $requests->get();
+        $requests = $requests->paginate(10)->withQueryString();
 
         return inertia('Endorser/DoneRequests', ['requests' => $requests]);
     }

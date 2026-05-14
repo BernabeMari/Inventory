@@ -1,6 +1,6 @@
 import SearchField from "@/Components/SearchField";
 import SidebarLayout from "@/Layouts/SidebarLayout";
-import { router, usePage } from "@inertiajs/react";
+import { Link, router, usePage } from "@inertiajs/react";
 import { useState } from "react";
 import React from 'react';
 
@@ -64,7 +64,7 @@ export default function(){
                         </tr>
                     </thead>
                     <tbody>
-                        {requests.map(request => (
+                        {requests.data.map(request => (
                             <tr className="hover:bg-[#fff7ea]"> 
 
 
@@ -260,6 +260,28 @@ export default function(){
                         </div>
                     </dialog>
                 )}
+
+                    <div>
+                    {requests?.links?.length > 3 && (
+                        <div className="mt-4 flex flex-wrap items-center justify-center gap-2 w-full">
+                            {requests.links.map((link, index) => (
+                                <Link
+                                    key={`${link.label}-${index}`}
+                                    href={link.url || "#"}
+                                    preserveScroll
+                                    className={`px-3 py-1 rounded-md text-sm border transition ${
+                                        link.active
+                                            ? "bg-[#8b1c1c] text-white border-[#8b1c1c]"
+                                            : link.url
+                                            ? "bg-white text-[#2d1208] border-[#d8b36b] hover:bg-[#fff7ea]"
+                                            : "bg-gray-100 text-gray-400 border-gray-200 pointer-events-none"
+                                    }`}
+                                    dangerouslySetInnerHTML={{ __html: link.label }}
+                                />
+                            ))}
+                        </div>
+                    )}
+                </div>
 
             </div>
         </SidebarLayout>

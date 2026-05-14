@@ -1,7 +1,7 @@
 import SearchField from "@/Components/SearchField"
 import SidebarLayout from "@/Layouts/SidebarLayout"
 import { PlusIcon } from "@heroicons/react/24/solid"
-import { router, useForm, usePage } from "@inertiajs/react"
+import { Link, router, useForm, usePage } from "@inertiajs/react"
 import { useState } from "react"
 import React from 'react';
 
@@ -113,79 +113,74 @@ export default function({requests}){
         
 
             {/* Table */}
-        <div className="flex justify-center items-center">
-            <table className="table border-separate border-spacing-x-16">
+        <div className="flex justify-center items-center p-4 overflow-x-auto">
+            <table className="w-full border-collapse border border-[#d8b36b]">
             {/* head */}
-            <thead>
+            <thead className="bg-gradient-to-r from-[#7f1717] via-[#a91f1f] to-[#c99a1b]">
                 <tr>
-                <th>YOUR REQUESTS</th>
-                <th>QUANTITY</th>
-                <th>STATUS</th>
-                <th>PURPOSE</th>
-                <th>ENDORSER'S MESSAGE</th>
-                <th>ACTION</th>
+                <th className="border border-[#d8b36b] text-white p-3 font-semibold">YOUR REQUESTS</th>
+                <th className="border border-[#d8b36b] text-white p-3 font-semibold">QUANTITY</th>
+                <th className="border border-[#d8b36b] text-white p-3 font-semibold">STATUS</th>
+                <th className="border border-[#d8b36b] text-white p-3 font-semibold">PURPOSE</th>
+                <th className="border border-[#d8b36b] text-white p-3 font-semibold">ENDORSER'S MESSAGE</th>
+                <th className="border border-[#d8b36b] text-white p-3 font-semibold">ACTION</th>
                 </tr>
             </thead>
             
             <tbody>
-                {requests.map(request => (
-                <tr> 
+                {requests.data.map(request => (
+                <tr className="hover:bg-[#fff7ea]"> 
 
-                <td>
+                <td className="border border-[#d8b36b] p-2">
                     <div className="font-bold">
                      {request.item.join(', ')}
                     </div>
                 </td>
 
-                <td>
+                <td className="border border-[#d8b36b] p-2">
                     <div className="font-bold">
                      {request.quantity.join(', ')}
                     </div>
                 </td>
 
 
-                <td>
-                    <div className="font-bold">
-                        {request.status === 'pending' && (
-                            <span className="text-yellow-500">{request.status}</span>
-                        )}
-                        {request.status === 'approved' && (
-                            <span className="text-green-500">{request.status}</span>
-                        )}
-                        {request.status === 'rejected' && (
-                            <span className="text-red-500">{request.status}</span>
-                        )}
-                        {request.status === 'cancelled' && (
-                            <span className="text-gray-500">{request.status}</span>
-                        )}
-                        {request.status === 'on-hold' && (
-                            <span className="text-orange-500">{request.status}</span>
-                        )}
-                        {request.status === 'for-pickup' && (
-                            <span className="text-emerald-500">Ready for pick up</span>
+                <td className="border border-[#d8b36b] p-2">
+                    <div className="font-bold flex-row flex justify-center gap-2">
+                        {request.status === 'pending' ? (
+                            <span className="bg-yellow-100 text-yellow-800 px-3 py-1 rounded-full text-sm font-semibold">pending</span>
+                        ) : request.status === 'approved' ? (
+                            <span className="bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm font-semibold">approved</span>
+                        ) : request.status === 'on-hold' ? (
+                            <span className="bg-red-100 text-red-800 px-3 py-1 rounded-full text-sm font-semibold">on-hold</span>
+                        ) : request.status === 'rejected' ? (
+                            <span className="bg-red-100 text-red-800 px-3 py-1 rounded-full text-sm font-semibold">rejected</span>
+                        ) : request.status === 'cancelled' ? (
+                            <span className="bg-red-100 text-red-800 px-3 py-1 rounded-full text-sm font-semibold">cancelled</span>
+                        ) : (
+                            <span className="bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm font-semibold">Ready for pick up</span>
                         )}
                     </div>
                 </td>
                 
                 
-                <td>
+                <td className="border border-[#d8b36b] p-2">
                     <div className="font-bold">
                        {request.message}
                     </div>
                 </td>
                 
                 
-                <td>
+                <td className="border border-[#d8b36b] p-2">
                     <div className="font-bold flex justify-center items-center">
                        {request.endorser_message ? (
                         <button
                             type="button"
                             onClick={() => { setEndorserMessage(request.endorser_message); setEndorserModal(true); }}
-                            className="text-left w-auto max-w-xs sm:max-w-sm md:max-w-md px-3 py-1 bg-white border border-[#d8b36b] rounded-md text-[#2d1208] truncate"
+                            className="inline-flex items-center justify-center p-1.5 bg-white border border-[#d8b36b] rounded-md text-[#2d1208] hover:bg-[#f8f1e7] transition"
                             title={request.endorser_message}
                         >
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M8.625 9.75a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0H8.25m4.125 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0H12m4.125 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0h-.375m-13.5 3.01c0 1.6 1.123 2.994 2.707 3.227 1.087.16 2.185.283 3.293.369V21l4.184-4.183a1.14 1.14 0 0 1 .778-.332 48.294 48.294 0 0 0 5.83-.498c1.585-.233 2.708-1.626 2.708-3.228V6.741c0-1.602-1.123-2.995-2.707-3.228A48.394 48.394 0 0 0 12 3c-2.392 0-4.744.175-7.043.513C3.373 3.746 2.25 5.14 2.25 6.741v6.018Z" />
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M8.625 9.75a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0H8.25m4.125 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0H12m4.125 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0h-.375m-13.5 3.01c0 1.6 1.123 2.994 2.707 3.227 1.087.16 2.185.283 3.293.369V21l4.184-4.183a1.14 1.14 0 0 1 .778-.332 48.294 48.294 0 0 0 5.83-.498c1.585-.233 2.708-1.626 2.708-3.228V6.741c0-1.602-1.123-2.995-2.707-3.228A48.394 48.394 0 0 0 12 3c-2.392 0-4.744.175-7.043.513C3.373 3.746 2.25 5.14 2.25 6.741v6.018Z" />
                             </svg>
                         </button>
                        ) : (
@@ -195,14 +190,14 @@ export default function({requests}){
                 </td>
                 
                 
-                <td>
+                <td className="border border-[#d8b36b] p-2 text-center align-middle">
                     <div className="font-bold">
                        {request.status === 'for-pickup' ? (
                         <button onClick={() => window.open(`/requests/${request.id}/pdf`, '_blank')} className="text-blue-500 hover:text-blue-700 underline font-semibold" type="button">View Issuance</button>
                        ) : request.status === 'pending' ? (
                         <button className="bg-red-500 hover:bg-red-600 text-white font-semibold py-2 px-4 rounded-lg transition" onClick={() => {setCancelModal(true); setData({request_id: request.id})}}> Cancel </button> 
                        ) : request.status === 'on-hold' ? (
-                        <div className="flex items-center gap-2">
+                        <div className="flex items-center gap-2 justify-center">
                             <button className="bg-purple-500 hover:bg-purple-600 text-white font-semibold py-2 px-4 rounded-lg transition" onClick={() => {setAttachModal(true); setSelectedAttachRequest(request); setData('request_id', request.id); setData('clearance', [])}}>
                                 {Array.isArray(request.clearance) && request.clearance.length > 0 ? 'Update Files' : 'Attach File'}
                             </button>
@@ -414,6 +409,28 @@ export default function({requests}){
                 </div>
                 </dialog>
             )}
+
+                <div>
+                    {requests?.links?.length > 3 && (
+                        <div className="mt-4 flex flex-wrap items-center justify-center gap-2 w-full">
+                            {requests.links.map((link, index) => (
+                                <Link
+                                    key={`${link.label}-${index}`}
+                                    href={link.url || "#"}
+                                    preserveScroll
+                                    className={`px-3 py-1 rounded-md text-sm border transition ${
+                                        link.active
+                                            ? "bg-[#8b1c1c] text-white border-[#8b1c1c]"
+                                            : link.url
+                                            ? "bg-white text-[#2d1208] border-[#d8b36b] hover:bg-[#fff7ea]"
+                                            : "bg-gray-100 text-gray-400 border-gray-200 pointer-events-none"
+                                    }`}
+                                    dangerouslySetInnerHTML={{ __html: link.label }}
+                                />
+                            ))}
+                        </div>
+                    )}
+                </div>
 
         </div>
         </SidebarLayout>
