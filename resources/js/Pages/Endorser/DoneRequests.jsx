@@ -9,6 +9,8 @@ export default function(){
     const {requests} = usePage().props
     const [endorserModal, setEndorserModal] = useState(false)
     const [endorserMessage, setEndorserMessage] = useState('')
+    const [clearanceModal, setClearanceModal] = useState(false)
+    const [clearanceImages, setClearanceImages] = useState([])
 
     function handleSearch(e){
         setSearch(e.target.value)
@@ -49,15 +51,16 @@ export default function(){
                     <thead className="bg-gradient-to-r from-[#7f1717] via-[#a91f1f] to-[#c99a1b] text-white">
                         <tr>
                         <th className="border border-[#d8b36b] text-white p-3 font-semibold"></th>
-                        <th className="border border-[#d8b36b] text-white p-3 font-semibold">DEPARTMENT</th>
+                        <th className="border border-[#d8b36b] text-white p-3 font-semibold">DEPARTMENT / REQUEST ID</th>
                         <th className="border border-[#d8b36b] text-white p-3 font-semibold">REQUEST</th>
                         <th className="border border-[#d8b36b] text-white p-3 font-semibold">QUANTITY OF REQUEST</th>
                         <th className="border border-[#d8b36b] text-white p-3 font-semibold">ISSUED ITEM</th>
                         <th className="border border-[#d8b36b] text-white p-3 font-semibold">ISSUED QUANTITY</th>
                         <th className="border border-[#d8b36b] text-white p-3 font-semibold">UNFULFILLED QUANTITY</th>
                         <th className="border border-[#d8b36b] text-white p-3 font-semibold">STATUS</th>
-                        <th className="border border-[#d8b36b] text-white p-3 font-semibold">MESSAGE</th>
-                        <th className="border border-[#d8b36b] text-white p-3 font-semibold">ENDORSER'S MESSAGE</th>
+                        <th className="border border-[#d8b36b] text-white p-3 font-semibold">PURPOSE</th>
+                        <th className="border border-[#d8b36b] text-white p-3 font-semibold">ACTION</th>
+                        
                         </tr>
                     </thead>
                     <tbody>
@@ -80,7 +83,7 @@ export default function(){
 
                         <td className="border border-[#d8b36b] p-2">
                             <div className="font-bold flex-row flex justify-center items-center gap-2">
-                                {request.user?.department}
+                                {request.user?.department} - {request.id}
                             </div>
                         </td>
 
@@ -140,12 +143,49 @@ export default function(){
                             </div>
                         </td>
 
-                        <td className="border border-[#d8b36b] p-2 flex justify-center">
-                            <div className="font-bold">
+                        <td className="border border-[#d8b36b] p-2 text-center align-middle">
+                            <div className="flex items-center justify-center gap-2">
                                 {request.endorser_message ? (
-                                    <button type="button" className="text-left w-auto px-3 py-1 bg-white border border-[#d8b36b] rounded-md text-[#2d1208] truncate" title={request.endorser_message} onClick={() => { setEndorserMessage(request.endorser_message); setEndorserModal(true); }}>
-                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
-                                        <path stroke-linecap="round" stroke-linejoin="round" d="M8.625 9.75a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0H8.25m4.125 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0H12m4.125 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0h-.375m-13.5 3.01c0 1.6 1.123 2.994 2.707 3.227 1.087.16 2.185.283 3.293.369V21l4.184-4.183a1.14 1.14 0 0 1 .778-.332 48.294 48.294 0 0 0 5.83-.498c1.585-.233 2.708-1.626 2.708-3.228V6.741c0-1.602-1.123-2.995-2.707-3.228A48.394 48.394 0 0 0 12 3c-2.392 0-4.744.175-7.043.513C3.373 3.746 2.25 5.14 2.25 6.741v6.018Z" />
+                                    <button
+                                        type="button"
+                                        className="inline-flex items-center justify-center p-1.5 bg-white border border-[#d8b36b] rounded-md text-[#2d1208] hover:bg-[#f8f1e7] transition"
+                                        title={request.endorser_message}
+                                        onClick={() => {
+                                            setEndorserMessage(request.endorser_message);
+                                            setEndorserModal(true);
+                                        }}
+                                    >
+                                        <svg
+                                            xmlns="http://www.w3.org/2000/svg"
+                                            fill="none"
+                                            viewBox="0 0 24 24"
+                                            strokeWidth={1.5}
+                                            stroke="currentColor"
+                                            className="w-6 h-6"
+                                        >
+                                            <path
+                                                strokeLinecap="round"
+                                                strokeLinejoin="round"
+                                                d="M8.625 9.75a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0H8.25m4.125 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0H12m4.125 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0h-.375m-13.5 3.01c0 1.6 1.123 2.994 2.707 3.227 1.087.16 2.185.283 3.293.369V21l4.184-4.183a1.14 1.14 0 0 1 .778-.332 48.294 48.294 0 0 0 5.83-.498c1.585-.233 2.708-1.626 2.708-3.228V6.741c0-1.602-1.123-2.995-2.707-3.228A48.394 48.394 0 0 0 12 3c-2.392 0-4.744.175-7.043.513C3.373 3.746 2.25 5.14 2.25 6.741v6.018Z"
+                                            />
+                                        </svg>
+                                    </button>
+                                ) : (
+                                    <span className="text-gray-500">-</span>
+                                )}
+
+                                {Array.isArray(request.clearance) && request.clearance.length > 0 ? (
+                                    <button
+                                        type="button"
+                                        className="inline-flex items-center justify-center p-1.5 bg-white border border-[#d8b36b] rounded-md text-[#2d1208] hover:bg-[#f8f1e7] transition"
+                                        title="View clearance attachments"
+                                        onClick={() => {
+                                            setClearanceImages(request.clearance)
+                                            setClearanceModal(true)
+                                        }}
+                                    >
+                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
+                                        <path strokeLinecap="round" strokeLinejoin="round" d="m18.375 12.739-7.693 7.693a4.5 4.5 0 0 1-6.364-6.364l10.94-10.94A3 3 0 1 1 19.5 7.372L8.552 18.32m.009-.01-.01.01m5.699-9.941-7.81 7.81a1.5 1.5 0 0 0 2.112 2.13" />
                                         </svg>
                                     </button>
                                 ) : (
@@ -153,6 +193,7 @@ export default function(){
                                 )}
                             </div>
                         </td>
+
                         </tr>
                             ))}
                         </tbody>
@@ -181,6 +222,42 @@ export default function(){
                             <button type="button" onClick={() => setEndorserModal(false)} className="bg-gray-400 hover:bg-gray-500 text-white font-semibold py-2 px-6 rounded-lg transition">Close</button>
                         </div>
                     </div>
+                    </dialog>
+                )}
+
+                {/* Clearance Images Modal */}
+                {clearanceModal && (
+                    <dialog className="modal modal-open">
+                        <div className="modal-box bg-[#fffdf8] border-2 border-[#e4c57c]/70 max-w-4xl">
+                            <button
+                                className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2"
+                                onClick={() => {
+                                    setClearanceModal(false)
+                                    setClearanceImages([])
+                                }}
+                            >
+                                ✕
+                            </button>
+
+                            <h3 className="font-bold text-2xl bg-gradient-to-r from-[#8b1c1c] via-[#b91c1c] to-[#d4a017] bg-clip-text text-transparent mb-4">Department Clearance Images</h3>
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                {clearanceImages.map((imagePath, index) => (
+                                    <a
+                                        key={index}
+                                        href={`/storage/${imagePath}`}
+                                        target="_blank"
+                                        rel="noreferrer"
+                                        className="border rounded p-2 block"
+                                    >
+                                        <img
+                                            src={`/storage/${imagePath}`}
+                                            alt={`clearance-${index + 1}`}
+                                            className="w-full h-56 object-cover rounded"
+                                        />
+                                    </a>
+                                ))}
+                            </div>
+                        </div>
                     </dialog>
                 )}
 

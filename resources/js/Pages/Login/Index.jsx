@@ -20,7 +20,7 @@ export default function(){
       <div className="absolute right-[-5rem] bottom-[-5rem] h-80 w-80 rounded-full bg-[#d4a017]/20 blur-3xl" />
 
       <div className="relative mx-auto grid min-h-screen max-w-7xl items-center gap-10 px-6 py-10 lg:grid-cols-[1.15fr_0.85fr] lg:px-10">
-        <div className="relative overflow-hidden rounded-[2rem] border border-[#d7b46a]/50 bg-gradient-to-br from-[#8b1c1c] via-[#aa2222] to-[#5a110f] p-10 text-white shadow-[0_30px_80px_rgba(122,24,24,0.35)]">
+        <div className="relative hidden overflow-hidden rounded-[2rem] border border-[#d7b46a]/50 bg-gradient-to-br from-[#8b1c1c] via-[#aa2222] to-[#5a110f] p-10 text-white shadow-[0_30px_80px_rgba(122,24,24,0.35)] lg:block">
           <div className="absolute inset-0 opacity-25 [background-image:radial-gradient(rgba(255,255,255,0.35)_1px,transparent_1px)] [background-size:24px_24px]" />
           <div className="relative flex items-center gap-4">
             <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-white/12 ring-1 ring-white/20 backdrop-blur">
@@ -58,7 +58,7 @@ export default function(){
           </div>
         </div>
 
-        <div className="relative mx-auto w-full max-w-md">
+        <div className="relative mx-auto w-full max-w-md lg:max-w-none">
           <div className="absolute inset-0 translate-x-4 translate-y-4 rounded-[2rem] bg-[#d4a017]/30 blur-2xl" />
           <div className="relative rounded-[2rem] border border-[#e6c87b]/70 bg-white/85 px-8 py-10 shadow-[0_24px_70px_rgba(78,34,16,0.18)] backdrop-blur-xl">
             <div className="mb-8 text-left">

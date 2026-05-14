@@ -57,6 +57,7 @@ class EndorserController extends Controller
             $query->where('item', 'like', '%' . $request->search . '%')
                 ->orWhere('quantity', 'like', '%' . $request->search . '%')
                 ->orWhere('status', 'like', '%' . $request->search . '%')
+                ->orWhere('id', 'like', '%' . $request->search . '%')
                 ->orWhere('message', 'like', '%' . $request->search . '%');
         })
         ->orWhereHas('user', function ($query) use ($request) {
