@@ -24,7 +24,7 @@ Route::controller(LoginController::class)->group(function (){
 // ADMIN
 Route::middleware('role:admin')->controller(AdminController::class)->group(function(){
     Route::get('/admin-dashboard', 'adminPage')->name('admin_page');
-    Route::get('/admin-set-interval', 'adminSetIntervalPage')->name('admin_set_interval');
+    Route::get('/admin-audit-logs', 'auditLogsPage')->name('admin_audit_logs_page');
     Route::post('/create-user', 'createUser')->name('create_user');
     Route::post('/edit-user', 'editUser')->name('edit_user');
     Route::post('/delete-user', 'deleteUser')->name('delete_user');

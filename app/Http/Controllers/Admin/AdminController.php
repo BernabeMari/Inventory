@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Audit;
 use App\Models\User;
 use Illuminate\Http\Request;
 
@@ -14,8 +15,32 @@ class AdminController extends Controller
         return inertia('Admin/CreateUser', ['users' => $users]);
     }
 
-    public function adminSetIntervalPage(){
-        return inertia('Admin/SetInterval');
+    public function auditLogsPage(Request $request)
+    {
+        $audits = Audit::query()
+            ->latest()
+            ->when(filled($request->search), function ($query) use ($request) {
+                $search = $request->search;
+
+                $query->where(function ($subQuery) use ($search) {
+                    $subQuery->where('username', 'like', '%' . $search . '%')
+                        ->orWhere('role', 'like', '%' . $search . '%')
+                        ->orWhere('action', 'like', '%' . $search . '%')
+                        ->orWhere('method', 'like', '%' . $search . '%')
+                        ->orWhere('route_name', 'like', '%' . $search . '%')
+                        ->orWhere('url', 'like', '%' . $search . '%')
+                        ->orWhere('ip_address', 'like', '%' . $search . '%');
+                });
+            })
+            ->paginate(20)
+            ->withQueryString();
+
+        return inertia('Admin/AuditLogs', [
+            'audits' => $audits,
+            'filters' => [
+                'search' => $request->search ?? '',
+            ],
+        ]);
     }
 
     // create user

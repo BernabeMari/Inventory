@@ -161,9 +161,9 @@ export default function({users}){
 
 
               <th className="gap-1 flex">
-                <button onClick={(e) => {setEditModal(true);setData({username: user.username, user_id: user.id, username_edit: user.username, is_active: data.is_active })}} className="btn border-0 bg-[#8b1c1c] text-white hover:bg-[#6f1515]"><PencilSquareIcon className="w-5 h-5"/></button>
+                <button onClick={(e) => {setEditModal(true);setData({username: user.username, user_id: user.id, username_edit: user.username, is_active: data.is_active })}} className="btn border-0 bg-[#8b1c1c] text-white p-1 hover:bg-[#6f1515]"><PencilSquareIcon className="w-5 h-5"/></button>
                 {data.is_active && (
-                  <button onClick={(e) => {setDeleteModal(true); setData({user_id: user.id, username: user.username, is_active: data.is_active})}} className="btn border-0 bg-[#d4a017] text-[#2d1208] hover:bg-[#b88d11]"><TrashIcon className="w-5 h-5"/></button>
+                  <button onClick={(e) => {setDeleteModal(true); setData({user_id: user.id, username: user.username, is_active: data.is_active})}} className="btn border-0 bg-[#d4a017] text-[#2d1208] p-1 hover:bg-[#b88d11]"><TrashIcon className="w-5 h-5"/></button>
                 )}
               </th>
             </tr>
@@ -264,7 +264,7 @@ export default function({users}){
 
 
             {/* Submit Button */}
-            <button className="btn border-0 bg-gradient-to-r from-[#8b1c1c] via-[#b91c1c] to-[#d4a017] text-white hover:from-[#6f1515] hover:via-[#9e1f1f] hover:to-[#b88d11]">Edit User</button>
+            <button className="btn border-0 bg-gradient-to-r from-[#8b1c1c] via-[#b91c1c] to-[#d4a017] text-white hover:from-[#6f1515] p-2 hover:via-[#9e1f1f] hover:to-[#b88d11]">Edit User</button>
           </form>
 
           

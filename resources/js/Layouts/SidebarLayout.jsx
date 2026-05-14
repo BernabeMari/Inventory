@@ -84,20 +84,20 @@ export default function({children}){
            </Link>
            )}
            
-           {/* Admin Set Interval */}
-           {auth.user.role === 'admin' && (
-            <Link href={route('admin_set_interval')} onClick={closeDrawer}>
-            <li className={`flex items-center w-full ${currentRoute === 'admin_set_interval' ? 'bg-[#b91c1c] text-white rounded-md shadow' : ''}`}>
-            <div className="tooltip tooltip-close tooltip-right w-full">
-            <button className={`btn w-full ${currentRoute === 'admin_set_interval' ? 'border-transparent bg-transparent text-white hover:bg-transparent shadow-none' : 'border-[#d7be7b] bg-white/75 text-[#4a2814] hover:bg-[#fff5e0]'}`}><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" className="my-1.5 inline-block size-4">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
-            </svg>
 
-                <span className="is-drawer-close:hidden">Set Interval</span></button>
-            </div>
-            </li>
-           </Link>
-           )}
+               {/* Admin Audit Logs */}
+               {auth.user.role === 'admin' && (
+                <Link href={route('admin_audit_logs_page')} onClick={closeDrawer}>
+                <li className={`flex items-center w-full ${currentRoute === 'admin_audit_logs_page' ? 'bg-[#b91c1c] text-white rounded-md shadow' : ''}`}>
+                <div className="tooltip tooltip-close tooltip-right w-full">
+                <button className={`btn w-full ${currentRoute === 'admin_audit_logs_page' ? 'border-transparent bg-transparent text-white hover:bg-transparent shadow-none' : 'border-[#d7be7b] bg-white/75 text-[#4a2814] hover:bg-[#fff5e0]'}`}><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" className="my-1.5 inline-block size-4">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h3.75M9 15h3.75M9 18h3.75m3 .75H18a2.25 2.25 0 0 0 2.25-2.25V6.108c0-1.135-.845-2.098-1.976-2.192a48.424 48.424 0 0 0-1.123-.08m-5.801 0c-.065.21-.1.433-.1.664 0 .414.336.75.75.75h4.5a.75.75 0 0 0 .75-.75 2.25 2.25 0 0 0-.1-.664m-5.8 0A2.251 2.251 0 0 1 13.5 2.25H15c1.012 0 1.867.668 2.15 1.586m-5.8 0c-.376.023-.75.05-1.124.08C9.095 4.01 8.25 4.973 8.25 6.108V8.25m0 0H4.875c-.621 0-1.125.504-1.125 1.125v11.25c0 .621.504 1.125 1.125 1.125h9.75c.621 0 1.125-.504 1.125-1.125V9.375c0-.621-.504-1.125-1.125-1.125H8.25ZM6.75 12h.008v.008H6.75V12Zm0 3h.008v.008H6.75V15Zm0 3h.008v.008H6.75V18Z" />
+                </svg>
+                    <span className="is-drawer-close:hidden">Audit Logs</span></button>
+                </div>
+                </li>
+               </Link>
+               )}
            
 
            {/* Head Reports Page */}
